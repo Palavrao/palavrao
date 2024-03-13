@@ -7,3 +7,7 @@
 ## 0.0.2 -- 2024-03-12
 
 * Removing unused imports in utils.hs
+
+## 0.0.3 -- 2024-03-12
+
+* Matches persistence logic added
