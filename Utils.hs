@@ -1,10 +1,7 @@
 module Utils where
 
 import qualified Data.ByteString.Lazy as B
-import Data.Aeson.Text (encodeToLazyText)
 import Data.Aeson
-
-import qualified Data.Text.Lazy.Encoding as TE
 import qualified Data.ByteString.Lazy.Char8 as BS
 
 readJsonFile :: (ToJSON t, FromJSON t) => FilePath -> IO [t]
