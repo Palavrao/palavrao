@@ -18,8 +18,8 @@ data Match = Match {
 instance ToJSON Match
 instance FromJSON Match
 
-createMatch :: Match -> IO()
-createMatch match = UT.incJsonFile match "data/matches.json"
+saveMatch :: Match -> IO()
+saveMatch match = UT.incJsonFile match "data/matches.json"
 
 getMatchByName :: String -> IO (Maybe Match)
 getMatchByName targetName = do

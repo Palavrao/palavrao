@@ -15,15 +15,15 @@ data Account = Account {
 instance ToJSON Account
 instance FromJSON Account
 
-createAcc :: Account -> IO()
-createAcc acc = UT.incJsonFile acc "data/accounts.json"
+saveAcc :: Account -> IO()
+saveAcc acc = UT.incJsonFile acc "data/accounts.json"
 
 getAccByName :: String -> IO (Maybe Account)
 getAccByName targetName = do
     accs <- UT.readJsonFile "data/accounts.json"
     return $ UT.getObjByField accs accName targetName
 
--- changeAccScore :: String -> Int -> IO()
+-- incAccScore :: String -> Int -> IO()
 -- changeAccScore targetAccName targetScore = do
 --     accs <- UT.readJsonFile "data/accounts.json"
 --     let updatedAccs = _getUpdatedAccs accs targetAccName targetScore
