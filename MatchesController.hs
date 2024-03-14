@@ -18,16 +18,10 @@ data Match = Match {
 instance ToJSON Match
 instance FromJSON Match
 
-createMatch :: Match -> IO()
-createMatch match = UT.updateJsonFile match "data/matches.json"
+saveMatch :: Match -> IO()
+saveMatch match = UT.incJsonFile match "data/matches.json"
 
 getMatchByName :: String -> IO (Maybe Match)
 getMatchByName targetName = do
     matches <- UT.readJsonFile "data/matches.json"
-    return $ _getMatchByName matches targetName
-
-_getMatchByName :: [Match] -> String -> Maybe Match
-_getMatchByName [] _ = Nothing
-_getMatchByName (match:matcht) targetName 
-    | matchName match == targetName = Just match
-    | otherwise = _getMatchByName matcht targetName
+    return $ UT.getObjByField matches matchName targetName
