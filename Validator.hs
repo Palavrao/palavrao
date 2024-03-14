@@ -10,7 +10,7 @@ coordValidation coord
             y = coord !! 1
             y' = coord !! 2
         in
-            x `elem` ['A' .. 'O'] && (y == '0' && y' `elem` "12345" || y == '1' && y' `elem` "012345")
+            x `elem` ['A' .. 'O'] && (y == '0' && y' `elem` ['1' .. '9'] || y == '1' && y' `elem` ['0' .. '5'])
 
 lettersValidation :: String -> Bool
 lettersValidation "" = False
