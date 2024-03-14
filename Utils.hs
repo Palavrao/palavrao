@@ -14,8 +14,8 @@ readJsonFile path = do
 writeJsonFile :: (ToJSON t, FromJSON t) => [t] -> FilePath -> IO()
 writeJsonFile obj path = B.writeFile path (encode obj)
 
-updateJsonFile :: (ToJSON t, FromJSON t) => t -> FilePath -> IO()
-updateJsonFile obj path = do
+incJsonFile :: (ToJSON t, FromJSON t) => t -> FilePath -> IO()
+incJsonFile obj path = do
     contents <- readJsonFile path
     let updatedContents = (obj:contents)
     writeJsonFile updatedContents path
@@ -23,3 +23,9 @@ updateJsonFile obj path = do
 getJsonStr :: (ToJSON t, FromJSON t) => t -> String
 getJsonStr obj = BS.unpack encodedObj
     where encodedObj = encode obj
+
+getObjByField :: (ToJSON t, FromJSON t, Eq b) => [t] -> (t -> b) -> b -> Maybe t
+getObjByField [] _ _= Nothing
+getObjByField (obj:objt) targetField targetValue
+    | targetField obj == targetValue = Just obj
+    | otherwise = getObjByField objt targetField targetValue
