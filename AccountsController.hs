@@ -27,7 +27,6 @@ incAccScore :: String -> Int -> IO()
 incAccScore targetAccName targetScore = do
     accs <- UT.readJsonFile "data/accounts.json"
     let updatedAccs = _getUpdatedAccs accs targetAccName targetScore
-    putStrLn(">>" ++ getJsonStr updatedAccs)
     UT.writeJsonFile updatedAccs "data/accounts.json"
 
 _getUpdatedAccs :: [Account] -> String -> Int -> [Account]
