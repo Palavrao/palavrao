@@ -23,14 +23,15 @@ getAccByName targetName = do
     accs <- UT.readJsonFile "data/accounts.json"
     return $ UT.getObjByField accs accName targetName
 
--- incAccScore :: String -> Int -> IO()
--- changeAccScore targetAccName targetScore = do
---     accs <- UT.readJsonFile "data/accounts.json"
---     let updatedAccs = _getUpdatedAccs accs targetAccName targetScore
---     UT.writeJsonFile updatedAccs "data/accounts.json"
+incAccScore :: String -> Int -> IO()
+incAccScore targetAccName targetScore = do
+    accs <- UT.readJsonFile "data/accounts.json"
+    let updatedAccs = _getUpdatedAccs accs targetAccName targetScore
+    putStrLn(">>" ++ getJsonStr updatedAccs)
+    UT.writeJsonFile updatedAccs "data/accounts.json"
 
--- _getUpdatedAccs :: [Account] -> String -> Int -> [Account]
--- _getUpdatedAccs [] _ _ = []
--- _getUpdatedAccs (acc:acct) targetAccName targetScore
---     | accName acc == targetAccName = (Account {accName = accName acc, score = targetScore}:acct)
---     | otherwise = (acc:acct)
+_getUpdatedAccs :: [Account] -> String -> Int -> [Account]
+_getUpdatedAccs [] _ _ = []
+_getUpdatedAccs (acc:acct) targetAccName targetScore
+    | accName acc == targetAccName = (Account {accName = accName acc, score = (score acc + targetScore)}:_getUpdatedAccs acct targetAccName targetScore)
+    | otherwise = (acc:_getUpdatedAccs acct targetAccName targetScore)
