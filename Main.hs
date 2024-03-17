@@ -7,12 +7,11 @@ import MatchesController
 main :: IO ()
 main = do
     startPersistence
-    p1 <- createAcc "Fulano"
-    p2 <- createAcc "Sicrano"
-    match <- createMatch "Fulano x Sicrano" p1 p2
+    
+    acc1 <- createAcc "Fulano"
+    acc2 <- createAcc "Sicrano"
+    match <- createMatch "Fulano x Sicrano" acc1 acc2
     print(matchName match)
-    print(board match)
-    print(p1Name match)
-    print(p1Score match)
-    print(p2Name match)
-    print(p2Score match)
+    print(matchBoard match)
+    print(matchP1 match)
+    print(matchP2 match)
