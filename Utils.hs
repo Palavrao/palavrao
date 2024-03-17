@@ -5,6 +5,7 @@ import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import System.Directory (createDirectoryIfMissing, doesFileExist, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
+import System.Random
 
 startPersistence :: IO()
 startPersistence = do
@@ -50,3 +51,22 @@ getObjByField [] _ _= Nothing
 getObjByField (obj:objt) targetField targetValue
     | targetField obj == targetValue = Just obj
     | otherwise = getObjByField objt targetField targetValue
+
+popRandomElements :: (Eq t) => [t] -> Int -> ([t], [t])
+popRandomElements avaiableElements qtdElements = _popRandomElements [] avaiableElements qtdElements
+
+_removeOneElement :: (Eq t) => [t] -> t -> [t]
+_removeOneElement [] _ = []
+_removeOneElement (element:tail) removed 
+    | element == removed = tail 
+    | otherwise = (element:_removeOneElement tail removed)
+
+generator = mkStdGen 40
+
+_popRandomElements :: (Eq t) => [t] -> [t] -> Int -> ([t], [t])
+_popRandomElements removedElements finalElements 0 = (removedElements, finalElements)
+_popRandomElements removedElements elements qtdElements = _popRandomElements (removedElements ++ [randElement]) updatedElements (qtdElements - 1)
+    where 
+        randElement = elements !! randIndex 
+        (randIndex, _) = randomR (0,((length elements)-1)) generator
+        updatedElements = _removeOneElement elements randElement
