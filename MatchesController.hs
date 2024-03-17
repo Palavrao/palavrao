@@ -41,6 +41,13 @@ createMatch name acc1 acc2 = do
     saveMatch match
     return match
 
+matchExists :: String -> IO (Bool)
+matchExists name = do
+    maybeMatch <- getMatchByName name
+    return $ case maybeMatch of
+        Nothing -> False
+        Just _ -> True
+
 getMatchByName :: String -> IO (Maybe Match)
 getMatchByName targetName = do
     matches <- UT.readJsonFile "data/matches.json"

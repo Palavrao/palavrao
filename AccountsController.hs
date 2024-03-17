@@ -24,6 +24,13 @@ createAcc name = do
     saveAcc acc
     return acc
 
+accExists :: String -> IO (Bool)
+accExists name = do
+    maybeAcc <- getAccByName name
+    return $ case maybeAcc of
+        Nothing -> False
+        Just _ -> True
+
 getAccByName :: String -> IO (Maybe Account)
 getAccByName targetName = do
     accs <- UT.readJsonFile "data/accounts.json"
