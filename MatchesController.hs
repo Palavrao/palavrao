@@ -22,8 +22,16 @@ data Match = Match {
 instance ToJSON Match
 instance FromJSON Match
 
-saveMatch :: Match -> IO()
-saveMatch match = UT.incJsonFile match "data/matches.json"
+saveMatchJson :: Match -> IO()
+saveMatchJson match = UT.incJsonFile match "data/matches.json"
+
+updateMatchJson :: Match -> IO()
+updateMatchJson updatedMatch = do
+    accs <- UT.readJsonFile "data/matches.json"
+    let updatedAccs = _getUpdatedMatches accs targetMatchName updatedMatch
+    UT.writeJsonFile updatedAccs "data/matches.json"
+    where
+        targetMatchName = mName updatedMatch
 
 createMatch :: String -> Account -> Account -> IO(Match)
 createMatch name acc1 acc2 = do
@@ -35,7 +43,7 @@ createMatch name acc1 acc2 = do
             mP2 = createPlayer acc2,
             mLetters = startLetters
         }
-    saveMatch match
+    saveMatchJson match
     return match
 
 matchExists :: String -> IO (Bool)
@@ -53,10 +61,10 @@ getMatchByName targetName = do
 updateMatchLetters :: Match -> [Letter] -> Match
 updateMatchLetters match newLetters = match {mLetters = newLetters}
 
-updateMatchPlayer :: Match -> Player -> Match
-updateMatchPlayer match player 
-    | mTurn match = match {mP1 = player}
-    | otherwise = match {mP2 = player}
+incPlayerScore :: Match -> Int -> Match
+incPlayerScore match incScore
+    | mTurn match = match {mP2 = PC.incPlayerScore (mP2 match) incScore}
+    | otherwise = match {mP1 = PC.incPlayerScore (mP1 match) incScore}
 
 updatePlayerLetters :: Match -> IO(Match)
 updatePlayerLetters match = do
@@ -65,14 +73,25 @@ updatePlayerLetters match = do
     let updatedMatch = updateMatchLetters match updatedLetters
     let updatedPlayer = PC.updatePlayerLetters player playerLetters
 
-    return $ updateMatchPlayer updatedMatch updatedPlayer
+    return $ _updateMatchPlayer updatedMatch updatedPlayer
     where
         player 
-            | mTurn match = mP1 match
-            | otherwise = mP2 match
+            | mTurn match = mP2 match
+            | otherwise = mP1 match
 
 toggleMatchTurn :: Match -> Match 
 toggleMatchTurn match = match {mTurn = not (mTurn match)}
 
 updateMatchBoard :: Match -> Board -> Match
 updateMatchBoard match newBoard = match {mBoard = newBoard}
+
+_updateMatchPlayer :: Match -> Player -> Match
+_updateMatchPlayer match player 
+    | mTurn match = match {mP2 = player}
+    | otherwise = match {mP1 = player}
+
+_getUpdatedMatches :: [Match] -> String -> Match -> [Match]
+_getUpdatedMatches [] _ _ = []
+_getUpdatedMatches (match:tail) targetMatchName updatedMatch
+    | mName match == targetMatchName = (updatedMatch:tail)
+    | otherwise = (match:_getUpdatedMatches tail targetMatchName updatedMatch)
