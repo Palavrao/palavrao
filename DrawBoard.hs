@@ -1,8 +1,8 @@
-module DrawTabuleiro where
+module DrawBoard where
 import Text.Printf
 import System.Console.ANSI
 import MatchesController
-import Tabuleiro
+import BoardController
 import Data.Char
 
 __colorText :: String -> Color -> IO ()
@@ -13,8 +13,8 @@ __colorText text color = do
     setSGR [Reset]  -- Reset text attributes to default
 
 -- █ ■
-__pintaTabuleiro :: Char -> IO ()
-__pintaTabuleiro (a)
+__pintaBoard :: Char -> IO ()
+__pintaBoard (a)
     |a == '#' = __colorText "■ " Red 
     |a == '-' = __colorText "■ " Magenta
     |a == '*' = __colorText "■ " Blue
@@ -71,21 +71,26 @@ __suffixes m i
     |otherwise = ""
 
 
-__montagemT :: Tabuleiro -> Int -> IO ()
-__montagemT t i = do
+
+
+__montagemT :: Match -> Int -> IO ()
+__montagemT m i = do
     if i > 15 then 
         putStr (unlines[printf "\n     X X X X X X X                  00:00",
                         printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n"])
     else do
         putStr "     "
-        mapM_ __pintaTabuleiro (lines!!i)
-        putStrLn (__suffixes (match t) i)
-        __montagemT t (i + 1)
-    where lines = ["A B C D E F G H I J K L M N O "] ++ (map (unwords . map printf) (curTiles t))
+        mapM_ __pintaBoard (lines!!i)
+        putStrLn (__suffixes m i)
+        __montagemT m (i + 1)
+    where 
+        formattedLines = map printf (curTiles $ board m)
+        lines = ["A B C D E F G H I J K L M N O"] ++ formattedLines
 
 
-verTabuleiro :: Tabuleiro -> IO ()
-verTabuleiro t = do
+
+verBoard :: Match -> IO ()
+verBoard m = do
     clearScreen
-    __montagemT t 0
+    __montagemT m 0
     

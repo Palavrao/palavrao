@@ -18,13 +18,19 @@ extra-source-files:  CHANGELOG.md, README.md
 
 executable palavrao
   main-is:             Main.hs
-  -- other-modules:
+  other-modules:
+    AccountsController,
+    BoardController,
+    DrawBoard,
+    MatchesController,
+    Utils,
+    Validator
   -- other-extensions:
   build-depends: 
     text >=1.2.4.0 && <1.3,      
     base >=4.13,
     bytestring >=0.10.10.1,
-    aeson >=2.0 && <3,
+    aeson,
     ansi-terminal >=1.1,
     brick,
     vty>=6.0,
