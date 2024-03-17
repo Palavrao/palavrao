@@ -2,6 +2,7 @@ module DrawBoard where
 import Text.Printf
 import System.Console.ANSI
 import MatchesController
+import AccountsController
 import BoardController
 import Data.Char
 
@@ -54,13 +55,12 @@ tt p1 s1 p2 s2 = unlines [
 __suffixes :: Match -> Int -> String
 __suffixes m i 
     |i == 1 = " 01                        "
-    |i == 2 = printf " 02    %-5s.     %-5s." (take 5 $ p1Name m) (take 5 $ p2Name m)
-    |i == 3 = printf " 03    %03d pt     %03d pt    " (p1Score m) (p2Score m)
+    |i == 2 = printf " 02    %-5s.     %-5s." (take 5 $ p1n) (take 5 $ p2n)
+    |i == 3 = printf " 03    %03d pt     %03d pt    " p1s p2s
     |i == 4 = " 04                        "
     |i == 5 = " 05                        "
     |i == 6 = " 06                        "
     |i == 7 = " 07                        "
-    |i == 8 = " 08                        "
     |i == 9 = " 09                        "
     |i == 10 = " 10                        "
     |i == 11 = " 11                        "
@@ -69,6 +69,11 @@ __suffixes m i
     |i == 14 = " 14   :!   pular vez       "
     |i == 15 = " 15   :*X  trocar letra x  "
     |otherwise = ""
+    where 
+        p1n = accName (pAcc (matchP1 m))
+        p2n = accName (pAcc (matchP2 m))
+        p1s = pScore (matchP1 m)
+        p2s = pScore (matchP2 m)
 
 
 
@@ -84,7 +89,7 @@ __montagemT m i = do
         putStrLn (__suffixes m i)
         __montagemT m (i + 1)
     where 
-        formattedLines = map printf (curTiles $ board m)
+        formattedLines = map printf (curTiles $ matchBoard m)
         lines = ["A B C D E F G H I J K L M N O"] ++ formattedLines
 
 
