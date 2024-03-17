@@ -4,7 +4,6 @@ module AccountsController where
 
 import GHC.Generics
 import Data.Aeson
-
 import Utils as UT
 
 data Account = Account {

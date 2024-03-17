@@ -6,7 +6,6 @@ import GHC.Generics
 import Data.Aeson
 import BoardController;
 import AccountsController
-
 import Utils as UT
 
 data Match = Match {
