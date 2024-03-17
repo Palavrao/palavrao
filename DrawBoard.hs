@@ -1,4 +1,5 @@
 module DrawBoard where
+
 import Text.Printf
 import System.Console.ANSI
 import MatchesController
@@ -6,12 +7,14 @@ import AccountsController
 import BoardController
 import Data.Char
 
+
 __colorText :: String -> Color -> IO ()
 __colorText text color = do
     setSGR [SetColor Foreground Vivid color]  -- Set the foreground color
     --setSGR [SetColor Background Vivid color]
     putStr text
     setSGR [Reset]  -- Reset text attributes to default
+
 
 -- █ ■
 __pintaBoard :: Char -> IO ()
@@ -52,6 +55,7 @@ tt p1 s1 p2 s2 = unlines [
                       "    # . . * . . . # . . . * . . #   15   :*X  trocar letra x  ",
                       "                                                              "]
 
+
 __suffixes :: Match -> Int -> String
 __suffixes m i 
     |i == 1 = " 01                        "
@@ -76,13 +80,12 @@ __suffixes m i
         p2s = pScore (matchP2 m)
 
 
-
-
 __montagemT :: Match -> Int -> IO ()
 __montagemT m i = do
     if i > 15 then 
-        putStr (unlines[printf "\n     X X X X X X X                  00:00",
-                        printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n"])
+        putStr (unlines
+                [printf "\n     X X X X X X X                  00:00",
+                 printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n"])
     else do
         putStr "     "
         mapM_ __pintaBoard (lines!!i)
@@ -91,7 +94,6 @@ __montagemT m i = do
     where 
         formattedLines = map printf (curTiles $ matchBoard m)
         lines = ["A B C D E F G H I J K L M N O"] ++ formattedLines
-
 
 
 verBoard :: Match -> IO ()
