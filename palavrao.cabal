@@ -32,10 +32,9 @@ executable palavrao
     bytestring >=0.10.10.1,
     aeson,
     ansi-terminal >=1.1,
-    brick,
-    vty>=6.0,
     directory>=1.3.6.0,
     filepath>=1.4.2.1,
-    directory
+    directory,
+    random>=1.2.1.2
   -- hs-source-dirs:
   default-language:    Haskell2010
