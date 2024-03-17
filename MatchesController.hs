@@ -9,11 +9,11 @@ import AccountsController
 import Utils as UT
 
 data Match = Match {
-    matchName :: String,
-    matchBoard :: Board,
-    matchTurn :: Bool,
-    matchP1 :: Player,
-    matchP2 :: Player
+    mName :: String,
+    mBoard :: Board,
+    mTurn :: Bool,
+    mP1 :: Player,
+    mP2 :: Player
 } deriving (Show, Generic)
 
 instance ToJSON Match
@@ -36,7 +36,7 @@ createPlayer acc = Player {pAcc = acc, pLetters = [], pScore = 0}
 
 createMatch :: String -> Account -> Account -> IO(Match)
 createMatch name acc1 acc2 = do
-    let match = Match {matchName = name, matchBoard = startBoard, matchTurn = False, matchP1 = createPlayer acc1, matchP2 = createPlayer acc2}
+    let match = Match {mName = name, mBoard = startBoard, mTurn = False, mP1 = createPlayer acc1, mP2 = createPlayer acc2}
     saveMatch match
     return match
 
@@ -50,4 +50,4 @@ matchExists name = do
 getMatchByName :: String -> IO (Maybe Match)
 getMatchByName targetName = do
     matches <- UT.readJsonFile "data/matches.json"
-    return $ UT.getObjByField matches matchName targetName
+    return $ UT.getObjByField matches mName targetName
