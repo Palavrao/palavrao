@@ -1,22 +1,18 @@
 module Main where
 
+import Utils
 import AccountsController
 import MatchesController
-import GameLoop
-
 
 main :: IO ()
 main = do
-    
-    createAcc Account {accName="fulano", score=0}
-    createAcc Account {accName="beltrano", score=0}
-    let m = Match {matchName="match1", p1Name="fulano", p1Score=0, p2Name="beltrano", p2Score=0}
-    createMatch m
-
-    let t = startTabuleiro m
-    verTabuleiro t
-    
-    --mapM (mapM replacements) (curTiles t) 
-    putStr ""
-
-    
+    startPersistence
+    p1 <- createAcc "Fulano"
+    p2 <- createAcc "Sicrano"
+    match <- createMatch "Fulano x Sicrano" p1 p2
+    print(matchName match)
+    print(board match)
+    print(p1Name match)
+    print(p1Score match)
+    print(p2Name match)
+    print(p2Score match)
