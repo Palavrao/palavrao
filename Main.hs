@@ -18,14 +18,33 @@ main = do
                         "└────────────────────────┘"])
     ctd <- getLine
     startPersistence
-    p1 <- createAcc "Fulano"
-    p2 <- createAcc "Sicrano"
-    match <- createMatch "Fulano x Sicrano" p1 p2
+    
+    acc1 <- createAcc "Fulano"
+    acc2 <- createAcc "Sicrano"
+    match <- createMatch "Fulano x Sicrano" acc1 acc2
     print(matchName match)
-    print(board match)
-    print(p1Name match)
-    print(p1Score match)
-    print(p2Name match)
-    print(p2Score match)
+    print(matchBoard match)
+    print(matchP1 match)
+    print(matchP2 match)
+
+    fulanoExiste <- accExists "Fulano"
+    if (fulanoExiste)
+        then putStrLn "Fulano existe"
+        else putStrLn "Fulano não existe"
+    
+    kaikeExiste <- accExists "Kaike"
+    if (kaikeExiste)
+        then putStrLn "Kaike existe"
+        else putStrLn "Kaike não existe"
+
+    fulanoXSicranoExiste <- matchExists "Fulano x Sicrano"
+    if (fulanoXSicranoExiste)
+        then putStrLn "Fulano x Sicrano existe"
+        else putStrLn "Fulano x Sicrano não existe"
+    
+    fulanoXKaikeExiste <- matchExists "Fulano x Kaike"
+    if (fulanoXKaikeExiste)
+        then putStrLn "Fulano x Kaike existe"
+        else putStrLn "Fulano x Kaike não existe"
 
     verBoard match
