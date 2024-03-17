@@ -75,10 +75,10 @@ _suffixes match i
     |i == 15 = " 15   :*X  trocar letra x  "
     |otherwise = ""
     where 
-        p1n = accName (pAcc (matchP1 match))
-        p2n = accName (pAcc (matchP2 match))
-        p1s = pScore (matchP1 match)
-        p2s = pScore (matchP2 match)
+        p1n = accName (pAcc (mP1 match))
+        p2n = accName (pAcc (mP2 match))
+        p1s = pScore (mP1 match)
+        p2s = pScore (mP2 match)
 
 
 _buildBoard :: Match -> Int -> IO ()
@@ -93,7 +93,7 @@ _buildBoard match i = do
         putStrLn (_suffixes match i)
         _buildBoard match (i + 1)
     where 
-        formattedLines = map printf (curTiles $ matchBoard match)
+        formattedLines = map printf (curTiles $ mBoard match)
         lines = ["A B C D E F G H I J K L M N O"] ++ formattedLines
 
 
