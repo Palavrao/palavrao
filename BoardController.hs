@@ -18,8 +18,8 @@ instance FromJSON Board
 
 startBoard :: Board
 startBoard = Board {
-                curTiles= 
-                        [['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#'],
+                curTiles= [
+                        ['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#'],
                         ['~', '-', '~', '~', '~', '!', '~', '~', '~', '!', '~', '~', '~', '-', '~'],
                         ['~', '~', '-', '~', '~', '~', '*', '~', '*', '~', '~', '~', '-', '~', '~'],
                         ['*', '~', '~', '-', '~', '~', '~', '*', '~', '~', '~', '-', '~', '~', '*'],
@@ -34,8 +34,8 @@ startBoard = Board {
                         ['~', '~', '-', '~', '~', '~', '*', '~', '*', '~', '~', '~', '-', '~', '~'],
                         ['~', '-', '~', '~', '~', '!', '~', '~', '~', '!', '~', '~', '~', '-', '~'],
                         ['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#']]
-                ,workTiles =
-                        [['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#'],
+                ,workTiles =[
+                        ['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#'],
                         ['~', '-', '~', '~', '~', '!', '~', '~', '~', '!', '~', '~', '~', '-', '~'],
                         ['~', '~', '-', '~', '~', '~', '*', '~', '*', '~', '~', '~', '-', '~', '~'],
                         ['*', '~', '~', '-', '~', '~', '~', '*', '~', '~', '~', '-', '~', '~', '*'],
@@ -56,14 +56,17 @@ _replacements a
     |elem a ['A'..'Z'] = a
     |otherwise = ' '
 
-getCol :: Int -> [[t]] -> [t]
-getCol n mat = map (!!n) mat
 
-searchHorizontal :: Board -> Int -> IO ()
-searchHorizontal board n = do
-        let line = map _replacements (b!!n)
-        --let wor = words line
-        putStrLn line
-        where b = curTiles board
---let col = getCol 2 ([[1,2,3],[4,5,6]] :: [[Int]])
---    printColoredText (show col) Red
+_getCol :: [[Char]] -> Int -> [Char]
+_getCol mat n = map (!!n) mat
+
+
+getWords :: Board -> [String]
+getWords board = (_search (!!) board 0) ++ (_search (_getCol) board 0)
+
+
+_search :: ([[Char]]->Int->[Char]) -> Board -> Int -> [String]
+_search _ _ 14 = []
+_search func board n =
+        (filter (\x -> length x > 1) (words $ map _replacements (func b n))) ++ _search (func) board (n+1)
+        where b = workTiles board

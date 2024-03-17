@@ -3,6 +3,7 @@ module Main where
 import Utils
 import AccountsController
 import MatchesController
+import BoardController
 import DrawBoard
 import System.Console.ANSI
 
@@ -25,10 +26,10 @@ main = do
     acc1 <- createAcc "Fulano"
     acc2 <- createAcc "Sicrano"
     match <- createMatch "Fulano x Sicrano" acc1 acc2
-    print(matchName match)
-    print(matchBoard match)
-    print(matchP1 match)
-    print(matchP2 match)
+    print(mName match)
+    print(mBoard match)
+    print(mP1 match)
+    print(mP2 match)
 
     fulanoExiste <- accExists "Fulano"
     if (fulanoExiste)
@@ -51,3 +52,4 @@ main = do
         else putStrLn "Fulano x Kaike não existe"
 
     printBoard match
+    putStrLn $ show (getWords (mBoard match))
