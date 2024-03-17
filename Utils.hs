@@ -3,6 +3,16 @@ module Utils where
 import qualified Data.ByteString.Lazy as B
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
+import System.Directory (createDirectoryIfMissing)
+import System.FilePath.Posix (takeDirectory)
+
+startPersistence :: IO()
+startPersistence = do
+    createDirectoryIfMissing True (takeDirectory "data/matches.json")
+    createDirectoryIfMissing True (takeDirectory "data/accounts.json")
+    
+    writeFile "data/matches.json" "[]"
+    writeFile "data/accounts.json" "[]"
 
 readJsonFile :: (ToJSON t, FromJSON t) => FilePath -> IO [t]
 readJsonFile path = do
