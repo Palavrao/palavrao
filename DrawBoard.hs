@@ -56,8 +56,8 @@ tt p1 s1 p2 s2 = unlines [
                       "                                                              "]
 
 
-__suffixes :: Match -> Int -> String
-__suffixes m i 
+_suffixes :: Match -> Int -> String
+_suffixes match i 
     |i == 1 = " 01                        "
     |i == 2 = printf " 02    %-5s.     %-5s." (take 5 $ p1n) (take 5 $ p2n)
     |i == 3 = printf " 03    %03d pt     %03d pt    " p1s p2s
@@ -65,6 +65,7 @@ __suffixes m i
     |i == 5 = " 05                        "
     |i == 6 = " 06                        "
     |i == 7 = " 07                        "
+    |i == 8 = " 08                        "
     |i == 9 = " 09                        "
     |i == 10 = " 10                        "
     |i == 11 = " 11                        "
@@ -74,14 +75,14 @@ __suffixes m i
     |i == 15 = " 15   :*X  trocar letra x  "
     |otherwise = ""
     where 
-        p1n = accName (pAcc (matchP1 m))
-        p2n = accName (pAcc (matchP2 m))
-        p1s = pScore (matchP1 m)
-        p2s = pScore (matchP2 m)
+        p1n = accName (pAcc (matchP1 match))
+        p2n = accName (pAcc (matchP2 match))
+        p1s = pScore (matchP1 match)
+        p2s = pScore (matchP2 match)
 
 
-__montagemT :: Match -> Int -> IO ()
-__montagemT m i = do
+_buildBoard :: Match -> Int -> IO ()
+_buildBoard match i = do
     if i > 15 then 
         putStr (unlines
                 [printf "\n     X X X X X X X                  00:00",
@@ -89,15 +90,15 @@ __montagemT m i = do
     else do
         putStr "     "
         mapM_ __pintaBoard (lines!!i)
-        putStrLn (__suffixes m i)
-        __montagemT m (i + 1)
+        putStrLn (_suffixes match i)
+        _buildBoard match (i + 1)
     where 
-        formattedLines = map printf (curTiles $ matchBoard m)
+        formattedLines = map printf (curTiles $ matchBoard match)
         lines = ["A B C D E F G H I J K L M N O"] ++ formattedLines
 
 
-verBoard :: Match -> IO ()
-verBoard m = do
+printBoard :: Match -> IO ()
+printBoard match = do
     clearScreen
-    __montagemT m 0
+    _buildBoard match 0
     

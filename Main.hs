@@ -16,6 +16,9 @@ main = do
                         "│        > Enter         │",
                         "│                        │",  
                         "└────────────────────────┘"])
+
+
+                        
     ctd <- getLine
     startPersistence
     
@@ -47,4 +50,4 @@ main = do
         then putStrLn "Fulano x Kaike existe"
         else putStrLn "Fulano x Kaike não existe"
 
-    verBoard match
+    printBoard match
