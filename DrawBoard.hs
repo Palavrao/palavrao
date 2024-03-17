@@ -6,7 +6,7 @@ import MatchesController
 import AccountsController
 import BoardController
 import Data.Char
-
+import PlayerController
 
 __colorText :: String -> Color -> IO ()
 __colorText text color = do
