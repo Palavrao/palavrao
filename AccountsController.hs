@@ -9,7 +9,7 @@ import Utils as UT
 
 data Account = Account {
     accName :: String,
-    score :: Int
+    accScore :: Int
 } deriving (Show, Generic)
 
 instance ToJSON Account
@@ -20,7 +20,7 @@ saveAcc acc = UT.incJsonFile acc "data/accounts.json"
 
 createAcc :: String -> IO(Account)
 createAcc name = do
-    let acc = Account {accName = name, score = 0}
+    let acc = Account {accName = name, accScore = 0}
     saveAcc acc
     return acc
 
@@ -38,5 +38,5 @@ incAccScore targetAccName targetScore = do
 _getUpdatedAccs :: [Account] -> String -> Int -> [Account]
 _getUpdatedAccs [] _ _ = []
 _getUpdatedAccs (acc:acct) targetAccName targetScore
-    | accName acc == targetAccName = (Account {accName = accName acc, score = (score acc + targetScore)}:_getUpdatedAccs acct targetAccName targetScore)
+    | accName acc == targetAccName = (Account {accName = accName acc, accScore = (accScore acc + targetScore)}:_getUpdatedAccs acct targetAccName targetScore)
     | otherwise = (acc:_getUpdatedAccs acct targetAccName targetScore)
