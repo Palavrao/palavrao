@@ -1,12 +1,11 @@
 module Main where
 
-import Utils
+import Utils as UT
 import AccountsController
 import MatchesController
 import BoardController
 import DrawBoard
 import System.Console.ANSI
-
 
 main :: IO ()
 main = do
@@ -17,8 +16,6 @@ main = do
                         "│        > Enter         │",
                         "│                        │",  
                         "└────────────────────────┘"])
-
-
                         
     ctd <- getLine
     startPersistence
@@ -53,3 +50,12 @@ main = do
 
     printBoard match
     putStrLn $ show (getWords (mBoard match))
+
+    maybeMatch <- getMatchByName "Fulano x Sicrano"
+    case maybeMatch of
+        Nothing -> putStrLn "Match not found."
+        Just match -> do
+
+            let updatedMatch = incPlayerScore (toggleMatchTurn (updateMatchLetters match [])) 100
+            updateMatchJson updatedMatch
+            putStrLn (UT.getJsonStr updatedMatch)
