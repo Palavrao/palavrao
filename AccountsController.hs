@@ -18,6 +18,12 @@ instance FromJSON Account
 saveAcc :: Account -> IO()
 saveAcc acc = UT.incJsonFile acc "data/accounts.json"
 
+createAcc :: String -> IO(Account)
+createAcc name = do
+    let acc = Account {accName = name, score = 0}
+    saveAcc acc
+    return acc
+
 getAccByName :: String -> IO (Maybe Account)
 getAccByName targetName = do
     accs <- UT.readJsonFile "data/accounts.json"
