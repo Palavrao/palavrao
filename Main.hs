@@ -3,6 +3,7 @@ module Main where
 import Utils
 import AccountsController
 import MatchesController
+import BoardController
 import DrawBoard
 import System.Console.ANSI
 
@@ -51,3 +52,4 @@ main = do
         else putStrLn "Fulano x Kaike não existe"
 
     printBoard match
+    putStrLn $ show (getWords (mBoard match))
