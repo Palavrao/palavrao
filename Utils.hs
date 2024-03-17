@@ -25,7 +25,6 @@ startPersistence = do
         then writeFile accountsPath "[]"
         else putStrLn "accounts.json file already exists"
 
-
 readJsonFile :: (ToJSON t, FromJSON t) => FilePath -> IO [t]
 readJsonFile path = do
     contents <- B.readFile path
