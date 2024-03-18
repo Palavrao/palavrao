@@ -9,13 +9,17 @@ import Utils as UT
 data Account = Account {
     accName :: String,
     accScore :: Int
-} deriving (Show, Generic)
+} deriving (Show, Generic, Eq)
 
 instance ToJSON Account
 instance FromJSON Account
 
-saveAcc :: Account -> IO()
-saveAcc acc = UT.incJsonFile acc "data/accounts.json"
+saveAccJson :: Account -> IO()
+saveAccJson acc = UT.incJsonFile acc "data/accounts.json"
+
+deleteAccFromJson :: Account -> IO()
+deleteAccFromJson acc = do 
+    UT.deleteJsonObj acc "data/accounts.json"
 
 createAcc :: String -> IO(Account)
 createAcc name = do
@@ -23,7 +27,7 @@ createAcc name = do
             accName = name, 
             accScore = 0
         }
-    saveAcc acc
+    saveAccJson acc
     return acc
 
 accExists :: String -> IO (Bool)
