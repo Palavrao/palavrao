@@ -36,6 +36,12 @@ readJsonFile path = do
 writeJsonFile :: (ToJSON t, FromJSON t) => [t] -> FilePath -> IO()
 writeJsonFile obj path = B.writeFile path (encode obj)
 
+deleteJsonObj :: (ToJSON t, FromJSON t, Eq t) => t -> FilePath -> IO()
+deleteJsonObj obj path = do
+    contents <- readJsonFile path
+    let updatedContents = _removeOneElement contents obj
+    writeJsonFile updatedContents path
+
 incJsonFile :: (ToJSON t, FromJSON t) => t -> FilePath -> IO()
 incJsonFile obj path = do
     contents <- readJsonFile path
