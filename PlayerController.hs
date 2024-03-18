@@ -12,7 +12,7 @@ data Player = Player {
     pAcc :: Account,
     pLetters :: [Letter],
     pScore :: Int
-} deriving (Show, Generic)
+} deriving (Show, Generic, Eq)
 
 instance ToJSON Player
 instance FromJSON Player
