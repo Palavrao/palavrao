@@ -24,7 +24,9 @@ executable palavrao
     DrawBoard,
     MatchesController,
     Utils,
-    Validator
+    Validator,
+    LettersController,
+    PlayerController
   -- other-extensions:
   build-depends: 
     text >=1.2.4.0 && <1.3,      
