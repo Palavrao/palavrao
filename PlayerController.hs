@@ -27,5 +27,5 @@ createPlayer acc = Player {
 updatePlayerLetters :: Player -> [Letter] -> Player
 updatePlayerLetters player newLetters = player {pLetters = newLetters}
 
-updatePlayerScore :: Player -> Int -> Player
-updatePlayerScore player newScore = player {pScore = newScore}
+incPlayerScore :: Player -> Int -> Player
+incPlayerScore player incScore = player {pScore = (pScore player + incScore)}
