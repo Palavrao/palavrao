@@ -11,15 +11,17 @@ import System.Console.ANSI
 main :: IO ()
 main = do
     clearScreen
-    putStrLn (unlines [ "┌────────────────────────┐",  
-                        "│                        │",  
-                        "│  Jogue em Tela Cheia!  │",  
-                        "│        > Enter         │",
-                        "│                        │",  
-                        "└────────────────────────┘"])
+    putStrLn (unlines [ "                 ┌─────────────────────────────┐",  
+                        "                 │                             │",  
+                        "                 │    Redimensione para que    │",
+                        "                 │  a linha caiba no terminal! │",  
+                        "                 │                             │",
+                        "<-------------------------------------------------------------->",
+                        "                 │           > Enter           │",
+                        "                 │                             │",  
+                        "                 └──────────────────────────── ┘"])
 
-
-                        
+    
     ctd <- getLine
     startPersistence
     
