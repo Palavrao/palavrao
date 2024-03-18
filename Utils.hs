@@ -31,7 +31,7 @@ readJsonFile path = do
     contents <- B.readFile path
     case eitherDecode contents of
         Left err -> error $ "Error decoding JSON: " ++ err
-        Right people -> return people
+        Right decodedContents -> return decodedContents
 
 writeJsonFile :: (ToJSON t, FromJSON t) => [t] -> FilePath -> IO()
 writeJsonFile obj path = B.writeFile path (encode obj)
