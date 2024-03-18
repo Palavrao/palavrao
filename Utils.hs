@@ -64,6 +64,7 @@ _removeOneElement (element:tail) removed
 generator = mkStdGen 40
 
 _popRandomElements :: (Eq t) => [t] -> [t] -> Int -> ([t], [t])
+_popRandomElements removedElements [] _ = (removedElements, [])
 _popRandomElements removedElements finalElements 0 = (removedElements, finalElements)
 _popRandomElements removedElements elements qtdElements = _popRandomElements (removedElements ++ [randElement]) updatedElements (qtdElements - 1)
     where 
