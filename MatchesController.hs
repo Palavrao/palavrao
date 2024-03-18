@@ -27,7 +27,7 @@ saveMatchJson match = UT.incJsonFile match "data/matches.json"
 
 deleteMatchFromJson :: Match -> IO()
 deleteMatchFromJson match = do 
-    UT.deleteJsonObj match "data/matches.json"
+    UT.deleteFromJson match "data/matches.json"
 
 updateMatchJson :: Match -> IO()
 updateMatchJson updatedMatch = do

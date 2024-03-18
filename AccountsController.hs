@@ -19,7 +19,7 @@ saveAccJson acc = UT.incJsonFile acc "data/accounts.json"
 
 deleteAccFromJson :: Account -> IO()
 deleteAccFromJson acc = do 
-    UT.deleteJsonObj acc "data/accounts.json"
+    UT.deleteFromJson acc "data/accounts.json"
 
 createAcc :: String -> IO(Account)
 createAcc name = do
