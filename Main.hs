@@ -52,9 +52,6 @@ main = do
         then putStrLn "Fulano x Kaike existe"
         else putStrLn "Fulano x Kaike não existe"
 
-    printBoard match
-    putStrLn $ show (getWords (mBoard match))
-
     maybeMatch <- getMatchByName "Fulano x Sicrano"
     case maybeMatch of
         Nothing -> putStrLn "Match not found."
@@ -63,3 +60,13 @@ main = do
             let updatedMatch = incPlayerScore (toggleMatchTurn (updateMatchLetters match [])) 100
             updateMatchJson updatedMatch
             putStrLn (UT.getJsonStr updatedMatch)
+
+
+    printBoard match
+    putStrLn $ show (getWords (mBoard match))
+    putStrLn $ show (placeHorizontal 1 1 "OLA" ["aaa","bbb","ccc"])
+    {- Expected
+    [aaa]
+    [bola]
+    [ccc]
+    -}
