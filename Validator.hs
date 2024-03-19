@@ -1,6 +1,23 @@
 module Validator where
 
-import Data.Char (toUpper)
+import MatchesController
+import BoardController
+import PlayerController
+import Data.Char
+
+initialValidation :: Match -> String -> Bool
+initialValidation _ "" = False
+initialValidation match linha
+    | length palavras /= 3 = False
+    | otherwise = 
+        (coordValidation coord) && (lettersValidation direction word) && (tileValidation (mBoard Match) (x, y) direction word 0)
+    where
+        palavras = words $ map toUpper linha
+        coord = (palavras !! 0)
+        x = ord (coord !! 0) - ord 'A'
+        y = read (dropWhile (== '0') coord) :: Int
+        direction = (palavras !! 1)
+        word = (palavras !! 2)
 
 coordValidation :: String -> Bool
 coordValidation coord
@@ -12,6 +29,19 @@ coordValidation coord
         in
             x `elem` ['A' .. 'O'] && (y == '0' && y' `elem` ['1' .. '9'] || y == '1' && y' `elem` ['0' .. '5'])
 
-lettersValidation :: String -> Bool
-lettersValidation "" = False
-lettersValidation word = [] == [l | l <- word, toUpper l `notElem` ['A' .. 'Z']]
+lettersValidation :: Char -> String -> Bool
+lettersValidation direction word = (direction == "V" || direction == "H") && [] == [l | l <- word, l `notElem` ['A' .. 'Z']]
+
+tileValidation :: Board -> (Int, Int) -> Char -> String -> Int -> Bool
+tileValidation _ _ _ word (length word) = True  
+tileValidation _ (15, _) _ _ _ = False
+tileValidation _ (_, 15) _ _ _ = False
+tileValidation board (x, y) direction word i =
+   case direction of
+      "H" -> if tile `elem` ['A' .. 'Z']
+                then (word !! i) == tile && tileValidation board (x, y + 1) direction word (i + 1)
+             else tileValidation board (x, y + 1) direction word (i + 1)
+      "V" -> tile `elem` ['A' .. 'Z']
+                then (word !! i) == tile && tileValidation board (x + 1, y) direction word (i + 1)
+             else tileValidation board (x + 1, y) direction word (i + 1)
+   where tile = (curTiles board !! x) !! y
