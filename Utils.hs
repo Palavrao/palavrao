@@ -31,10 +31,16 @@ readJsonFile path = do
     contents <- B.readFile path
     case eitherDecode contents of
         Left err -> error $ "Error decoding JSON: " ++ err
-        Right people -> return people
+        Right decodedContents -> return decodedContents
 
 writeJsonFile :: (ToJSON t, FromJSON t) => [t] -> FilePath -> IO()
 writeJsonFile obj path = B.writeFile path (encode obj)
+
+deleteFromJson :: (ToJSON t, FromJSON t, Eq t) => t -> FilePath -> IO()
+deleteFromJson obj path = do
+    contents <- readJsonFile path
+    let updatedContents = _removeOneElement contents obj
+    writeJsonFile updatedContents path
 
 incJsonFile :: (ToJSON t, FromJSON t) => t -> FilePath -> IO()
 incJsonFile obj path = do
@@ -64,6 +70,7 @@ _removeOneElement (element:tail) removed
 generator = mkStdGen 40
 
 _popRandomElements :: (Eq t) => [t] -> [t] -> Int -> ([t], [t])
+_popRandomElements removedElements [] _ = (removedElements, [])
 _popRandomElements removedElements finalElements 0 = (removedElements, finalElements)
 _popRandomElements removedElements elements qtdElements = _popRandomElements (removedElements ++ [randElement]) updatedElements (qtdElements - 1)
     where 

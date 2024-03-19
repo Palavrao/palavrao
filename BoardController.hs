@@ -11,7 +11,7 @@ import Data.Aeson
 data Board = Board {
     curTiles :: [[Char]],
     workTiles :: [[Char]]
-} deriving (Show, Generic)
+} deriving (Show, Generic, Eq)
 
 instance ToJSON Board
 instance FromJSON Board

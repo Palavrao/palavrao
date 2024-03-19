@@ -17,13 +17,17 @@ data Match = Match {
     mP1 :: Player,
     mP2 :: Player,
     mLetters :: [Letter]
-} deriving (Show, Generic)
+} deriving (Show, Generic, Eq)
 
 instance ToJSON Match
 instance FromJSON Match
 
 saveMatchJson :: Match -> IO()
 saveMatchJson match = UT.incJsonFile match "data/matches.json"
+
+deleteMatchFromJson :: Match -> IO()
+deleteMatchFromJson match = do 
+    UT.deleteFromJson match "data/matches.json"
 
 updateMatchJson :: Match -> IO()
 updateMatchJson updatedMatch = do
