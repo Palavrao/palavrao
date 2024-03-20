@@ -87,13 +87,17 @@ toyBoard = Board {
                         ['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#']]}
 
 updateBoard :: Board -> [[Char]] -> Board
-updateBoard initial update = Board { curTiles=update }
+updateBoard initial update = Board { curTiles= curTiles initial, workTiles=update }
 
 
 _replacements :: Char -> Char
 _replacements a
     |elem a ['A'..'Z'] = a
     |otherwise = ' '
+
+replaceElement :: [[Char]] -> Int -> Int -> Char -> [[Char]]
+replaceElement matrix y x c =
+  take y matrix ++ [take x (matrix !! y) ++ [c] ++ drop (x + 1) (matrix !! y)] ++ drop (y + 1) matrix
 
 
 _getCol :: [[Char]] -> Int -> [Char]
@@ -116,9 +120,9 @@ placeWord x y isHorizontal wrd initialBoard
     | isHorizontal = updateBoard initialBoard (placeHorizontal x y wrd (workTiles initialBoard))
     | otherwise = initialBoard
 
-placeHorizontal :: Int -> Int -> [Char] -> [[Char]] -> [[Char]]
+placeHorizontal :: Int -> Int -> [Char] -> [[Char]] -> Maybe [[Char]]
 placeHorizontal _ _ [] b = b
 placeHorizontal x y (h:t) b =
-    placeHorizontal (x+1) y t (take y b ++ [take x (b !! y) ++ [h] ++ drop (x + 1) (b !! y)] ++ drop (y + 1) b) 
+    placeHorizontal (x+1) y t (replaceElement b y x h) 
 
 

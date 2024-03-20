@@ -33,7 +33,7 @@ lettersValidation :: Char -> String -> Bool
 lettersValidation direction word = (direction == "V" || direction == "H") && [] == [l | l <- word, l `notElem` ['A' .. 'Z']]
 
 tileValidation :: Board -> (Int, Int) -> Char -> String -> Int -> Bool
-tileValidation _ _ _ word (length word) = True  
+tileValidation _ _ _ word _ = True  
 tileValidation _ (15, _) _ _ _ = False
 tileValidation _ (_, 15) _ _ _ = False
 tileValidation board (x, y) direction word i =
@@ -45,3 +45,11 @@ tileValidation board (x, y) direction word i =
                 then (word !! i) == tile && tileValidation board (x + 1, y) direction word (i + 1)
              else tileValidation board (x + 1, y) direction word (i + 1)
    where tile = (curTiles board !! x) !! y
+
+-- Recebe o board, o booleano que informa se eh horizontal, as coordenadas x e y (col, row) indexadas em zero, a palavra, e retorna se passou ou não
+tileValidationSize :: Board -> Bool -> (Int, Int) -> String -> Bool
+tileValidationSize b isHorizontal (x,y) word 
+    | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
+    | otherwise = (y <= 15 - (length word) && y >= 0) && (x >= 0 && x <= 14)
+
+tileValidationLetters :: Board -> (Int, Int) -> String -> Bool
