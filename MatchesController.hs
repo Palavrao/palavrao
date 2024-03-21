@@ -16,7 +16,8 @@ data Match = Match {
     mTurn :: Bool,
     mP1 :: Player,
     mP2 :: Player,
-    mLetters :: [Letter]
+    mLetters :: [Letter],
+    mUsedWords :: [String]
 } deriving (Show, Generic, Eq)
 
 instance ToJSON Match
@@ -28,8 +29,9 @@ matchesPath = "data/matches.json"
 saveMatchJson :: Match -> IO()
 saveMatchJson match = UT.incJsonFile match matchesPath
 
-deleteMatchFromJson :: Match -> IO()
-deleteMatchFromJson match = do 
+deleteMatchFromJson :: String -> IO()
+deleteMatchFromJson name = do
+    match <- getMatchByName name
     UT.deleteFromJson match matchesPath
 
 updateMatchJson :: Match -> IO()
@@ -48,10 +50,11 @@ createMatch name acc1 acc2 = do
             mTurn = False,
             mP1 = createPlayer acc1,
             mP2 = createPlayer acc2,
-            mLetters = startLetters
+            mLetters = startLetters,
+            mUsedWords = []
         }
 
-    matchP1Letters <- updatePlayerLetters match 
+    matchP1Letters <- updatePlayerLetters match
     let matchP2 = toggleMatchTurn matchP1Letters
     matchP2Letters <- updatePlayerLetters matchP2
     let initMatch = toggleMatchTurn matchP2Letters
@@ -59,17 +62,25 @@ createMatch name acc1 acc2 = do
     saveMatchJson initMatch
     return initMatch
 
+finishMatch :: Match -> IO()
+finishMatch match = do
+    incAccScore (accName (pAcc p1)) (pScore p1)
+    incAccScore (accName (pAcc p2)) (pScore p2)
+    deleteMatchFromJson (mName match)
+    where
+        p1 = mP1 match
+        p2 = mP2 match
+
 matchExists :: String -> IO (Bool)
 matchExists name = do
     maybeMatch <- getMatchByName name
     return $ case maybeMatch of
         Nothing -> False
         Just _ -> True
-    
-getMatches :: IO([Match])
+
+getMatches :: IO ([Match])
 getMatches = do
-    matches <- UT.readJsonFile matchesPath
-    return matches
+    UT.readJsonFile matchesPath
 
 getMatchByName :: String -> IO (Maybe Match)
 getMatchByName targetName = do
@@ -90,15 +101,18 @@ updatePlayerLetters match = do
 
     return $ _updateMatchPlayer updatedMatch updatedPlayer
         where
-            player 
+            player
                 | mTurn match = mP2 match
                 | otherwise = mP1 match
 
-toggleMatchTurn :: Match -> Match 
+toggleMatchTurn :: Match -> Match
 toggleMatchTurn match = match {mTurn = not (mTurn match)}
 
 updateMatchBoard :: Match -> Board -> Match
 updateMatchBoard match newBoard = match {mBoard = newBoard}
+
+updateMUsedWords :: Match -> [String] -> Match
+updateMUsedWords match words = match {mUsedWords = words ++ mUsedWords match}
 
 switchPlayerLetter :: Match -> Letter -> IO(Match)
 switchPlayerLetter match letter = do
@@ -113,12 +127,12 @@ switchPlayerLetter match letter = do
 
     return $ _updateMatchPlayer updatedMatch updatedPlayer
     where
-        player 
+        player
             | mTurn match = mP2 match
             | otherwise = mP1 match
 
 _updateMatchPlayer :: Match -> Player -> Match
-_updateMatchPlayer match player 
+_updateMatchPlayer match player
     | mTurn match = match {mP2 = player}
     | otherwise = match {mP1 = player}
 
