@@ -89,10 +89,10 @@ updatePlayerLetters match = do
     let updatedPlayer = updateLetters player playerLetters
 
     return $ _updateMatchPlayer updatedMatch updatedPlayer
-    where
-        player 
-            | mTurn match = mP2 match
-            | otherwise = mP1 match
+        where
+            player 
+                | mTurn match = mP2 match
+                | otherwise = mP1 match
 
 toggleMatchTurn :: Match -> Match 
 toggleMatchTurn match = match {mTurn = not (mTurn match)}
@@ -102,7 +102,10 @@ updateMatchBoard match newBoard = match {mBoard = newBoard}
 
 switchPlayerLetter :: Match -> Letter -> IO(Match)
 switchPlayerLetter match letter = do
-    (playerLetters, updatedLetters) <- UT.popRandomElements (mLetters match) 1
+    (newLetter, updatedLetters) <- UT.popRandomElements (mLetters match) 1
+
+    let playerLetters = (head newLetter:pLetters player)
+
     let updatedPlayerLetters = UT.removeOneElement playerLetters letter
 
     let updatedMatch = _updateMatchLetters match updatedLetters
@@ -110,9 +113,9 @@ switchPlayerLetter match letter = do
 
     return $ _updateMatchPlayer updatedMatch updatedPlayer
     where
-    player 
-        | mTurn match = mP2 match
-        | otherwise = mP1 match
+        player 
+            | mTurn match = mP2 match
+            | otherwise = mP1 match
 
 _updateMatchPlayer :: Match -> Player -> Match
 _updateMatchPlayer match player 
