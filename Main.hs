@@ -57,7 +57,7 @@ main = do
         Nothing -> putStrLn "Match not found."
         Just match -> do
 
-            let updatedMatch = incPlayerScore (toggleMatchTurn (updateMatchLetters match [])) 100
+            let updatedMatch = incPlayerScore (toggleMatchTurn (_updateMatchLetters match [])) 100
             updateMatchJson updatedMatch
             putStrLn (UT.getJsonStr updatedMatch)
 
