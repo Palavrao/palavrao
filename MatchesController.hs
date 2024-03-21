@@ -22,18 +22,21 @@ data Match = Match {
 instance ToJSON Match
 instance FromJSON Match
 
+matchesPath :: String
+matchesPath = "data/matches.json"
+
 saveMatchJson :: Match -> IO()
-saveMatchJson match = UT.incJsonFile match "data/matches.json"
+saveMatchJson match = UT.incJsonFile match matchesPath
 
 deleteMatchFromJson :: Match -> IO()
 deleteMatchFromJson match = do 
-    UT.deleteFromJson match "data/matches.json"
+    UT.deleteFromJson match matchesPath
 
 updateMatchJson :: Match -> IO()
 updateMatchJson updatedMatch = do
-    accs <- UT.readJsonFile "data/matches.json"
+    accs <- getMatches
     let updatedAccs = _getUpdatedMatches accs targetMatchName updatedMatch
-    UT.writeJsonFile updatedAccs "data/matches.json"
+    UT.writeJsonFile updatedAccs matchesPath
     where
         targetMatchName = mName updatedMatch
 
@@ -56,10 +59,15 @@ matchExists name = do
     return $ case maybeMatch of
         Nothing -> False
         Just _ -> True
+    
+getMatches :: IO([Match])
+getMatches = do
+    matches <- UT.readJsonFile matchesPath
+    return matches
 
 getMatchByName :: String -> IO (Maybe Match)
 getMatchByName targetName = do
-    matches <- UT.readJsonFile "data/matches.json"
+    matches <- getMatches
     return $ UT.getObjByField matches mName targetName
 
 updateMatchLetters :: Match -> [Letter] -> Match
