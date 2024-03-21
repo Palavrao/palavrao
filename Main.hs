@@ -64,9 +64,4 @@ main = do
 
     printBoard match
     putStrLn $ show (getWords (mBoard match))
-    putStrLn $ show (placeHorizontal 1 1 "OLA" ["aaa","bbb","ccc"])
-    {- Expected
-    [aaa]
-    [bola]
-    [ccc]
-    -}
+    tt (placeWord 1 1 False "OLAR" toyBoard)

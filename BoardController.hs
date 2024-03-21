@@ -87,7 +87,7 @@ toyBoard = Board {
                         ['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#']]}
 
 updateBoard :: Board -> [[Char]] -> Board
-updateBoard initial update = Board { curTiles= curTiles initial, workTiles=update }
+updateBoard initial update = initial { workTiles=update }
 
 
 _replacements :: Char -> Char
@@ -117,12 +117,11 @@ _search func board n =
 
 placeWord :: Int -> Int -> Bool -> [Char] -> Board -> Board
 placeWord x y isHorizontal wrd initialBoard
-    | isHorizontal = updateBoard initialBoard (placeHorizontal x y wrd (workTiles initialBoard))
-    | otherwise = initialBoard
+    | isHorizontal = updateBoard initialBoard (placeLetters True x y wrd (workTiles initialBoard))
+    | otherwise = updateBoard initialBoard (placeLetters False x y wrd (workTiles initialBoard))
 
-placeHorizontal :: Int -> Int -> [Char] -> [[Char]] -> Maybe [[Char]]
-placeHorizontal _ _ [] b = b
-placeHorizontal x y (h:t) b =
-    placeHorizontal (x+1) y t (replaceElement b y x h) 
+placeLetters :: Bool -> Int -> Int -> [Char] -> [[Char]] -> [[Char]]
+placeLetters _ _ _ [] b = b
 
-
+placeLetters True x y (h:t) b = placeLetters True (x+1) y t (replaceElement b y x h)
+placeLetters False x y (h:t) b = placeLetters False x (y+1) t (replaceElement b y x h)
