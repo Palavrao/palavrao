@@ -14,12 +14,15 @@ data Account = Account {
 instance ToJSON Account
 instance FromJSON Account
 
+accsPath :: String
+accsPath = "data/accounts.json"
+
 saveAccJson :: Account -> IO()
-saveAccJson acc = UT.incJsonFile acc "data/accounts.json"
+saveAccJson acc = UT.incJsonFile acc accsPath
 
 deleteAccFromJson :: Account -> IO()
 deleteAccFromJson acc = do 
-    UT.deleteFromJson acc "data/accounts.json"
+    UT.deleteFromJson acc accsPath
 
 createAcc :: String -> IO(Account)
 createAcc name = do
@@ -30,6 +33,11 @@ createAcc name = do
     saveAccJson acc
     return acc
 
+getAccs :: IO([Account])
+getAccs = do
+    accs <- UT.readJsonFile accsPath
+    return accs
+
 accExists :: String -> IO (Bool)
 accExists name = do
     maybeAcc <- getAccByName name
@@ -39,14 +47,20 @@ accExists name = do
 
 getAccByName :: String -> IO (Maybe Account)
 getAccByName targetName = do
-    accs <- UT.readJsonFile "data/accounts.json"
+    accs <- getAccs
     return $ UT.getObjByField accs accName targetName
 
 incAccScore :: String -> Int -> IO()
 incAccScore targetAccName incScore = do
-    accs <- UT.readJsonFile "data/accounts.json"
+    accs <- getAccs
     let updatedAccs = _getUpdatedAccs accs targetAccName incScore
-    UT.writeJsonFile updatedAccs "data/accounts.json"
+    UT.writeJsonFile updatedAccs accsPath
+
+getAccRank :: IO([Account])
+getAccRank = do
+    accs <- getAccs
+    let sortedAccs = UT.sortObjsByField accs accScore
+    return $ drop ((length sortedAccs) - 5) sortedAccs
 
 _getUpdatedAccs :: [Account] -> String -> Int -> [Account]
 _getUpdatedAccs [] _ _ = []

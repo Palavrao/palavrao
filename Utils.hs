@@ -6,6 +6,8 @@ import qualified Data.ByteString.Lazy.Char8 as BS
 import System.Directory (createDirectoryIfMissing, doesFileExist, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
 import System.Random
+import Data.List (sortBy)
+import Data.Ord (comparing)
 
 startPersistence :: IO()
 startPersistence = do
@@ -39,7 +41,7 @@ writeJsonFile obj path = B.writeFile path (encode obj)
 deleteFromJson :: (ToJSON t, FromJSON t, Eq t) => t -> FilePath -> IO()
 deleteFromJson obj path = do
     contents <- readJsonFile path
-    let updatedContents = _removeOneElement contents obj
+    let updatedContents = removeOneElement contents obj
     writeJsonFile updatedContents path
 
 incJsonFile :: (ToJSON t, FromJSON t) => t -> FilePath -> IO()
@@ -58,22 +60,25 @@ getObjByField (obj:objt) targetField targetValue
     | targetField obj == targetValue = Just obj
     | otherwise = getObjByField objt targetField targetValue
 
-popRandomElements :: (Eq t) => [t] -> Int -> ([t], [t])
+sortObjsByField :: (Ord b) => [t]-> (t -> b) -> [t]
+sortObjsByField [] _  = []
+sortObjsByField objs targetField = sortBy (comparing targetField) objs 
+
+popRandomElements :: (Eq t) => [t] -> Int -> IO([t], [t])
 popRandomElements avaiableElements qtdElements = _popRandomElements [] avaiableElements qtdElements
 
-_removeOneElement :: (Eq t) => [t] -> t -> [t]
-_removeOneElement [] _ = []
-_removeOneElement (element:tail) removed 
+removeOneElement :: (Eq t) => [t] -> t -> [t]
+removeOneElement [] _ = []
+removeOneElement (element:tail) removed 
     | element == removed = tail 
-    | otherwise = (element:_removeOneElement tail removed)
+    | otherwise = (element:removeOneElement tail removed)
 
-generator = mkStdGen 40
+_popRandomElements :: (Eq t) => [t] -> [t] -> Int -> IO([t], [t])
+_popRandomElements removedElements [] _ = return (removedElements, [])
+_popRandomElements removedElements finalElements 0 = return (removedElements, finalElements)
+_popRandomElements removedElements elements qtdElements = do
+    randIndex <- randomRIO (0,((length elements)-1))
+    let randElement = elements !! (randIndex) 
+    let updatedElements = removeOneElement elements randElement
 
-_popRandomElements :: (Eq t) => [t] -> [t] -> Int -> ([t], [t])
-_popRandomElements removedElements [] _ = (removedElements, [])
-_popRandomElements removedElements finalElements 0 = (removedElements, finalElements)
-_popRandomElements removedElements elements qtdElements = _popRandomElements (removedElements ++ [randElement]) updatedElements (qtdElements - 1)
-    where 
-        randElement = elements !! randIndex 
-        (randIndex, _) = randomR (0,((length elements)-1)) generator
-        updatedElements = _removeOneElement elements randElement
+    _popRandomElements (removedElements ++ [randElement]) updatedElements (qtdElements - 1)
