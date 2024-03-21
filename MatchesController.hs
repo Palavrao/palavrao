@@ -16,7 +16,8 @@ data Match = Match {
     mTurn :: Bool,
     mP1 :: Player,
     mP2 :: Player,
-    mLetters :: [Letter]
+    mLetters :: [Letter],
+    mUsedWords :: [String]
 } deriving (Show, Generic, Eq)
 
 instance ToJSON Match
@@ -49,7 +50,8 @@ createMatch name acc1 acc2 = do
             mTurn = False,
             mP1 = createPlayer acc1,
             mP2 = createPlayer acc2,
-            mLetters = startLetters
+            mLetters = startLetters,
+            mUsedWords = []
         }
 
     matchP1Letters <- updatePlayerLetters match
@@ -108,6 +110,9 @@ toggleMatchTurn match = match {mTurn = not (mTurn match)}
 
 updateMatchBoard :: Match -> Board -> Match
 updateMatchBoard match newBoard = match {mBoard = newBoard}
+
+updateMUsedWords :: Match -> [String] -> Match
+updateMUsedWords match words = match {mUsedWords = words ++ mUsedWords match}
 
 switchPlayerLetter :: Match -> Letter -> IO(Match)
 switchPlayerLetter match letter = do
