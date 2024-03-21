@@ -11,7 +11,7 @@ import Data.Aeson
 data Action = NewGame | ContinueGame | CreateAccount deriving (Show, Eq)
 
 data Menu = Menu {
-    curTiles :: [[Char]]
+    box :: [[Char]]
 } deriving (Show, Generic)
 
 instance ToJSON Menu
@@ -26,10 +26,10 @@ startMenu = Menu {
         "    │          PALAVRÃO             │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │      >  novo jogo             │   ",
-        "    │      =  continuar jogo        │   ",
-        "    │      !  criar conta           │   ",
-        "    │                               │   ",
+        "    │      A  novo jogo             │   ",
+        "    │      B  continuar jogo        │   ",
+        "    │      C  criar conta           │   ",
+        "    │      D  regras                │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -49,9 +49,9 @@ updateMenu action menu = case action of
         "    │          PALAVRÃO             │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │      +  novo jogo             │   ",
-        "    │      =  continuar jogo        │   ",
-        "    │      !  criar conta           │   ",
+        "    │      C criar conta            │   ",
+        "    │      L login                  │   ",
+        "    │      V voltar                 │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -67,8 +67,8 @@ updateMenu action menu = case action of
         "    │          PALAVRÃO             │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │  + digite o nome da partida   │   ",
-        "    │    > voltar                   │   ",
+        "    │      P nome da partida        │   ",
+        "    │      V voltar                 │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -85,8 +85,8 @@ updateMenu action menu = case action of
         "    │          PALAVRÃO             │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │     ! para digitar o nome     │   ",
-        "    │     > voltar                  │   ",
+        "    │     J digitar nome            │   ",
+        "    │     V voltar                  │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -105,8 +105,10 @@ captureInput = do
 
 _getAction :: Char -> Maybe Action
 _getAction input
-        | input == '>'    = Just NewGame
-        | input == '='    = Just ContinueGame
-        | input == '!'    = Just CreateAccount
+        | input == 'A'    = Just NewGame
+        | input == 'B'    = Just ContinueGame
+        | input == 'C'    = Just CreateAccount
+        | input == 'D'    = Just Rules
+        | input == 'L'    = Just Login
         | otherwise       = Nothing
  
