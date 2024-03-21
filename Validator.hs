@@ -58,4 +58,3 @@ tileValidationLetters _ _ _ _ = False
 
 tileValidation :: Board -> (Int, Int) -> Bool -> String -> Bool
 tileValidation b (x, y) isHorizontal word = (tileValidationSize b isHorizontal (x, y) word) && (tileValidationLetters b isHorizontal (x, y)  word)
- -}

@@ -11,7 +11,7 @@ import Data.Aeson
 data Action = NewGame | ContinueGame | CreateAccount deriving (Show, Eq)
 
 data Menu = Menu {
-    curTiles :: [[Char]]
+    box :: [[Char]]
 } deriving (Show, Generic)
 
 instance ToJSON Menu
