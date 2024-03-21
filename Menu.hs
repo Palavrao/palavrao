@@ -8,7 +8,7 @@ import Data.Char
 import GHC.Generics
 import Data.Aeson
 
-data Action = NewGame | ContinueGame | CreateAccount deriving (Show, Eq)
+data Action = NewGame | ContinueGame | CreateAccount | Rules | Login  deriving (Show, Eq)
 
 data Menu = Menu {
     box :: [[Char]]
@@ -111,4 +111,3 @@ _getAction input
         | input == 'D'    = Just Rules
         | input == 'L'    = Just Login
         | otherwise       = Nothing
- 
