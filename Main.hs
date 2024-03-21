@@ -13,7 +13,7 @@ import Menu
 main :: IO ()
 main = do
    clearScreen
-   let initialMenu = _startMenu
+   let initialMenu = startMenu
    drawMenu initialMenu
    clearScreen
  
@@ -25,7 +25,7 @@ main = do
                        "                 │  a linha caiba no terminal! │", 
                        "                 │                             │",
                        "<-------------------------------------------------------------->",
-                       "                 │           > Enter           │",
+                       "                 │           S Enter           │",
                        "                 │                             │", 
                        "                 └──────────────────────────── ┘"])
 
@@ -83,3 +83,13 @@ main = do
 drawMenu :: Menu -> IO ()
 drawMenu (Menu tiles) = do
    mapM_ putStrLn tiles
+
+--action :: Maybe Action -> Menu
+--action input =
+--    case input of
+--      Just Begin -> do
+--      Just NewGame -> do
+--      Just ContinueGame -> do
+--      Just CreateAccount -> do
+--      Just Rules -> do
+--      Just Login -> do
