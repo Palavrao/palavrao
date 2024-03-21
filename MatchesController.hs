@@ -6,7 +6,7 @@ import GHC.Generics
 import Data.Aeson
 import BoardController;
 import AccountsController
-import PlayerController as PC
+import PlayerController
 import LettersController
 import Utils as UT
 
@@ -50,8 +50,14 @@ createMatch name acc1 acc2 = do
             mP2 = createPlayer acc2,
             mLetters = startLetters
         }
-    saveMatchJson match
-    return match
+
+    matchP1Letters <- updatePlayerLetters match 
+    let matchP2 = toggleMatchTurn matchP1Letters
+    matchP2Letters <- updatePlayerLetters matchP2
+    let initMatch = toggleMatchTurn matchP2Letters
+
+    saveMatchJson initMatch
+    return initMatch
 
 matchExists :: String -> IO (Bool)
 matchExists name = do
@@ -70,20 +76,17 @@ getMatchByName targetName = do
     matches <- getMatches
     return $ UT.getObjByField matches mName targetName
 
-updateMatchLetters :: Match -> [Letter] -> Match
-updateMatchLetters match newLetters = match {mLetters = newLetters}
-
 incPlayerScore :: Match -> Int -> Match
-incPlayerScore match incScore
-    | mTurn match = match {mP2 = PC.incPlayerScore (mP2 match) incScore}
-    | otherwise = match {mP1 = PC.incPlayerScore (mP1 match) incScore}
+incPlayerScore match score
+    | mTurn match = match {mP2 = incScore (mP2 match) score}
+    | otherwise = match {mP1 = incScore (mP1 match) score}
 
 updatePlayerLetters :: Match -> IO(Match)
 updatePlayerLetters match = do
-    let (updatedLetters, playerLetters) = UT.popRandomElements (mLetters match) (7 - (length (pLetters player)))
+    (playerLetters, updatedLetters) <- UT.popRandomElements (mLetters match) (7 - (length (pLetters player)))
 
-    let updatedMatch = updateMatchLetters match updatedLetters
-    let updatedPlayer = PC.updatePlayerLetters player playerLetters
+    let updatedMatch = _updateMatchLetters match updatedLetters
+    let updatedPlayer = updateLetters player playerLetters
 
     return $ _updateMatchPlayer updatedMatch updatedPlayer
     where
@@ -97,6 +100,20 @@ toggleMatchTurn match = match {mTurn = not (mTurn match)}
 updateMatchBoard :: Match -> Board -> Match
 updateMatchBoard match newBoard = match {mBoard = newBoard}
 
+switchPlayerLetter :: Match -> Letter -> IO(Match)
+switchPlayerLetter match letter = do
+    (playerLetters, updatedLetters) <- UT.popRandomElements (mLetters match) 1
+    let updatedPlayerLetters = UT.removeOneElement playerLetters letter
+
+    let updatedMatch = _updateMatchLetters match updatedLetters
+    let updatedPlayer = updateLetters player updatedPlayerLetters
+
+    return $ _updateMatchPlayer updatedMatch updatedPlayer
+    where
+    player 
+        | mTurn match = mP2 match
+        | otherwise = mP1 match
+
 _updateMatchPlayer :: Match -> Player -> Match
 _updateMatchPlayer match player 
     | mTurn match = match {mP2 = player}
@@ -107,3 +124,6 @@ _getUpdatedMatches [] _ _ = []
 _getUpdatedMatches (match:tail) targetMatchName updatedMatch
     | mName match == targetMatchName = (updatedMatch:tail)
     | otherwise = (match:_getUpdatedMatches tail targetMatchName updatedMatch)
+
+_updateMatchLetters :: Match -> [Letter] -> Match
+_updateMatchLetters match newLetters = match {mLetters = newLetters}
