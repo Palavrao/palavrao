@@ -12,12 +12,15 @@ import Menu
 
 main :: IO ()
 main = do
+    -- lê as linhas do arquivo e guarda em uma lista
+   linesOfFile <- UT.getWordList
+   let linesAsList = linesOfFile
+
    clearScreen
-   let initialMenu = _startMenu
+   let initialMenu = startMenu
    drawMenu initialMenu
    clearScreen
  
-  
    clearScreen
    putStrLn (unlines [ "                 ┌─────────────────────────────┐", 
                        "                 │                             │", 
@@ -29,6 +32,7 @@ main = do
                        "                 │                             │", 
                        "                 └──────────────────────────── ┘"])
 
+    
 
   
    -- ctd <- getLine
@@ -83,3 +87,4 @@ main = do
 drawMenu :: Menu -> IO ()
 drawMenu (Menu tiles) = do
    mapM_ putStrLn tiles
+
