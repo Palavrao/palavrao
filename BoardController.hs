@@ -127,5 +127,5 @@ placeLetters True x y (h:t) b = placeLetters True (x+1) y t (replaceElement b y 
 placeLetters False x y (h:t) b = placeLetters False x (y+1) t (replaceElement b y x h)
 
 
-verifyWord :: Match -> [String] -> String -> Bool
-
+verifyWord :: [String] -> String -> Bool
+verifyWord words word = elem word words

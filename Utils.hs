@@ -86,6 +86,6 @@ _popRandomElements removedElements elements qtdElements = do
 
 getWordList :: IO [String]
 getWordList = do
-    base <- readFile "br-sem-acentos-txt"
+    base <- readFile "palavras/br-sem-acentos.txt"
     return (lines base)
     
