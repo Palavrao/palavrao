@@ -8,10 +8,11 @@ import Data.Char
 import GHC.Generics
 import Data.Aeson
 
-data Action = NewGame | ContinueGame | CreateAccount deriving (Show, Eq)
+data Action = NewGame | ContinueGame | CreateAccount | Rules | Login | StartMenu | Begin deriving (Show, Eq)
 
 data Menu = Menu {
-    box :: [[Char]]
+    box :: [[Char]],
+    boxBefore :: String
 } deriving (Show, Generic)
 
 instance ToJSON Menu
@@ -36,9 +37,7 @@ startMenu = Menu {
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ]
-
-    }
+    ], boxBefore = "N"}
 
 updateMenu :: Action -> Menu -> Menu
 updateMenu action menu = case action of
@@ -59,7 +58,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ]}
+    ], boxBefore = "SM"}
         ContinueGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
@@ -77,7 +76,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ]}
+    ], boxBefore = "NG"}
         CreateAccount -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
@@ -95,7 +94,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ]}
+    ], boxBefore = "NG"}
 
 captureInput :: IO (Maybe Action)
 captureInput = do
@@ -103,12 +102,19 @@ captureInput = do
         clearScreen
         return $ _getAction input
 
-_getAction :: Char -> Maybe Action
-_getAction input
+_getAction :: Char -> Menu -> Maybe Action
+_getAction input menu
+        | input == 'S'    = Just Begin
         | input == 'A'    = Just NewGame
         | input == 'B'    = Just ContinueGame
         | input == 'C'    = Just CreateAccount
         | input == 'D'    = Just Rules
         | input == 'L'    = Just Login
+        | input == 'V'    = _goBack (boxBefore menu)
         | otherwise       = Nothing
- 
+
+_goBack :: String -> Maybe Action
+_goBack boxBefore
+      | boxBefore == "NG" = Just NewGame
+      | boxBefore == "SM" = Just StartMenu
+      | otherwise         = Nothing

@@ -86,3 +86,10 @@ _popRandomElements removedElements elements qtdElements = do
     let updatedElements = removeOneElement elements randElement
 
     _popRandomElements (removedElements ++ [randElement]) updatedElements (qtdElements - 1)
+
+
+getWordList :: IO [String]
+getWordList = do
+    base <- readFile "palavras/br-sem-acentos.txt"
+    return (lines base)
+    
