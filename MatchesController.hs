@@ -9,6 +9,9 @@ import AccountsController
 import PlayerController
 import LettersController
 import Utils as UT
+import Data.Time.Clock
+import System.Console.ANSI
+
 
 data Match = Match {
     mName :: String,
@@ -17,7 +20,8 @@ data Match = Match {
     mP1 :: Player,
     mP2 :: Player,
     mLetters :: [Letter],
-    mUsedWords :: [String]
+    mUsedWords :: [String],
+    mTimer :: Float
 } deriving (Show, Generic, Eq)
 
 instance ToJSON Match
@@ -51,7 +55,8 @@ createMatch name acc1 acc2 = do
             mP1 = createPlayer acc1,
             mP2 = createPlayer acc2,
             mLetters = startLetters,
-            mUsedWords = []
+            mUsedWords = [],
+            mTimer = 300
         }
 
     matchP1Letters <- updatePlayerLetters match
@@ -70,6 +75,9 @@ finishMatch match = do
     where
         p1 = mP1 match
         p2 = mP2 match
+
+updateMatchTimer :: Match -> Float -> Match
+updateMatchTimer match time = match { mTimer = time }
 
 matchExists :: String -> IO (Bool)
 matchExists name = do

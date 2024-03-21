@@ -2,84 +2,62 @@ module Main where
 
 
 import Utils as UT
-import AccountsController
 import MatchesController
 import BoardController
 import DrawBoard
 import System.Console.ANSI
 import Menu
+import AccountsController
+import Control.Monad (forever)
+import Data.Time.Clock (getCurrentTime, NominalDiffTime, UTCTime, diffUTCTime)
+import Control.Concurrent (threadDelay)
+import System.Console.ANSI
+import MatchesController (updateMatchTimer, saveMatchJson, toggleMatchTurn)
 
+gameLoop :: Match -> UTCTime -> IO ()
+gameLoop match lastUpdate = do
+    printBoard match
+    input <- getLine
+    if input == "s"
+        then putStrLn "sextou"
+        else putStrLn ""
+
+    currentTime <- getCurrentTime
+    let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
+        updatedTimer = mTimer match - realToFrac elapsed
+
+    if updatedTimer <= 0
+        then do
+            putStrLn "Your turn is over!"
+            let updatedMatch = updateMatchTimer match 300
+            let updatedMatch' = toggleMatchTurn updatedMatch
+            saveMatchJson updatedMatch
+            gameLoop updatedMatch' currentTime
+        else do
+            let updatedMatch = updateMatchTimer match updatedTimer
+            threadDelay 100000
+            gameLoop updatedMatch currentTime
 
 main :: IO ()
 main = do
-   clearScreen
-   let initialMenu = _startMenu
-   drawMenu initialMenu
-   clearScreen
- 
-  
-   clearScreen
-   putStrLn (unlines [ "                 ┌─────────────────────────────┐", 
-                       "                 │                             │", 
-                       "                 │    Redimensione para que    │",
-                       "                 │  a linha caiba no terminal! │", 
-                       "                 │                             │",
-                       "<-------------------------------------------------------------->",
-                       "                 │           > Enter           │",
-                       "                 │                             │", 
-                       "                 └──────────────────────────── ┘"])
+    clearScreen
+    putStrLn (unlines [ "                 ┌─────────────────────────────┐",  
+                        "                 │                             │",  
+                        "                 │    Redimensione para que    │",
+                        "                 │  a linha caiba no terminal! │",  
+                        "                 │                             │",
+                        "<-------------------------------------------------------------->",
+                        "                 │           > Enter           │",
+                        "                 │                             │",  
+                        "                 └──────────────────────────── ┘"])
 
+    ctd <- getLine
+    startPersistence
 
-  
-   -- ctd <- getLine
-   -- startPersistence
-  
-   -- acc1 <- createAcc "Fulano"
-   -- acc2 <- createAcc "Sicrano"
-   -- match <- createMatch "Fulano x Sicrano" acc1 acc2
-   -- print(mName match)
-   -- print(mBoard match)
-   -- print(mP1 match)
-   -- print(mP2 match)
+    startTime <- getCurrentTime
 
+    acc1 <- createAcc "Fulano"
+    acc2 <- createAcc "Sicrano"
+    match <- createMatch "Match" acc1 acc2
 
-   -- fulanoExiste <- accExists "Fulano"
-   -- if (fulanoExiste)
-   --     then putStrLn "Fulano existe"
-   --     else putStrLn "Fulano não existe"
-  
-   -- kaikeExiste <- accExists "Kaike"
-   -- if (kaikeExiste)
-   --     then putStrLn "Kaike existe"
-   --     else putStrLn "Kaike não existe"
-
-
-   -- fulanoXSicranoExiste <- matchExists "Fulano x Sicrano"
-   -- if (fulanoXSicranoExiste)
-   --     then putStrLn "Fulano x Sicrano existe"
-   --     else putStrLn "Fulano x Sicrano não existe"
-  
-   -- fulanoXKaikeExiste <- matchExists "Fulano x Kaike"
-   -- if (fulanoXKaikeExiste)
-   --     then putStrLn "Fulano x Kaike existe"
-   --     else putStrLn "Fulano x Kaike não existe"
-
-
-   -- printBoard match
-   -- putStrLn $ show (getWords (mBoard match))
-
-
-   -- maybeMatch <- getMatchByName "Fulano x Sicrano"
-   -- case maybeMatch of
-   --     Nothing -> putStrLn "Match not found."
-   --     Just match -> do
-
-
-   --         let updatedMatch = incPlayerScore (toggleMatchTurn (updateMatchLetters match [])) 100
-   --         updateMatchJson updatedMatch
-   --         putStrLn (UT.getJsonStr updatedMatch)
-
-
-drawMenu :: Menu -> IO ()
-drawMenu (Menu tiles) = do
-   mapM_ putStrLn tiles
+    gameLoop match startTime

@@ -8,6 +8,7 @@ import System.FilePath.Posix (takeDirectory)
 import System.Random
 import Data.List (sortBy)
 import Data.Ord (comparing)
+import Data.Fixed (mod')
 
 startPersistence :: IO()
 startPersistence = do
@@ -72,6 +73,9 @@ removeOneElement [] _ = []
 removeOneElement (element:tail) removed 
     | element == removed = tail 
     | otherwise = (element:removeOneElement tail removed)
+
+formatTime :: Float -> String
+formatTime time = show (round (time / 60)) ++ ":" ++ show (round (mod' time 60))
 
 _popRandomElements :: (Eq t) => [t] -> [t] -> Int -> IO([t], [t])
 _popRandomElements removedElements [] _ = return (removedElements, [])
