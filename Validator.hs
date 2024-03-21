@@ -53,4 +53,9 @@ tileValidationSize b isHorizontal (x,y) word
     | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
     | otherwise = (y <= 15 - (length word) && y >= 0) && (x >= 0 && x <= 14)
 
---tileValidationLetters :: Board -> (Int, Int) -> String -> Bool
+tileValidationLetters :: Board -> Bool -> (Int, Int) -> String -> Bool
+tileValidationLetters _ _ _ _ = False
+
+tileValidation :: Board -> (Int, Int) -> Bool -> String -> Bool
+tileValidation b (x, y) isHorizontal word = (tileValidationSize b isHorizontal (x, y) word) && (tileValidationLetters b isHorizontal (x, y)  word)
+ -}

@@ -17,9 +17,9 @@ data Menu = Menu {
 instance ToJSON Menu
 instance FromJSON Menu
 
-_startMenu :: Menu
-_startMenu = Menu {
-    curTiles = [
+startMenu :: Menu
+startMenu = Menu {
+    box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -40,9 +40,9 @@ _startMenu = Menu {
 
     }
 
-_updateMenu :: Action -> Menu -> Menu
-_updateMenu action menu = case action of
-        NewGame -> menu { curTiles = [
+updateMenu :: Action -> Menu -> Menu
+updateMenu action menu = case action of
+        NewGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -60,16 +60,16 @@ _updateMenu action menu = case action of
         "    │                               │   ",
         "    └───────────────────────────────┘   "
     ]}
-        ContinueGame -> menu { curTiles = [
+        ContinueGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │          PALAVRÃO             │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │! + digite o nome dos usuários │   ",
+        "    │  + digite o nome da partida   │   ",
+        "    │    > voltar                   │   ",
         "    │                               │   ",
-        "    │       > voltar                │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -78,7 +78,7 @@ _updateMenu action menu = case action of
         "    │                               │   ",
         "    └───────────────────────────────┘   "
     ]}
-        CreateAccount -> menu { curTiles = [
+        CreateAccount -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -97,8 +97,8 @@ _updateMenu action menu = case action of
         "    └───────────────────────────────┘   "
     ]}
 
-_captureInput :: IO (Maybe Action)
-_captureInput = do
+captureInput :: IO (Maybe Action)
+captureInput = do
         input <- getChar
         clearScreen
         return $ _getAction input
