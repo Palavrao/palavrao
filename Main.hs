@@ -13,14 +13,9 @@ import Menu
 main :: IO ()
 main = do
     -- lê as linhas do arquivo e guarda em uma lista
-   linesOfFile <- UT.getWordList
-   let linesAsList = linesOfFile
+   lof <- UT.getWordList
+   let linesAsList = lof
 
-   clearScreen
-   let initialMenu = startMenu
-   drawMenu initialMenu
-   clearScreen
- 
    clearScreen
    putStrLn (unlines [ "                 ┌─────────────────────────────┐", 
                        "                 │                             │", 
@@ -32,10 +27,13 @@ main = do
                        "                 │                             │", 
                        "                 └──────────────────────────── ┘"])
 
-    
-
-  
-   -- ctd <- getLine
+   ctd <- getLine
+   
+   clearScreen
+   let initialMenu = startMenu
+   drawMenu initialMenu
+   clearScreen
+ 
    -- startPersistence
   
    -- acc1 <- createAcc "Fulano"
