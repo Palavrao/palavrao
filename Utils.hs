@@ -6,6 +6,8 @@ import qualified Data.ByteString.Lazy.Char8 as BS
 import System.Directory (createDirectoryIfMissing, doesFileExist, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
 import System.Random
+import Data.List (sortBy)
+import Data.Ord (comparing)
 
 startPersistence :: IO()
 startPersistence = do
@@ -57,6 +59,10 @@ getObjByField [] _ _= Nothing
 getObjByField (obj:objt) targetField targetValue
     | targetField obj == targetValue = Just obj
     | otherwise = getObjByField objt targetField targetValue
+
+sortObjsByField :: (Ord b) => [t]-> (t -> b) -> [t]
+sortObjsByField [] _  = []
+sortObjsByField objs targetField = sortBy (comparing targetField) objs 
 
 popRandomElements :: (Eq t) => [t] -> Int -> ([t], [t])
 popRandomElements avaiableElements qtdElements = _popRandomElements [] avaiableElements qtdElements
