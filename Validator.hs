@@ -23,12 +23,12 @@ initialValidation match linha
         isHorizontal = (palavras !! 1) == "H"       
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
-        y = (read (tail coord) :: Int)
+        y = (read (tail coord) :: Int) -1
         letrasNoBoard = takeUpTo isHorizontal match (x,y) (length word) --DEBUGAR
 
 
 coordValidation :: [Char] -> Bool
-coordValidation (x:y) = x `elem` ['A' .. 'O'] && (isStringInt y) && (ord x - ord 'A' >= 0 && ord x - ord 'A' <= 14) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
+coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (isStringInt y) && ((read y :: Int) >= 1 && (read y :: Int) <= 15)
 
 
 wordValidation :: String -> Bool
@@ -36,14 +36,14 @@ wordValidation word = [] == [l | l <- word, not (isLetter l)]
 
 --DEBUGAR
 tileValidationLetters :: String -> String -> Bool
+tileValidationLetters [] [] = True
 tileValidationLetters (tileHead:tileTail) (wordHead:wordTail)
-    | wordTail == [] = True
-    | (tileHead `elem` ['A'..'Z']) && tileHead /= wordHead = False
+    | (tileHead `elem` ['A'..'Z']) && (tileHead /= wordHead) = False
     | otherwise = tileValidationLetters tileTail wordTail
 
 takeUpTo :: Bool -> Match -> (Int, Int) -> Int -> [Char]
 takeUpTo isHorizontal match (x, y) len
-    | isHorizontal = (take len (drop y (b !! x)))
+    | isHorizontal = (take len (drop x (b !! y)))
     | otherwise = take len $ map (!! x) $ drop y b
     where b = curTiles (mBoard match)
 
