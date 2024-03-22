@@ -13,14 +13,15 @@ import Data.Time.Clock (getCurrentTime, NominalDiffTime, UTCTime, diffUTCTime)
 import Control.Concurrent (threadDelay)
 import System.Console.ANSI
 import MatchesController (updateMatchTimer, saveMatchJson, toggleMatchTurn)
+import Validator
 
 gameLoop :: Match -> UTCTime -> IO ()
 gameLoop match lastUpdate = do
     printBoard match
     input <- getLine
-    if input == "s"
-        then putStrLn "sextou"
-        else putStrLn ""
+    if (initialValidation match input)
+        then putStrLn "Okay"
+        else putStrLn "False!!!!"
 
     currentTime <- getCurrentTime
     let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
