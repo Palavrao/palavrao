@@ -7,6 +7,7 @@ import AccountsController
 import BoardController
 import Data.Char
 import PlayerController
+import Utils as UT
 
 __colorText :: String -> Color -> IO ()
 __colorText text color = do
@@ -45,7 +46,7 @@ _suffixes match i
     |i == 4 = " 04                        "
     |i == 5 = " 05                        "
     |i == 6 = " 06                        "
-    |i == 7 = " 07                        "
+    |i == 7 = printf " 07    %s     " (UT.formatTime (mTimer match))
     |i == 8 = " 08                        "
     |i == 9 = " 09                        "
     |i == 10 = " 10                        "
@@ -80,6 +81,6 @@ _buildBoard match i = do
 
 printBoard :: Match -> IO ()
 printBoard match = do
-    clearScreen
+    --clearScreen
     _buildBoard match 0
     
