@@ -8,18 +8,36 @@ import Control.Concurrent (threadDelay)
 import System.Console.ANSI
 import Controllers.BoardController
 
-fluxo :: String -> IO ()
-fluxo (':':t) = putStrLn "COMANDO"
-fluxo (_:t) = putStrLn "PALAVRA"
+fluxo :: Match -> String -> IO Bool
+
+fluxo _ ":S" = do
+                putStrLn "S"
+                return True
+fluxo _ ":?" = do
+                putStrLn "?" 
+                return True
+fluxo _ ":!" = do
+                putStrLn "!" 
+                return True
+fluxo _ ":*x" = do
+                putStrLn "" 
+                return True
+fluxo match input = return (initialValidation match input)
 
 gameLoop :: Match -> UTCTime -> IO ()
 gameLoop match lastUpdate = do
     printBoard match
     input <- getLine
-    fluxo input
-    if (initialValidation match input)
+    v <- (fluxo match input)
+    putStrLn $ show v
+{-     if (initialValidation match input)
         then putStrLn "Okay"
-        else putStrLn "False!!!!"
+        else putStrLn "False!!!!" 
+        
+        
+        fluxo _ (':':t) = do
+                    putStrLn "COMANDO"
+                    return True-}
 
     currentTime <- getCurrentTime
     let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
