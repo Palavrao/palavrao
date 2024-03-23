@@ -1,12 +1,12 @@
 module Main where
 
-
 import Utils as UT
 import MatchesController
 import BoardController
 import DrawBoard
 import System.Console.ANSI
 import Menu
+import DrawMenu
 import AccountsController
 import Control.Monad (forever)
 import Data.Time.Clock (getCurrentTime, NominalDiffTime, UTCTime, diffUTCTime)
@@ -42,17 +42,18 @@ gameLoop match lastUpdate = do
 main :: IO ()
 main = do
     clearScreen
-    putStrLn (unlines [ "                 ┌─────────────────────────────┐",  
-                        "                 │                             │",  
-                        "                 │    Redimensione para que    │",
-                        "                 │  a linha caiba no terminal! │",  
-                        "                 │                             │",
-                        "<-------------------------------------------------------------->",
-                        "                 │           > Enter           │",
-                        "                 │                             │",  
-                        "                 └──────────────────────────── ┘"])
-
-    ctd <- getLine
+    menuLoop beginGame
+--    putStrLn (unlines [ "                 ┌─────────────────────────────┐",
+--                        "                 │                             │",
+--                        "                 │    Redimensione para que    │",
+--                        "                 │  a linha caiba no terminal! │",
+--                        "                 │                             │",
+--                        "<-------------------------------------------------------------->",
+--                        "                 │           > Enter           │",
+--                        "                 │                             │",
+--                        "                 └──────────────────────────── ┘"])
+--
+--    ctd <- getLine
     startPersistence
 
     startTime <- getCurrentTime
