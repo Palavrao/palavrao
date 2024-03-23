@@ -8,11 +8,15 @@ import Data.Char
 import GHC.Generics
 import Data.Aeson
 
-data Action = NewGame | ContinueGame | Rules | Login | StartMenu deriving (Show, Eq)
+data Action = NewGame | ContinueGame | Rules | Login | StartMenu | InvalidAction deriving (Show, Generic, Eq)
+
+instance ToJSON Action
+instance FromJSON Action
 
 data Menu = Menu {
     box :: [[Char]],
-    boxBefore :: String
+    boxBefore :: Action,
+    action :: Action
 } deriving (Show, Generic)
 
 instance ToJSON Menu
@@ -30,7 +34,7 @@ beginGame = Menu {
         "                 │           > Enter           │                ",
         "                 │                             │                ",
         "                 └─────────────────────────────┘                "
-    ], boxBefore = "N"}
+    ], boxBefore = InvalidAction, action = StartMenu}
 
 updateMenu :: Action -> Menu -> Menu
 updateMenu action menu = case action of
@@ -51,7 +55,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-     ], boxBefore = "SM"}
+     ], boxBefore = StartMenu, action = StartMenu}
         NewGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
@@ -69,7 +73,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ], boxBefore = "SM"}
+    ], boxBefore = StartMenu, action = NewGame}
         ContinueGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
@@ -87,7 +91,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ], boxBefore = "SM"}
+    ], boxBefore = StartMenu, action = ContinueGame}
         Login -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
@@ -105,7 +109,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ], boxBefore = "NG"}
+    ], boxBefore = NewGame, action = Login}
         Rules -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │                               │   ",
@@ -123,4 +127,4 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ], boxBefore = "SM"}
+    ], boxBefore = StartMenu, action = Rules}
