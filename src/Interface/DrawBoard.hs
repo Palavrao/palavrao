@@ -46,7 +46,7 @@ _suffixes match i
     |i == 4 = " 03                        "
     |i == 5 = " 04                        "
     |i == 6 = " 05                        "
-    |i == 7 = printf " 06    %s     " (UT.formatTime (mTimer match))
+    |i == 7 = " 06                        " 
     |i == 8 = " 07                        "
     |i == 9 = " 08                        "
     |i == 10 = " 09                        "
@@ -67,7 +67,7 @@ _buildBoard :: Match -> Int -> IO ()
 _buildBoard match i = do
     if i > 15 then 
         putStr (unlines
-                [printf "\n     X X X X X X X                  00:00",
+                [printf "\n     X X X X X X X                  Tempo restante: %s" (UT.formatTime (mTimer match)),
                  printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n"])
     else do
         putStr "     "

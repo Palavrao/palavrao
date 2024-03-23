@@ -8,11 +8,15 @@ import Control.Concurrent (threadDelay)
 import System.Console.ANSI
 import Controllers.BoardController
 
+fluxo :: String -> IO ()
+fluxo (':':t) = putStrLn "COMANDO"
+fluxo (_:t) = putStrLn "PALAVRA"
+
 gameLoop :: Match -> UTCTime -> IO ()
 gameLoop match lastUpdate = do
-    clearScreen
     printBoard match
     input <- getLine
+    fluxo input
     if (initialValidation match input)
         then putStrLn "Okay"
         else putStrLn "False!!!!"

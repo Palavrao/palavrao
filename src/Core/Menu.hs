@@ -13,7 +13,6 @@ import Interface.BoxesMenu
 _drawMenu :: Menu -> IO ()
 _drawMenu menu = do
     clearScreen
-    setCursorPosition 0 0
     mapM_ putStrLn (box menu)
 
 menuLoop :: Menu -> IO ()
