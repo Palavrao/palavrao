@@ -40,21 +40,21 @@ tt b = do
 
 _suffixes :: Match -> Int -> String
 _suffixes match i 
-    |i == 1 = " 01                        "
-    |i == 2 = printf " 02    %-5s.     %-5s." (take 5 $ p1n) (take 5 $ p2n)
-    |i == 3 = printf " 03    %03d pt     %03d pt    " p1s p2s
-    |i == 4 = " 04                        "
-    |i == 5 = " 05                        "
-    |i == 6 = " 06                        "
-    |i == 7 = printf " 07    %s     " (UT.formatTime (mTimer match))
-    |i == 8 = " 08                        "
-    |i == 9 = " 09                        "
-    |i == 10 = " 10                        "
-    |i == 11 = " 11                        "
-    |i == 12 = " 12   :C   sair            "
-    |i == 13 = " 13   :?   manual          "
-    |i == 14 = " 14   :!   pular vez       "
-    |i == 15 = " 15   :*X  trocar letra x  "
+    |i == 1 = " 00                        "
+    |i == 2 = printf " 01    %-5s.     %-5s." (take 5 $ p1n) (take 5 $ p2n)
+    |i == 3 = printf " 02    %03d pt     %03d pt    " p1s p2s
+    |i == 4 = " 03                        "
+    |i == 5 = " 04                        "
+    |i == 6 = " 05                        "
+    |i == 7 = printf " 06    %s     " (UT.formatTime (mTimer match))
+    |i == 8 = " 07                        "
+    |i == 9 = " 08                        "
+    |i == 10 = " 09                        "
+    |i == 11 = " 10                        "
+    |i == 12 = " 11   :C   sair            "
+    |i == 13 = " 12   :?   manual          "
+    |i == 14 = " 13   :!   pular vez       "
+    |i == 15 = " 14   :*X  trocar letra x  "
     |otherwise = ""
     where 
         p1n = accName (pAcc (mP1 match))
