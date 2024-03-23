@@ -4,6 +4,7 @@ module Core.Menu where
 
 import Text.Printf
 import System.Console.ANSI
+import System.Exit
 import Data.Char
 import GHC.Generics
 import Data.Aeson
@@ -22,19 +23,20 @@ menuLoop menu = do
     if userInput == 'P' || userInput == 'J'
         then print userInput --logica salvar dados e inicar partida
     else do
-      let action = _inputToAction userInput menu
-          updatedMenu = updateMenu action menu
+      action <- _inputToAction userInput menu
+      let updatedMenu = updateMenu action menu
       menuLoop updatedMenu
 
-_inputToAction :: Char -> Menu -> Action
+_inputToAction :: Char -> Menu -> IO Action
 _inputToAction userInput actualMenu = case userInput of
-    'A' -> NewGame
-    'B' -> ContinueGame
-    'C' -> Login
-    'D' -> Rules
-    'L' -> Login
-    'V' -> _goBack (boxBefore actualMenu)
-    _   -> StartMenu
+    'A' -> return NewGame
+    'B' -> return ContinueGame
+    'C' -> return Login
+    'D' -> return Rules
+    'L' -> return Login
+    'V' -> return (_goBack (boxBefore actualMenu))
+    'S' -> exitSuccess >> return StartMenu
+    _   -> return StartMenu
 
 _goBack :: String -> Action
 _goBack boxBefore = case boxBefore of

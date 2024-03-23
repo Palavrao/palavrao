@@ -45,7 +45,7 @@ updateMenu action menu = case action of
         "    │      B  continuar jogo        │   ",
         "    │      C  criar conta           │   ",
         "    │      D  regras                │   ",
-        "    │                               │   ",
+        "    │      S  sair                  │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
