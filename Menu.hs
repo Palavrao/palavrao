@@ -7,114 +7,43 @@ import System.Console.ANSI
 import Data.Char
 import GHC.Generics
 import Data.Aeson
+import BoxesMenu
 
-data Action = NewGame | ContinueGame | CreateAccount | Rules | Login | StartMenu | Begin deriving (Show, Eq)
+_drawMenu :: Menu -> IO ()
+_drawMenu menu = do
+    clearScreen
+    setCursorPosition 0 0
+    mapM_ putStrLn (box menu)
 
-data Menu = Menu {
-    box :: [[Char]],
-    boxBefore :: String
-} deriving (Show, Generic)
+menuLoop :: Menu -> IO ()
+menuLoop menu = do
+    _drawMenu menu
+    userInput <- getChar
+    if userInput == 'P' || userInput == 'J'
+    then print userInput --logica salvar dados e inicar partida
+    else do
+      let action = _inputToAction userInput menu
+          updatedMenu = updateMenu action menu
+      menuLoop updatedMenu
 
-instance ToJSON Menu
-instance FromJSON Menu
+_inputToAction :: Char -> Menu -> Action
+_inputToAction userInput actualMenu = case userInput of
+    'A' -> NewGame
+    'B' -> ContinueGame
+    'C' -> Login
+    'D' -> Rules
+    'L' -> Login
+    'V' -> _goBack (boxBefore actualMenu)
+    _   -> StartMenu
 
-startMenu :: Menu
-startMenu = Menu {
-    box = [
-        "    ┌───────────────────────────────┐   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │          PALAVRÃO             │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │      A  novo jogo             │   ",
-        "    │      B  continuar jogo        │   ",
-        "    │      C  criar conta           │   ",
-        "    │      D  regras                │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    └───────────────────────────────┘   "
-    ], boxBefore = "N"}
+_goBack :: String -> Action
+_goBack boxBefore = case boxBefore of
+    "NG" -> NewGame
+    "SM" -> StartMenu
+    _   -> StartMenu
 
-updateMenu :: Action -> Menu -> Menu
-updateMenu action menu = case action of
-        NewGame -> menu { box = [
-        "    ┌───────────────────────────────┐   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │          PALAVRÃO             │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │      C criar conta            │   ",
-        "    │      L login                  │   ",
-        "    │      V voltar                 │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    └───────────────────────────────┘   "
-    ], boxBefore = "SM"}
-        ContinueGame -> menu { box = [
-        "    ┌───────────────────────────────┐   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │          PALAVRÃO             │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │      P nome da partida        │   ",
-        "    │      V voltar                 │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    └───────────────────────────────┘   "
-    ], boxBefore = "NG"}
-        CreateAccount -> menu { box = [
-        "    ┌───────────────────────────────┐   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │          PALAVRÃO             │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │     J digitar nome            │   ",
-        "    │     V voltar                  │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    └───────────────────────────────┘   "
-    ], boxBefore = "NG"}
-
-captureInput :: IO (Maybe Action)
-captureInput = do
-        input <- getChar
-        clearScreen
-        return $ _getAction input
-
-_getAction :: Char -> Menu -> Maybe Action
-_getAction input menu
-        | input == 'S'    = Just Begin
-        | input == 'A'    = Just NewGame
-        | input == 'B'    = Just ContinueGame
-        | input == 'C'    = Just CreateAccount
-        | input == 'D'    = Just Rules
-        | input == 'L'    = Just Login
-        | input == 'V'    = _goBack (boxBefore menu)
-        | otherwise       = Nothing
-
-_goBack :: String -> Maybe Action
-_goBack boxBefore
-      | boxBefore == "NG" = Just NewGame
-      | boxBefore == "SM" = Just StartMenu
-      | otherwise         = Nothing
+{-
+main :: IO ()
+main = do
+    menuLoop beginGame
+-}
