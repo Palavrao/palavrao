@@ -19,27 +19,22 @@ _drawMenu menu = do
 menuLoop :: Menu -> IO ()
 menuLoop menu = do
     _drawMenu menu
-    userInput <- getChar
-    if userInput == 'P' || userInput == 'J'
+    userInput <- getLine
+    if userInput == "P" || userInput == "J"
         then print userInput --logica salvar dados e inicar partida
     else do
       action <- _inputToAction userInput menu
       let updatedMenu = updateMenu action menu
       menuLoop updatedMenu
 
-_inputToAction :: Char -> Menu -> IO Action
+_inputToAction :: String -> Menu -> IO Action
 _inputToAction userInput actualMenu = case userInput of
-    'A' -> return NewGame
-    'B' -> return ContinueGame
-    'C' -> return Login
-    'D' -> return Rules
-    'L' -> return Login
-    'V' -> return (_goBack (boxBefore actualMenu))
-    'S' -> exitSuccess >> return StartMenu
-    _   -> return StartMenu
+    "A" -> return NewGame
+    "B" -> return ContinueGame
+    "C" -> return Login
+    "D" -> return Rules
+    "L" -> return Login
+    "V" -> return (boxBefore actualMenu)
+    "S" -> exitSuccess >> return StartMenu
+    _   -> return (action actualMenu)
 
-_goBack :: String -> Action
-_goBack boxBefore = case boxBefore of
-    "NG" -> NewGame
-    "SM" -> StartMenu
-    _   -> StartMenu
