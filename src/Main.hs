@@ -7,19 +7,15 @@ import Controllers.AccountsController
 import Data.Time.Clock (getCurrentTime)
 import System.Console.ANSI
 import Interface.BoxesMenu
-import System.IO
 import Core.Game
 
 main :: IO ()
 main = do
-    hSetBuffering stdin NoBuffering
     clearScreen
     
     menuLoop beginGame
 
     startPersistence
-
-    hSetBuffering stdin LineBuffering
 
     startTime <- getCurrentTime
 
