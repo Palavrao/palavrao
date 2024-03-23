@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module BoxesMenu where
+module Interface.BoxesMenu where
 
 import Text.Printf
 import System.Console.ANSI

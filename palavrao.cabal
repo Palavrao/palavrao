@@ -18,15 +18,7 @@ extra-source-files:  CHANGELOG.md, README.md
 
 executable palavrao
   main-is:             Main.hs
-  other-modules:
-    AccountsController,
-    BoardController,
-    DrawBoard,
-    MatchesController,
-    Utils,
-    Validator,
-    LettersController,
-    PlayerController
+  hs-source-dirs:      src
   -- other-extensions:
   build-depends: 
     text >=1.2.4.0 && <1.3,      
@@ -38,6 +30,6 @@ executable palavrao
     filepath>=1.4.2.1,
     directory,
     random>=1.2.1.2,
-    time>=1.12.2
+    time>=1.9
   -- hs-source-dirs:
   default-language:    Haskell2010

@@ -1,4 +1,4 @@
-module Utils where
+module Utils.Utils where
 
 import qualified Data.ByteString.Lazy as B
 import Data.Aeson

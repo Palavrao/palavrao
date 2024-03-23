@@ -1,14 +1,14 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module MatchesController where
+module Controllers.MatchesController where
 
 import GHC.Generics
 import Data.Aeson
-import BoardController;
-import AccountsController
-import PlayerController
-import LettersController
-import Utils as UT
+import Controllers.BoardController;
+import Controllers.AccountsController
+import Controllers.PlayerController
+import Controllers.LettersController
+import Utils.Utils as UT
 import Data.Time.Clock
 import System.Console.ANSI
 

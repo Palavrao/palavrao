@@ -1,13 +1,13 @@
-module DrawBoard where
+module Interface.DrawBoard where
 
 import Text.Printf
 import System.Console.ANSI
-import MatchesController
-import AccountsController
-import BoardController
+import Controllers.MatchesController
+import Controllers.AccountsController
+import Controllers.BoardController
 import Data.Char
-import PlayerController
-import Utils as UT
+import Controllers.PlayerController
+import Utils.Utils as UT
 
 __colorText :: String -> Color -> IO ()
 __colorText text color = do

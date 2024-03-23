@@ -1,12 +1,12 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module PlayerController where
+module Controllers.PlayerController where
 
-import Utils as UT
+import Utils.Utils as UT
 import GHC.Generics
 import Data.Aeson
-import AccountsController
-import LettersController
+import Controllers.AccountsController
+import Controllers.LettersController
 
 data Player = Player {
     pAcc :: Account,

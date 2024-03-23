@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module BoardController where
+module Controllers.BoardController where
         
 import Text.Printf
 import System.Console.ANSI

@@ -1,10 +1,10 @@
-module Validator where
+module Utils.Validator where
 
-import MatchesController
-import BoardController
-import PlayerController
+import Controllers.MatchesController
+import Controllers.BoardController
+import Controllers.PlayerController
 import Data.Char
-import MatchesController
+import Controllers.MatchesController
 
 isStringInt :: String -> Bool
 isStringInt str = case reads str :: [(Int, String)] of

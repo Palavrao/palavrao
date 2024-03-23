@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module LettersController where
+module Controllers.LettersController where
 
 import Data.Aeson
 import GHC.Generics

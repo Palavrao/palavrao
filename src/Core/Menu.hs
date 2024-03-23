@@ -1,13 +1,13 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Menu where
+module Core.Menu where
 
 import Text.Printf
 import System.Console.ANSI
 import Data.Char
 import GHC.Generics
 import Data.Aeson
-import BoxesMenu
+import Interface.BoxesMenu
 
 _drawMenu :: Menu -> IO ()
 _drawMenu menu = do
@@ -20,7 +20,7 @@ menuLoop menu = do
     _drawMenu menu
     userInput <- getChar
     if userInput == 'P' || userInput == 'J'
-    then print userInput --logica salvar dados e inicar partida
+        then print userInput --logica salvar dados e inicar partida
     else do
       let action = _inputToAction userInput menu
           updatedMenu = updateMenu action menu
@@ -41,9 +41,3 @@ _goBack boxBefore = case boxBefore of
     "NG" -> NewGame
     "SM" -> StartMenu
     _   -> StartMenu
-
-{-
-main :: IO ()
-main = do
-    menuLoop beginGame
--}

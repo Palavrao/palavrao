@@ -1,10 +1,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module AccountsController where
+module Controllers.AccountsController where
 
 import GHC.Generics
 import Data.Aeson
-import Utils as UT
+import Utils.Utils as UT
 
 data Account = Account {
     accName :: String,
