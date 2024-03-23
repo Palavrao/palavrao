@@ -12,14 +12,11 @@ import Core.Game
 
 main :: IO ()
 main = do
-    hSetBuffering stdin NoBuffering
     clearScreen
     
     menuLoop beginGame
 
     startPersistence
-
-    hSetBuffering stdin LineBuffering
 
     startTime <- getCurrentTime
 
