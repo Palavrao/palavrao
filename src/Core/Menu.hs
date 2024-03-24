@@ -74,8 +74,7 @@ _menuFlux menu input = do
             "2" -> Just <$> return (updateMenu (boxBefore menu) menu)
             _   -> Just <$> return (updateMenu (action menu) menu)
         Rules -> case input of 
-            "1" -> Just <$> return (updateMenu (boxBefore menu) menu)
-            _   -> Just <$> return (updateMenu (action menu) menu)
+            _   -> Just <$> return (updateMenu (boxBefore menu) menu)
         BeforeGame -> case input of
             "1" -> do
                 wordList <- UT.getWordList
@@ -92,6 +91,8 @@ _menuFlux menu input = do
             "2" -> Just <$> return (updateMenu (boxBefore menu) menu)
             "3" -> Just <$> return (updateMenu (boxBefore menu) menu)
             _   -> Just <$> return (updateMenu (action menu) menu)
+        Rank -> case input of
+            _   -> Just <$> return (updateMenu (boxBefore menu) menu)
         _ -> Just <$> return (updateMenu (action menu) menu)
 
 _accsFull :: Menu -> Bool

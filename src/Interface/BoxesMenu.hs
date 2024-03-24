@@ -116,7 +116,7 @@ updateMenu action menu = case action of
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │     1. voltar                 │   ",
+        "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
