@@ -92,4 +92,9 @@ getWordList :: IO [String]
 getWordList = do
     base <- readFile "palavras/br-sem-acentos.txt"
     return (lines base)
+
+manual :: IO ()
+manual = do
+            putStrLn "TODO"
+
     
