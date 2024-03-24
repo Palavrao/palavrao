@@ -21,7 +21,8 @@ initialValidation match wordlist linha
                 (_tileValidationSize isHorizontal (x, y) word) && 
                 (_wordValidation word) && 
                 (_tileValidationLetters letrasNoBoard word) &&
-                (wordExistenceValidation match wordlist word))
+                (_wordExistenceValidation match wordlist word) &&
+                (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match)))))
 
     where
         palavras = words $ map toUpper linha
@@ -33,8 +34,15 @@ initialValidation match wordlist linha
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word) --DEBUGAR
 
 
-wordExistenceValidation :: Match -> [String] -> String -> Bool
-wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsedWords match)) || ((map toLower word) `elem` wordList)
+_wordExistenceValidation :: Match -> [String] -> String -> Bool
+_wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsedWords match)) || ((map toLower word) `elem` wordList)
+
+
+_allWordsExist :: Match -> [String] -> [String] -> Bool
+_allWordsExist match wordlist wordsToTest = ((length wordsThatDontExist) == 0)
+    where
+        wordsThatDontExist = [x | x <- wordsToTest, (wordExistenceValidation match wordlist x) == False] 
+
 
 _coordValidation :: [Char] -> Bool
 _coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
