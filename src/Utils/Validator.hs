@@ -3,6 +3,7 @@ module Utils.Validator where
 import Controllers.MatchesController
 import Controllers.BoardController
 import Controllers.PlayerController
+import Controllers.AccountsController
 import Data.Char
 import Controllers.MatchesController
 import Utils.Utils as UT
@@ -79,3 +80,17 @@ readWordInput linha match = (x, y, isHorizontal, word)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
+
+accExistsValidation :: String -> IO(Bool)
+accExistsValidation accName = do
+    acc <- getAccByName accName
+    case acc of 
+        Just acc -> return True
+        Nothing -> return False
+
+matchExistsValidation :: String -> IO(Bool)
+matchExistsValidation matchName = do
+    match <- getMatchByName matchName
+    case match of 
+        Just match -> return True
+        Nothing    -> return False
