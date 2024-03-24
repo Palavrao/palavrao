@@ -47,7 +47,9 @@ _menuFlux menu input = do
                 else do    
                     Just <$> return (updateMenu Register menu)
             "4" -> Just <$> return (updateMenu Rules menu)
-            "5" -> Just <$> return (updateMenu Rank menu)
+            "5" -> do
+                updatedMenu <- _getRank menu
+                Just <$> return (updatedMenu)
             "6" -> exitSuccess >> return Nothing
             _   -> Just <$> return (updateMenu (action menu) menu)
         NewGame -> case input of 
@@ -171,3 +173,13 @@ _updateAccs menu acc =
             menu {p1 = acc}
         else
             menu {p2 = acc}
+
+_getRank :: Menu -> IO(Menu)
+_getRank menu = do
+    accs <- getAccRank
+    let updatedRank = _updateRank menu accs
+    return $ updateMenu Rank updatedRank
+
+
+_updateRank :: Menu -> [Account] -> Menu
+_updateRank menu accs = menu {accsRank = accs}
