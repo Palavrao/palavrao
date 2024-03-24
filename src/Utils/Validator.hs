@@ -5,17 +5,23 @@ import Controllers.BoardController
 import Controllers.PlayerController
 import Data.Char
 import Controllers.MatchesController
+import Utils.Utils as UT
 
 isStringInt :: String -> Bool
 isStringInt str = case reads str :: [(Int, String)] of
     [(num, "")] -> True
     _           -> False
 
-initialValidation :: Match -> String -> Bool
-initialValidation _ "" = False
-initialValidation match linha
+initialValidation :: Match -> [String] -> String -> Bool
+initialValidation _ _ "" = False
+initialValidation match wordlist linha
     | length palavras /= 3 = False
-    | otherwise = ((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord)  && (_tileValidationSize isHorizontal (x, y) word) && (_wordValidation word) && (_tileValidationLetters letrasNoBoard word)
+    | otherwise = (((palavras !! 1) `elem` ["V", "H"]) && 
+                (_coordValidation coord)  && 
+                (_tileValidationSize isHorizontal (x, y) word) && 
+                (_wordValidation word) && 
+                (_tileValidationLetters letrasNoBoard word) &&
+                (wordExistenceValidation match wordlist word))
 
     where
         palavras = words $ map toUpper linha
@@ -26,6 +32,9 @@ initialValidation match linha
         y = (read (tail coord) :: Int)
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word) --DEBUGAR
 
+
+wordExistenceValidation :: Match -> [String] -> String -> Bool
+wordExistenceValidation match wordList word = (word `elem` (mUsedWords match)) || (word `elem` wordList)
 
 _coordValidation :: [Char] -> Bool
 _coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
@@ -57,3 +66,14 @@ _tileValidationSize isHorizontal (x, y) word
 playerHasLetter :: Player -> Char -> Bool
 playerHasLetter player letter = any (\l -> letter l == 'A') (pLetters player)
  -}
+
+readWordInput :: String -> Match -> (Int, Int, Bool, String)
+readWordInput linha match = (x, y, isHorizontal, word)
+    where
+        palavras = words $ map toUpper linha
+        coord = (palavras !! 0)
+        isHorizontal = (palavras !! 1) == "H"       
+        word = (palavras !! 2)
+        x = ord (head coord ) - ord 'A'
+        y = (read (tail coord) :: Int)
+        letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
