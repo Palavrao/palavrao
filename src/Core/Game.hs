@@ -6,38 +6,47 @@ import Interface.DrawBoard
 import Utils.Validator
 import Control.Concurrent (threadDelay)
 import System.Console.ANSI
+import System.IO
 import Controllers.BoardController
+import Utils.Utils as UT
 
-fluxo :: Match -> String -> IO Bool
 
-fluxo _ ":S" = do
-                putStrLn "S"
-                return True
-fluxo _ ":?" = do
-                putStrLn "?" 
-                return True
-fluxo _ ":!" = do
-                putStrLn "!" 
-                return True
-fluxo _ ":*x" = do
-                putStrLn "" 
-                return True
-fluxo match input = return (initialValidation match input)
+valida :: Match -> [String] -> String -> IO Match
+valida match _ ":C" = return (match) -- TODO
+valida match _ ":!" = do
+                        putStrLn ">> Pulou o turno"
+                        return (match) -- TODO
+valida match wordlist ":?" = do
+                        UT.manual
+                        putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
+                        hFlush stdout
+                        i <- getLine
+                        m <- (valida match wordlist i)
+                        return m -- TODO
 
-gameLoop :: Match -> UTCTime -> IO ()
-gameLoop match lastUpdate = do
+valida match _ (':':'*':t) = do
+                        putStrLn "TODO SWITCH LETTERS"
+                        return (match) -- TODO
+
+valida match wordlist input = 
+    if (initialValidation match wordlist input)
+        then
+            return (updateMatchBoard match (placeWord (readWordInput input match) (mBoard match)))
+    else do
+        putStr "Coordenada Inválida, tente novamente: \nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
+        hFlush stdout
+        i <- getLine
+        m <- (valida match wordlist i)
+        return m
+
+
+gameLoop :: Match -> [String] -> UTCTime -> IO ()
+gameLoop match wordList lastUpdate = do
     printBoard match
+    putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
+    hFlush stdout
     input <- getLine
-    v <- (fluxo match input)
-    putStrLn $ show v
-{-     if (initialValidation match input)
-        then putStrLn "Okay"
-        else putStrLn "False!!!!" 
-        
-        
-        fluxo _ (':':t) = do
-                    putStrLn "COMANDO"
-                    return True-}
+    m <- valida match wordList input
 
     currentTime <- getCurrentTime
     let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
@@ -46,11 +55,11 @@ gameLoop match lastUpdate = do
     if updatedTimer <= 0
         then do
             putStrLn "Your turn is over!"
-            let updatedMatch = updateMatchTimer match 300
+            let updatedMatch = updateMatchTimer m 300
             let updatedMatch' = toggleMatchTurn updatedMatch
             saveMatchJson updatedMatch
-            gameLoop updatedMatch' currentTime
+            gameLoop updatedMatch' wordList currentTime
         else do
-            let updatedMatch = updateMatchTimer match updatedTimer
+            let updatedMatch = updateMatchTimer m updatedTimer
             threadDelay 100000
-            gameLoop updatedMatch currentTime
+            gameLoop updatedMatch wordList currentTime

@@ -11,16 +11,18 @@ import Core.Game
 
 main :: IO ()
 main = do
+    startPersistence
+    wordList <- getWordList
+
     clearScreen
     
     menuLoop beginGame
 
-    startPersistence
 
-    startTime <- getCurrentTime
+    startTime <- getCurrentTime    
 
     acc1 <- createAcc "Fulano"
     acc2 <- createAcc "Sicrano"
     match <- createMatch "Match" acc1 acc2
 
-    gameLoop match startTime
+    gameLoop match wordList startTime
