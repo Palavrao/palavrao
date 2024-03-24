@@ -34,7 +34,7 @@ initialValidation match wordlist linha
 
 
 wordExistenceValidation :: Match -> [String] -> String -> Bool
-wordExistenceValidation match wordList word = (word `elem` (mUsedWords match)) || (word `elem` wordList)
+wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsedWords match)) || ((map toLower word) `elem` wordList)
 
 _coordValidation :: [Char] -> Bool
 _coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)

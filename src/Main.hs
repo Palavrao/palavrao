@@ -19,6 +19,8 @@ main = do
     menuLoop beginGame
 
 
+    
+
     startTime <- getCurrentTime    
 
     acc1 <- createAcc "Fulano"
