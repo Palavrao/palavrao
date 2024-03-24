@@ -28,16 +28,24 @@ valida match _ (':':'*':t) = do
                         putStrLn "TODO SWITCH LETTERS"
                         return (match) -- TODO
 
-valida match wordlist input = 
-    if (initialValidation match wordlist input)
-        then
-            return (updateMatchBoard match (placeWord (readWordInput input match) (mBoard match)))
-    else do
-        putStr "Coordenada Inválida, tente novamente: \nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
+valida match wordlist input 
+    |(res && ((length listaDeRes) == 0)) = return (updateMatchBoard match (placeWord (readWordInput input match) (mBoard match)))
+    |(res && ((length listaDeRes) /= 0)) = do
+        UT.__colorText ("\nPalavras inválidas: " ++ (show listaDeRes) ++ " \nTente novamente: \n") Red
+        putStr "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
         hFlush stdout
         i <- getLine
         m <- (valida match wordlist i)
         return m
+    | otherwise = do
+        UT.__colorText "\nCoordenada ou Formatação inválidas, tente novamente: \n" Red
+        putStr "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
+        hFlush stdout
+        i <- getLine
+        m <- (valida match wordlist i)
+        return m
+    where 
+        (res, listaDeRes) = (initialValidation match wordlist input)
 
 
 gameLoop :: Match -> [String] -> UTCTime -> IO ()

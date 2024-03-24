@@ -9,27 +9,20 @@ import Data.Char
 import Controllers.PlayerController
 import Utils.Utils as UT
 
-__colorText :: String -> Color -> IO ()
-__colorText text color = do
-    setSGR [SetColor Foreground Vivid color]  -- Set the foreground color
-    --setSGR [SetColor Background Vivid color]
-    putStr text
-    setSGR [Reset]  -- Reset text attributes to default
-
 
 -- █ ■
 __pintaBoard :: Char -> IO ()
 __pintaBoard (a)
-    |a == '#' = __colorText "■ " Red 
-    |a == '-' = __colorText "■ " Magenta
-    |a == '*' = __colorText "■ " Blue
-    |a == '!' = __colorText "■ " Green
-    |a == '~' = __colorText "■ " White
+    |a == '#' = UT.__colorText "■ " Red 
+    |a == '-' = UT.__colorText "■ " Magenta
+    |a == '*' = UT.__colorText "■ " Blue
+    |a == '!' = UT.__colorText "■ " Green
+    |a == '~' = UT.__colorText "■ " White
     |a == '>' = printf " "
     |a == '\n' = printf "\n"
     |isDigit a = printf [a]
     |isSpace a = return ()
-    |isPrint a = __colorText ( [toUpper a] ++ " ") White
+    |isPrint a = UT.__colorText ( [toUpper a] ++ " ") White
     |otherwise = return ()
 
 
