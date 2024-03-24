@@ -81,8 +81,13 @@ _menuFlux menu input = do
                 startTime <- getCurrentTime
                 gameLoop (currentMatch menu) wordList startTime
                 Just <$> return (updateMenu StartMenu menu)
-            "2" -> Just <$> return (updateMenu (boxBefore menu) menu)
-            "3" -> Just <$> return (updateMenu (boxBefore menu) menu)
+            "2" -> do
+                let updatedMenu = menu {p1 = p2 menu}
+                let updatedMenu' = _updateAccs updatedMenu Account{accName = ""}
+                Just <$> return (updateMenu (boxBefore menu) updatedMenu')
+            "3" -> do
+                let updatedMenu = _updateAccs menu Account{accName = ""}
+                Just <$> return (updateMenu (boxBefore menu) updatedMenu)
             _   -> Just <$> return (updateMenu (action menu) menu)
         RegisterMatch -> case input of
             "1" -> do
