@@ -12,17 +12,11 @@ isStringInt str = case reads str :: [(Int, String)] of
     [(num, "")] -> True
     _           -> False
 
-initialValidation :: Match -> [String] -> String -> Bool
-initialValidation _ _ "" = False
+initialValidation :: Match -> [String] -> String -> (Bool, [String])
+initialValidation _ _ "" = (False, [])
 initialValidation match wordlist linha
-    | length palavras /= 3 = False
-    | otherwise = (((palavras !! 1) `elem` ["V", "H"]) && 
-                (_coordValidation coord)  && 
-                (_tileValidationSize isHorizontal (x, y) word) && 
-                (_wordValidation word) && 
-                (_tileValidationLetters letrasNoBoard word) &&
-                (_wordExistenceValidation match wordlist word) &&
-                (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match)))))
+    | length palavras /= 3 = (False, [])
+    | otherwise = (resCoordenadas, resPalavras)
 
     where
         palavras = words $ map toUpper linha
@@ -32,16 +26,16 @@ initialValidation match wordlist linha
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word) --DEBUGAR
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_tileValidationLetters letrasNoBoard word))
+        resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
 _wordExistenceValidation :: Match -> [String] -> String -> Bool
 _wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsedWords match)) || ((map toLower word) `elem` wordList)
 
 
-_allWordsExist :: Match -> [String] -> [String] -> Bool
-_allWordsExist match wordlist wordsToTest = ((length wordsThatDontExist) == 0)
-    where
-        wordsThatDontExist = [x | x <- wordsToTest, (wordExistenceValidation match wordlist x) == False] 
+_allWordsExist :: Match -> [String] -> [String] -> [String]
+_allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, (_wordExistenceValidation match wordlist x) == False] 
 
 
 _coordValidation :: [Char] -> Bool

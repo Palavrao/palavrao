@@ -18,7 +18,6 @@ main = do
     
     menuLoop beginGame
 
-
     
 
     startTime <- getCurrentTime    

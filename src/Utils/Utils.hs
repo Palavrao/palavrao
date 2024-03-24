@@ -9,6 +9,8 @@ import System.Random
 import Data.List (sortBy)
 import Data.Ord (comparing)
 import Data.Fixed (mod')
+import System.Console.ANSI
+
 
 startPersistence :: IO()
 startPersistence = do
@@ -97,5 +99,13 @@ getWordList = do
 manual :: IO ()
 manual = do
             putStrLn "TODO"
+
+
+__colorText :: String -> Color -> IO ()
+__colorText text color = do
+    setSGR [SetColor Foreground Vivid color]  -- Set the foreground color
+    --setSGR [SetColor Background Vivid color]
+    putStr text
+    setSGR [Reset]  -- Reset text attributes to default
 
     
