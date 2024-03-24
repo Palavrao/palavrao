@@ -74,6 +74,6 @@ _buildBoard match i = do
 
 printBoard :: Match -> IO ()
 printBoard match = do
-    --clearScreen
+    clearScreen
     _buildBoard match 0
     

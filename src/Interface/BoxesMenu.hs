@@ -182,21 +182,21 @@ updateMenu action menu = case action of
         "    │         criar partida         │   ",
         "    └───────────────────────────────┘   "
     ], boxBefore = StartMenu, action = RegisterMatch}
-        Rank -> menu { box = [
+        Rank -> menu { box = ([
         "    ┌───────────────────────────────┐   ",
         printf "    │  %-5s                 %-5s  │   " (take 5 $ (accName (p1 menu))) (take 5 $ (accName (p2 menu))),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
-        "    │                               │   ",
-        printf "    │     1. %-5s  -  %-4s         │   " (take 5 $ accName ((accsRank menu) !! 0)) (take 4 $ show (accScore ((accsRank menu) !! 0))),
-        printf "    │     2. %-5s  -  %-4s         │   " (take 5 $ accName ((accsRank menu) !! 1)) (take 4 $ show (accScore ((accsRank menu) !! 1))),
-        printf "    │     3. %-5s  -  %-4s         │   " (take 5 $ accName ((accsRank menu) !! 2)) (take 4 $ show (accScore ((accsRank menu) !! 2))),
-        printf "    │     4. %-5s  -  %-4s         │   " (take 5 $ accName ((accsRank menu) !! 3)) (take 4 $ show (accScore ((accsRank menu) !! 3))),
-        printf "    │     5. %-5s  -  %-4s         │   " (take 5 $ accName ((accsRank menu) !! 4)) (take 4 $ show (accScore ((accsRank menu) !! 4))),
-        "    │                               │   ",
+        "    │                               │   "] 
+        ++ (geraRankLines menu) ++
+       ["    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │             rank              │   ",
         "    └───────────────────────────────┘   "
-    ], boxBefore = StartMenu, action = Rank}
+    ]), boxBefore = StartMenu, action = Rank}
+
+
+geraRankLines :: Menu -> [String]
+geraRankLines menu = [( "    │     " ++ (show (i)) ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc))) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
