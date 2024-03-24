@@ -97,25 +97,37 @@ _createMatch menu = do
     putStr "nome_da_partida> "
     hFlush stdout
     newMatchName <- getLine 
-    if (newMatchName /= "") then do
-        match <- createMatch newMatchName (p1 menu) (p2 menu)
-        let updatedMatch = _updateCurrentMatch menu match
-        return $ updateMenu BeforeGame updatedMatch
-    else do
-        putStrLn "Nome invalido"
-        return $ menu 
+    case newMatchName of 
+        "2" -> return menu
+        ""  -> do
+            putStrLn "nome invalido"
+            _createMatch menu
+        _   -> do
+            match <- createMatch newMatchName (p1 menu) (p2 menu)
+            let updatedMatch = _updateCurrentMatch menu match
+            return $ updateMenu BeforeGame updatedMatch
 
 _login :: Menu -> IO(Menu)
 _login menu = do
     putStr "nome_de_usuario> "
     hFlush stdout
     accName <- getLine
-    acc <- getAccByName accName
-    case acc of
-        Just acc -> do
-            let updatedAccs = _updateAccs menu acc
-            return $ updateMenu NewGame updatedAccs
-        Nothing -> do 
+    if (accName /= "2") 
+        then do 
+            acc <- getAccByName accName
+            case acc of
+                Just acc -> do
+                    if acc == (p1 menu) 
+                        then do
+                            putStrLn "usuario ja logado"
+                            _login menu
+                    else do
+                        let updatedAccs = _updateAccs menu acc
+                        return $ updateMenu NewGame updatedAccs
+                Nothing -> do 
+                    putStrLn "nome nao cadastrado"
+                    _login menu
+        else do
             return $ updateMenu NewGame menu
 
 _createAcc :: Menu -> IO(Menu)
@@ -123,17 +135,20 @@ _createAcc menu = do
     putStr "nome_de_usuario> "
     hFlush stdout
     newAccName <- getLine
-    if (newAccName /= "") then do
-        acc <- createAcc newAccName
-        let updatedAccs = _updateAccs menu acc
-        if (accName (p2 updatedAccs) == "")
-            then do
-                return $ updateMenu NewGame updatedAccs
-            else do
-                return $ updateMenu StartMenu updatedAccs
-    else do
-        putStrLn "Nome invalido"
-        return menu
+    case newAccName of 
+        "2" -> return menu
+        ""  -> do
+            putStrLn "nome invalido"
+            _createAcc menu
+        _   -> do
+            acc <- createAcc newAccName
+            let updatedAccs = _updateAccs menu acc
+            if (accName (p2 updatedAccs) == "")
+                then do
+                    return $ updateMenu NewGame updatedAccs
+                else do
+                    return $ updateMenu StartMenu updatedAccs
+            
 
 _updateRank :: Menu -> [Account] -> Menu
 _updateRank menu accs = menu {accsRank = accs}
@@ -143,7 +158,10 @@ _updateCurrentMatch menu match = menu {currentMatch = match}
 
 _updateAccs :: Menu -> Account -> Menu
 _updateAccs menu acc = 
-    if (accName (p1 menu) == "") then
-        menu {p1 = acc}
+    if (p1 menu) == acc then
+        menu
     else
-        menu {p2 = acc}
+        if (accName (p1 menu) == "") then
+            menu {p1 = acc}
+        else
+            menu {p2 = acc}
