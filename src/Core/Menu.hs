@@ -12,6 +12,9 @@ import Interface.BoxesMenu
 import System.IO
 import Controllers.AccountsController
 import Controllers.MatchesController
+import Data.Time.Clock (getCurrentTime)
+import Utils.Utils as UT
+import Core.Game
 
 _drawMenu :: Menu -> IO ()
 _drawMenu menu = do
@@ -67,7 +70,11 @@ _menuFlux menu input = do
             "1" -> Just <$> return (updateMenu (boxBefore menu) menu)
             _   -> Just <$> return (updateMenu (action menu) menu)
         BeforeGame -> case input of
-            "1" -> return Nothing 
+            "1" -> do
+                wordList <- UT.getWordList
+                startTime <- getCurrentTime
+                gameLoop (currentMatch menu) wordList startTime
+                Just <$> return (updateMenu StartMenu menu)
             "2" -> Just <$> return (updateMenu (boxBefore menu) menu)
             "3" -> Just <$> return (updateMenu (boxBefore menu) menu)
             _   -> Just <$> return (updateMenu (action menu) menu)
