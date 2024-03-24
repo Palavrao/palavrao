@@ -36,10 +36,16 @@ _menuFlux menu input = do
     case action menu of
         StartMenu -> case input of
             "1" -> do
-                let updatedMenu = _verifyIfAccs menu
-                Just <$> return (updatedMenu)
+                if (_accsFull menu) then do
+                    Just <$> return (updateMenu RegisterMatch menu)
+                else do 
+                    Just <$> return (updateMenu NewGame menu)
             "2" -> Just <$> return (updateMenu ContinueGame menu)
-            "3" -> Just <$> return (updateMenu Register menu)
+            "3" -> 
+                if (_accsFull menu) then do 
+                    Just <$> return (updateMenu (action menu) menu)
+                else do    
+                    Just <$> return (updateMenu Register menu)
             "4" -> Just <$> return (updateMenu Rules menu)
             "5" -> Just <$> return (updateMenu Rank menu)
             "6" -> exitSuccess >> return Nothing
@@ -86,11 +92,8 @@ _menuFlux menu input = do
             _   -> Just <$> return (updateMenu (action menu) menu)
         _ -> Just <$> return (updateMenu (action menu) menu)
 
-_verifyIfAccs :: Menu -> Menu
-_verifyIfAccs menu = 
-    if (accName (p2 menu) == "") 
-        then updateMenu NewGame menu
-        else updateMenu RegisterMatch menu
+_accsFull :: Menu -> Bool
+_accsFull menu = not (accName (p2 menu) == "")
 
 _createMatch :: Menu -> IO(Menu)
 _createMatch menu = do
@@ -130,7 +133,11 @@ _login menu = do
                         _login menu
                     else do
                         let updatedAccs = _updateAccs menu acc
-                        return $ updateMenu NewGame updatedAccs
+                        if (_accsFull updatedAccs) then do
+                            putStrLn "acc fulll"
+                            return $ updateMenu StartMenu updatedAccs
+                        else do
+                            return $ updateMenu NewGame updatedAccs
 
 _createAcc :: Menu -> IO(Menu)
 _createAcc menu = do
@@ -147,10 +154,10 @@ _createAcc menu = do
         else do
             acc <- createAcc newAccName
             let updatedAccs = _updateAccs menu acc
-            if (accName (p2 updatedAccs) == "") then do
-                return $ updateMenu NewGame updatedAccs
-            else do
+            if (_accsFull updatedAccs) then do
                 return $ updateMenu StartMenu updatedAccs
+            else do
+                return $ updateMenu NewGame updatedAccs
 
 _updateCurrentMatch :: Menu -> Match -> Menu
 _updateCurrentMatch menu match = menu {currentMatch = match}
