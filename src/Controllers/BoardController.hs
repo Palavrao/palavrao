@@ -109,7 +109,7 @@ getWords board = (_search (!!) board 0) ++ (_search (_getCol) board 0)
 
 
 _search :: ([[Char]]->Int->[Char]) -> Board -> Int -> [String]
-_search _ _ 14 = []
+_search _ _ 15 = []
 _search func board n =
         (filter (\x -> length x > 1) (words $ map _replacements (func b n))) ++ _search (func) board (n+1)
         where b = workTiles board

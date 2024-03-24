@@ -18,7 +18,6 @@ initialValidation _ _ "" = (False, [])
 initialValidation match wordlist linha
     | length palavras /= 3 = (False, [])
     | otherwise = (resCoordenadas, resPalavras)
-
     where
         palavras = words $ map toUpper linha
         coord = (palavras !! 0)
