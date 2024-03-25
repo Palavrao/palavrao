@@ -26,10 +26,15 @@ initialValidation match wordlist linha
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
+        playerOnTurn = _getPlayerOnTurn
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word) --DEBUGAR
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_tileValidationLetters letrasNoBoard word))
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_playerHasLetter playerOnTurn word) && (_tileValidationLetters letrasNoBoard word))
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
+_getPlayerOnTurn :: Match -> Player
+_getPlayerOnTurn match 
+    | mTurn match = mP2
+    | otherwise = mP1
 
 _wordExistenceValidation :: Match -> [String] -> String -> Bool
 _wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsedWords match)) || ((map toLower word) `elem` wordList)
@@ -65,10 +70,10 @@ _tileValidationSize :: Bool -> (Int, Int) -> String -> Bool
 _tileValidationSize isHorizontal (x, y) word
     | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
     | otherwise = (y <= 15 - (length word) && y >= 0) && (x >= 0 && x <= 14)
-{-
-playerHasLetter :: Player -> Char -> Bool
-playerHasLetter player letter = any (\l -> letter l == 'A') (pLetters player)
- -}
+
+_playerHasLetter :: Player -> [Char] -> Bool
+_playerHasLetter _ [] = True
+_playerHasLetter player (c:cs) = any (\letterObj -> letter letterObj == c) (pLetters player) && playerHasLetter player cs
 
 readWordInput :: String -> Match -> (Int, Int, Bool, String)
 readWordInput linha match = (x, y, isHorizontal, word)
