@@ -136,3 +136,30 @@ startLetters = [
         Letter {letter='X', letterScore=7},
         Letter {letter='Z', letterScore=7}
     ]
+
+letterValue :: Char -> Int
+letterValue c
+    | c == 'A' = 1
+    | c == 'E' = 1
+    | c == 'I' = 1
+    | c == 'O' = 1
+    | c == 'S' = 1
+    | c == 'U' = 1
+    | c == 'M' = 1
+    | c == 'R' = 1
+    | c == 'T' = 1
+    | c == 'D' = 2
+    | c == 'L' = 2
+    | c == 'C' = 2
+    | c == 'P' = 2
+    | c == 'N' = 3
+    | c == 'B' = 3
+    | c == 'F' = 4
+    | c == 'G' = 4
+    | c == 'H' = 4
+    | c == 'V' = 4
+    | c == 'J' = 5
+    | c == 'Q' = 6
+    | c == 'X' = 7
+    | c == 'Z' = 7
+    | otherwise = 0
