@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant bracket" #-}
 module Utils.Validator where
 
 import Controllers.MatchesController
@@ -13,11 +15,11 @@ isStringInt str = case reads str :: [(Int, String)] of
     [(num, "")] -> True
     _           -> False
 
-initialValidation :: Match -> [String] -> String -> (Bool, [String])
-initialValidation _ _ "" = (False, [])
+initialValidation :: Match -> [String] -> String -> (Bool, [String], Int)
+initialValidation _ _ "" = (False, [], 0)
 initialValidation match wordlist linha
-    | length palavras /= 3 = (False, [])
-    | otherwise = (resCoordenadas, resPalavras)
+    | length palavras /= 3 = (False, [], 0)
+    | otherwise = (resCoordenadas, resPalavras, getPointsWord letrasNoBoard word)
     where
         palavras = words $ map toUpper linha
         coord = (palavras !! 0)
@@ -25,15 +27,17 @@ initialValidation match wordlist linha
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
+        playerOnTurn = _getPlayerOnTurn
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_tileValidationLetters letrasNoBoard word) && estaConectado)
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_playerHasLetter playerOnTurn word) && (_tileValidationLetters letrasNoBoard word) && estaConectado)
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
+
 
 _getPlayerOnTurn :: Match -> Player
 _getPlayerOnTurn match 
-    | mTurn match = mP2
-    | otherwise = mP1
+    | mTurn match = mP2 match
+    | otherwise = mP1 match
 
 _wordExistenceValidation :: Match -> [String] -> String -> Bool
 _wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsedWords match)) || ((map toLower word) `elem` wordList)

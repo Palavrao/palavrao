@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Redundant return" #-}
 module Core.Game where
 
 import Controllers.MatchesController
@@ -29,7 +32,10 @@ valida match _ (':':'*':t) = do
                         return (match) -- TODO
 
 valida match wordlist input 
-    |(res && ((length listaDeRes) == 0)) = return (updateMatchBoard match (placeWord (readWordInput input match) (mBoard match)))
+    |(res && ((length listaDeRes) == 0)) = do
+        UT.__colorText ("Palavra válida! Pontos: " ++ (show points)) Green
+        let m = (updateMatchBoard match (updateBoard (placeWord (readWordInput input match) (mBoard match))))
+        return m
     |(res && ((length listaDeRes) /= 0)) = do
         UT.__colorText ("\nPalavras inválidas: " ++ (show listaDeRes) ++ " \nTente novamente: \n") Red
         putStr "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
@@ -45,7 +51,7 @@ valida match wordlist input
         m <- (valida match wordlist i)
         return m
     where 
-        (res, listaDeRes) = (initialValidation match wordlist input)
+        (res, listaDeRes, points) = (initialValidation match wordlist input)
 
 
 gameLoop :: Match -> [String] -> UTCTime -> IO ()
