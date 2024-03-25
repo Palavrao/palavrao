@@ -71,6 +71,7 @@ _menuFlux menu input = do
             _   -> Just <$> return (updateMenu (action menu) menu)
         ContinueGame -> case input of 
             "1" -> Just <$> return (updateMenu BeforeGame menu)
+            "2" -> Just <$> return (updateMenu Matches menu)
             "3" -> Just <$> return (updateMenu (boxBefore menu) menu)
             _   -> Just <$> return (updateMenu (action menu) menu)
         Rules -> case input of 
@@ -97,6 +98,8 @@ _menuFlux menu input = do
             "3" -> Just <$> return (updateMenu (boxBefore menu) menu)
             _   -> Just <$> return (updateMenu (action menu) menu)
         Rank -> case input of
+            _   -> Just <$> return (updateMenu (boxBefore menu) menu)
+        Matches -> case input of
             _   -> Just <$> return (updateMenu (boxBefore menu) menu)
         _ -> Just <$> return (updateMenu (action menu) menu)
 

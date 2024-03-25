@@ -9,7 +9,7 @@ import GHC.Generics
 import Controllers.AccountsController
 import Controllers.MatchesController
 
-data Action = NewGame | ContinueGame | Rules | Login | Register | RegisterMatch | StartMenu | Rank | InvalidAction | BeforeGame deriving (Show, Eq)
+data Action = NewGame | ContinueGame | Rules | Login | Register | RegisterMatch | StartMenu | Rank | InvalidAction | BeforeGame | Matches deriving (Show, Eq)
 
 data Menu = Menu {
     box :: [[Char]],
@@ -196,7 +196,20 @@ updateMenu action menu = case action of
         "    │             rank              │   ",
         "    └───────────────────────────────┘   "
     ]), boxBefore = StartMenu, action = Rank}
-
+        Matches -> menu { box = ([
+        "    ┌───────────────────────────────┐   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │           PALAVRÃO            │   ",
+        "    │                               │   ",
+        "    │                               │   "]
+        {-++ (geraMatchLines menu)-} ++
+       ["    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    └───────────────────────────────┘   "
+    ]), boxBefore = ContinueGame, action = Matches}
 
 geraRankLines :: Menu -> [String]
 geraRankLines menu = [( "    │     " ++ (show (i)) ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc))) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
