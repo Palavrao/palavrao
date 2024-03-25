@@ -25,8 +25,9 @@ initialValidation match wordlist linha
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
-        letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word) --DEBUGAR
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_tileValidationLetters letrasNoBoard word))
+        letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
+        estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_tileValidationLetters letrasNoBoard word) && estaConectado)
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
@@ -52,11 +53,6 @@ _tileValidationLetters (tileHead:tileTail) (wordHead:wordTail)
     | (tileHead `elem` ['A'..'Z']) && (tileHead /= wordHead) = False
     | otherwise = _tileValidationLetters tileTail wordTail
 
-_takeUpTo :: Bool -> Match -> (Int, Int) -> Int -> [Char]
-_takeUpTo isHorizontal match (x, y) len
-    | isHorizontal = (take len (drop x (b !! y)))
-    | otherwise = take len $ map (!! x) $ drop y b
-    where b = curTiles (mBoard match)
 
 
 -- Recebe o board, o booleano que informa se eh horizontal, as coordenadas x e y (col, row) indexadas em zero, a palavra, e retorna se passou ou não
@@ -93,3 +89,10 @@ matchExistsValidation matchName = do
     case match of 
         Just match -> return True
         Nothing    -> return False
+
+
+_takeUpTo :: Bool -> Match -> (Int, Int) -> Int -> [Char]
+_takeUpTo isHorizontal match (x, y) len
+    | isHorizontal = (take len (drop x (b !! y)))
+    | otherwise = take len $ map (!! x) $ drop y b
+    where b = curTiles (mBoard match)
