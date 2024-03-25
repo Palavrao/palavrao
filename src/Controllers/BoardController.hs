@@ -7,6 +7,7 @@ import System.Console.ANSI
 import Data.Char
 import GHC.Generics
 import Data.Aeson
+import Controllers.LettersController as LC
 
 data Board = Board {
     curTiles :: [[Char]],
@@ -87,7 +88,7 @@ toyBoard = Board {
                         ['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#']]}
 
 updateBoard :: Board -> [[Char]] -> Board
-updateBoard initial update = initial { workTiles=update,curTiles=update  }
+updateBoard initial update = initial { workTiles=update}
 
 
 _replacements :: Char -> Char
@@ -130,3 +131,36 @@ placeLetters False x y (h:t) b = placeLetters False x (y+1) t (replaceElement b 
 
 verifyWord :: [String] -> String -> Bool
 verifyWord words word = elem word words
+
+
+
+
+getPointsWord :: [Char] -> [Char]-> Int
+getPointsWord tiles word = (wordBonuses tiles word) * (getPointsLetter tiles word) + (bingo tiles)
+
+getPointsLetter :: [Char] -> [Char] -> Int
+getPointsLetter [] [] = 0
+getPointsLetter (hBoard:tBoard) (hWord:tWord) 
+        | hBoard == '*' = 2 * (LC.letterValue hWord) -- azul dobra
+        | hBoard == '!' = 3 * (LC.letterValue hWord) -- verde triplica
+        | otherwise = LC.letterValue hWord
+
+bingo :: [Char] -> Int
+bingo tiles
+        | playedLetters > 6 = 50
+        |otherwise = 0
+        where playedLetters = length [x | x <- tiles, (x `elem` ['A'..'Z']) == False]
+
+wordBonuses :: [Char] -> [Char] -> Int
+wordBonuses [] [] = 1
+wordBonuses (hBoard:tBoard) (hWord:tWord) 
+        | hBoard == '-' = 2 * (wordBonuses tBoard tWord)
+        | hBoard == '#' = 3 * (wordBonuses tBoard tWord) -- verde triplica
+        | otherwise = (wordBonuses tBoard tWord)
+
+
+{- 
+        | hBoard `elem` ['A'..'Z'] = (letterValue hWord)
+        | hBoard == '#' = triplicaPalavra
+        | hBoard == '-' = duplicaPalavra -}
+
