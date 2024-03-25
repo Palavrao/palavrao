@@ -27,7 +27,7 @@ initialValidation match wordlist linha
         y = (read (tail coord) :: Int)
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_tileValidationLetters letrasNoBoard word) && estaConectado)
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_tileValidationLetters letrasNoBoard word) && estaConectado) && (_coordCenterValidation match isHorizontal (x,y) word)
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 _getPlayerOnTurn :: Match -> Player
@@ -37,6 +37,18 @@ _getPlayerOnTurn match
 
 _wordExistenceValidation :: Match -> [String] -> String -> Bool
 _wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsedWords match)) || ((map toLower word) `elem` wordList)
+
+
+_coordCenterValidation :: Match -> Bool -> (Int, Int) -> String -> Bool
+_coordCenterValidation match isHorizontal (x,y) word
+    | centerValue /= '-' = True
+    | isHorizontal = (y == 7) && (x <= 7 && 7 <= finalXInd)
+    | otherwise = (x == 7) && (y <= 7 && 7 <= finalYInd)
+    where 
+        finalXInd = x + (length word) - 1
+        finalYInd = y + (length word) - 1
+        matrix = curTiles (mBoard match)
+        centerValue = (matrix !! 7) !! 7
 
 
 _allWordsExist :: Match -> [String] -> [String] -> [String]
