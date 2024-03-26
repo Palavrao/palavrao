@@ -12,14 +12,18 @@ import System.Console.ANSI
 import System.IO
 import Controllers.BoardController
 import Utils.Utils as UT
+import Controllers.AccountsController
+import Controllers.PlayerController
+import Data.Char
 
 
 valida :: Match -> [String] -> String -> IO (Match, String)
 valida match _ ":C" = return (match, "") -- TODO
 valida match _ ":!" = do
-                        return (skipPlayerTurn match, ">> Pulou o turno") -- TODO
+                        return (skipPlayerTurn match, ">> " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pulou o turno!\n") -- TODO
 valida match wordlist ":?" = do
                         UT.manual
+                        UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match))))) Blue
                         putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
                         hFlush stdout
                         i <- getLine
@@ -28,15 +32,16 @@ valida match wordlist ":?" = do
 
 valida match _ (':':'*':t) = do
                         putStrLn "TODO SWITCH LETTERS"
-                        return (match, ("Trocou a letra " ++ t)) -- TODO
+                        return (skipPlayerTurn match, ("Trocou a letra " ++ t ++ "\n")) -- TODO
 
 valida match wordlist input 
     |(res && ((length listaDeRes) == 0)) = do
-        let m = (resetMatchSkipsQtd (updateMatchBoard match (updateBoard (placeWord (readWordInput input match) (mBoard match)))))
-        return (m, ("Palavra válida! Pontos: " ++ (show points)))
+        let m = toggleMatchTurn (incPlayerScore (resetMatchSkipsQtd (updateMatchBoard match boardAtualizado)) points)
+        return (m, ("Palavra válida! Pontos: " ++ (show points) ++ "\n"))
+
     |(res && ((length listaDeRes) /= 0)) = do
         UT.__colorText ("\nPalavras inválidas: " ++ (show listaDeRes) ++ " \nTente novamente: \n") Red
-        putStr "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
+        putStrLn "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
         hFlush stdout
         i <- getLine
         (m, msg)  <- (valida match wordlist i)
@@ -50,12 +55,14 @@ valida match wordlist input
         return (m, msg)
     where 
         (res, listaDeRes, points) = (initialValidation match wordlist input)
+        boardAtualizado = (updateBoard (placeWord (readWordInput input match) (mBoard match)))
 
 
 gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
     printBoard match
     UT.__colorText lastMessage Green
+    UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match))))) Blue
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
     input <- getLine
