@@ -14,53 +14,54 @@ import Controllers.BoardController
 import Utils.Utils as UT
 
 
-valida :: Match -> [String] -> String -> IO Match
-valida match _ ":C" = return (match) -- TODO
+valida :: Match -> [String] -> String -> IO (Match, String)
+valida match _ ":C" = return (match, "") -- TODO
 valida match _ ":!" = do
                         putStrLn ">> Pulou o turno"
-                        return (match) -- TODO
+                        return (match, ">> Pulou o turno") -- TODO
 valida match wordlist ":?" = do
                         UT.manual
                         putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
                         hFlush stdout
                         i <- getLine
-                        m <- (valida match wordlist i)
-                        return m -- TODO
+                        (m, msg)  <- (valida match wordlist i)
+                        return (m, msg) -- TODO
 
 valida match _ (':':'*':t) = do
                         putStrLn "TODO SWITCH LETTERS"
-                        return (match) -- TODO
+                        return (match, ("Trocou a letra " ++ t)) -- TODO
 
 valida match wordlist input 
     |(res && ((length listaDeRes) == 0)) = do
-        UT.__colorText ("Palavra válida! Pontos: " ++ (show points)) Green
         let m = (updateMatchBoard match (updateBoard (placeWord (readWordInput input match) (mBoard match))))
-        return m
+        return (m, ("Palavra válida! Pontos: " ++ (show points)))
     |(res && ((length listaDeRes) /= 0)) = do
         UT.__colorText ("\nPalavras inválidas: " ++ (show listaDeRes) ++ " \nTente novamente: \n") Red
         putStr "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
         hFlush stdout
         i <- getLine
-        m <- (valida match wordlist i)
-        return m
+        (m, msg)  <- (valida match wordlist i)
+        return (m, msg)
     | otherwise = do
         UT.__colorText "\nCoordenada ou Formatação inválidas, tente novamente: \n" Red
         putStr "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
         hFlush stdout
         i <- getLine
-        m <- (valida match wordlist i)
-        return m
+        (m, msg) <- (valida match wordlist i)
+        return (m, msg)
     where 
         (res, listaDeRes, points) = (initialValidation match wordlist input)
 
 
-gameLoop :: Match -> [String] -> UTCTime -> IO ()
-gameLoop match wordList lastUpdate = do
+gameLoop :: Match -> [String] -> UTCTime -> String -> IO ()
+gameLoop match wordList lastUpdate lastMessage = do
     printBoard match
+    UT.__colorText lastMessage Green
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
     input <- getLine
-    m <- valida match wordList input
+    (m, msg) <- valida match wordList input
+    
 
     currentTime <- getCurrentTime
     let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
@@ -72,8 +73,8 @@ gameLoop match wordList lastUpdate = do
             let updatedMatch = updateMatchTimer m 300
             let updatedMatch' = toggleMatchTurn updatedMatch
             saveMatchJson updatedMatch
-            gameLoop updatedMatch' wordList currentTime
+            gameLoop updatedMatch' wordList currentTime ""
         else do
             let updatedMatch = updateMatchTimer m updatedTimer
             threadDelay 100000
-            gameLoop updatedMatch wordList currentTime
+            gameLoop updatedMatch wordList currentTime msg

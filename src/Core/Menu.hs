@@ -80,7 +80,7 @@ _menuFlux menu input = do
             "1" -> do
                 wordList <- UT.getWordList
                 startTime <- getCurrentTime
-                gameLoop (currentMatch menu) wordList startTime
+                gameLoop (currentMatch menu) wordList startTime ""
                 Just <$> return (updateMenu StartMenu menu)
             "2" -> do
                 let updatedMenu = menu {p1 = p2 menu}
