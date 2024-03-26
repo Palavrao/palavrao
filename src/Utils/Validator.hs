@@ -15,6 +15,7 @@ isStringInt str = case reads str :: [(Int, String)] of
     [(num, "")] -> True
     _           -> False
 
+
 initialValidation :: Match -> [String] -> String -> (Bool, [String], Int)
 initialValidation _ _ "" = (False, [], 0)
 initialValidation match wordlist linha
@@ -27,10 +28,11 @@ initialValidation match wordlist linha
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
-        playerOnTurn = _getPlayerOnTurn
+       {-  playerOnTurn = _getPlayerOnTurn -}
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_playerHasLetter playerOnTurn word) && (_tileValidationLetters letrasNoBoard word) && estaConectado) && (_coordCenterValidation match isHorizontal (x,y) word)
+        centroLivre = (((curTiles (mBoard match)) !! 7) !! 7) == '-'
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && {- (_playerHasLetter playerOnTurn word) &&  -}(_tileValidationLetters letrasNoBoard word) && (estaConectado || centroLivre) && (_coordCenterValidation match isHorizontal (x,y) word))
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
@@ -81,10 +83,10 @@ _tileValidationSize isHorizontal (x, y) word
     | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
     | otherwise = (y <= 15 - (length word) && y >= 0) && (x >= 0 && x <= 14)
 
-_playerHasLetter :: Player -> [Char] -> Bool
+{- _playerHasLetter :: Player -> [Char] -> Bool
 _playerHasLetter _ [] = True
 _playerHasLetter player (c:cs) = any (\letterObj -> letter letterObj == c) (pLetters player) && playerHasLetter player cs
-
+ -}
 readWordInput :: String -> Match -> (Int, Int, Bool, String)
 readWordInput linha match = (x, y, isHorizontal, word)
     where
