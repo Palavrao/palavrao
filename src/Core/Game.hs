@@ -15,10 +15,14 @@ import Utils.Utils as UT
 import Controllers.AccountsController
 import Controllers.PlayerController
 import Data.Char
+import Controllers.LettersController
 
 
 valida :: Match -> [String] -> String -> IO (Match, String)
-valida match _ ":C" = return (match, "") -- TODO
+valida match wl ":c" = valida match wl ":C"
+valida match _ ":C" = do
+                    finishedMatch <- finishMatch match
+                    return (finishedMatch, "\nPartida encerrada, salvando...\n") -- TODO
 valida match _ ":!" = do
                         return (skipPlayerTurn match, ">> " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pulou o turno!\n") -- TODO
 valida match wordlist ":?" = do
@@ -73,9 +77,14 @@ valida match wordlist input
 
 gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
-    printBoard match
+    clearScreen
     UT.__colorText lastMessage Green
+    UT.__colorText "> Enter para seguir para a visão do próximo jogador!\n\n" Blue
+    hFlush stdout
+    c <- getLine
+    printBoard match
     UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match))))) Blue
+    putStrLn ("::LETRAS:: \n" ++ [letter l  | l <- pLetters (_getPlayerOnTurn match)])
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
     input <- getLine
