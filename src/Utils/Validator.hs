@@ -30,7 +30,7 @@ initialValidation match wordlist linha
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
         playerOnTurn = _getPlayerOnTurn match
-        playerLetters = [l | l <- letter pLetters playerOnTurn]
+        playerLetters = [letter l | l <- pLetters playerOnTurn]
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
         centroLivre = (((curTiles (mBoard match)) !! 7) !! 7) == '-'

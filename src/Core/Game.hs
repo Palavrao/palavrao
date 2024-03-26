@@ -18,7 +18,10 @@ import Data.Char
 
 
 valida :: Match -> [String] -> String -> IO (Match, String)
-valida match _ ":C" = return (match, "") -- TODO
+valida match wl ":c" = valida match wl ":C"
+valida match _ ":C" = do
+                    finishedMatch <- finishMatch match
+                    return (finishedMatch, "\nPartida encerrada, salvando...\n") -- TODO
 valida match _ ":!" = do
                         return (skipPlayerTurn match, ">> " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pulou o turno!\n") -- TODO
 valida match wordlist ":?" = do
