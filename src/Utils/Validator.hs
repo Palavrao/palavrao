@@ -34,7 +34,7 @@ initialValidation match wordlist linha
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
         centroLivre = (((curTiles (mBoard match)) !! 7) !! 7) == '-'
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_playerHasLetter playerLetters letrasNoBoard word) && (_tileValidationLetters letrasNoBoard word) && (estaConectado || centroLivre) && (_coordCenterValidation match isHorizontal (x,y) word))
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_wordValidation word letrasNoBoard) && (_tileValidationSize isHorizontal (x, y) word) && (_playerHasLetter playerLetters letrasNoBoard word) && (_tileValidationLetters letrasNoBoard word) && (estaConectado || centroLivre) && (_coordCenterValidation match isHorizontal (x,y) word))
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
@@ -67,8 +67,8 @@ _coordValidation :: [Char] -> Bool
 _coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
 
   
-_wordValidation :: String -> Bool
-_wordValidation word = [] == [l | l <- word, not (isLetter l)]
+_wordValidation :: String -> String -> Bool
+_wordValidation word letrasNoBoard = ([] == [l | l <- word, not (isLetter l)]) && (length word /= length [l | l <- letrasNoBoard, isLetter l])
 
 --DEBUGAR
 _tileValidationLetters :: String -> String -> Bool
@@ -90,6 +90,7 @@ _playerHasLetter _ _ [] = True
 _playerHasLetter playerLetters (b:bs) (w:ws) -- (letrasNoBoard) (word)
     | b == w = True && (_playerHasLetter playerLetters bs ws)
     | w `elem` playerLetters = True && (_playerHasLetter (_removeChar w playerLetters) (b:bs) ws)
+    | '>' `elem` playerLetters = True && (_playerHasLetter (_removeChar '>' playerLetters) (b:bs) ws)
     | otherwise = False
 
 _removeChar :: Char -> [Char] -> [Char]
