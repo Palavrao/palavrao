@@ -76,8 +76,12 @@ valida match wordlist input
 
 gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
-    printBoard match
+    clearScreen
     UT.__colorText lastMessage Green
+    UT.__colorText "> Enter para seguir para a visão do próximo jogador!\n\n" Blue
+    hFlush stdout
+    c <- getLine
+    printBoard match
     UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match))))) Blue
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
