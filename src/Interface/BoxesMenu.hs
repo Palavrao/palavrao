@@ -7,9 +7,10 @@ import System.Console.ANSI
 import Data.Char
 import GHC.Generics
 import Controllers.AccountsController
+import Controllers.PlayerController
 import Controllers.MatchesController
 
-data Action = NewGame | ContinueGame | Rules | Login | Register | RegisterMatch | StartMenu | Rank | InvalidAction | BeforeGame | Matches deriving (Show, Eq)
+data Action = NewGame | ContinueGame | Rules | Login | Register | RegisterMatch | StartMenu | Rank | InvalidAction | BeforeGame | FinishMatch | Matches deriving (Show, Eq)
 
 data Menu = Menu {
     box :: [[Char]],
@@ -210,6 +211,24 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    └───────────────────────────────┘   "
     ]), boxBefore = ContinueGame, action = Matches}
+        FinishMatch -> menu { box = ([
+        "    ┌───────────────────────────────┐   ",
+        printf "    │  %-5s                 %-5s  │   " (take 5 $ (accName (p1 menu))) (take 5 $ (accName (p2 menu))),
+        "    │                               │   ",
+        "    │           PALAVRÃO            │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │        Player ganhador        │   ",
+        "    │                               │   ",
+        printf "    │        %-17s      │   " (take 17 $ (accName (pAcc (getBestPlayer (currentMatch menu))))),
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │       partida finalizada      │   ",
+        "    └───────────────────────────────┘   "
+    ]), boxBefore = StartMenu, action = FinishMatch}
 
 geraRankLines :: Menu -> [String]
 geraRankLines menu = [( "    │     " ++ (show (i)) ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc))) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]

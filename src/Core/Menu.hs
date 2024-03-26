@@ -80,8 +80,9 @@ _menuFlux menu input = do
             "1" -> do
                 wordList <- UT.getWordList
                 startTime <- getCurrentTime
-                gameLoop (currentMatch menu) wordList startTime
-                Just <$> return (updateMenu StartMenu menu)
+                finishedMatch <- gameLoop (currentMatch menu) wordList startTime
+                let updatedMenu = _updateCurrentMatch menu finishedMatch
+                Just <$> return (updateMenu FinishMatch updatedMenu)
             "2" -> do
                 let updatedMenu = menu {p1 = p2 menu}
                 let updatedMenu' = _updateAccs updatedMenu Account{accName = ""}
@@ -101,6 +102,8 @@ _menuFlux menu input = do
             _   -> Just <$> return (updateMenu (boxBefore menu) menu)
         Matches -> case input of
             _   -> Just <$> return (updateMenu (boxBefore menu) menu)
+        FinishMatch -> case input of
+            _   -> Just <$> return (updateMenu (boxBefore menu) beginGame)
         _ -> Just <$> return (updateMenu (action menu) menu)
 
 _accsFull :: Menu -> Bool
