@@ -69,11 +69,12 @@ createMatch name acc1 acc2 = do
     saveMatchJson initMatch
     return initMatch
 
-finishMatch :: Match -> IO()
+finishMatch :: Match -> IO(Match)
 finishMatch match = do
     incAccScore (accName (pAcc p1)) (pScore p1)
     incAccScore (accName (pAcc p2)) (pScore p2)
     deleteMatchFromJson (mName match)
+    return match
     where
         p1 = mP1 match
         p2 = mP2 match
@@ -114,6 +115,17 @@ updatePlayerLetters match = do
             player
                 | mTurn match = mP2 match
                 | otherwise = mP1 match
+
+getBestPlayer :: Match -> Player
+getBestPlayer match
+    | p1Score > p2Score = p1
+    | p1Score < p2Score = p2
+    | otherwise = Player{pAcc = Account{accName = "Nenhum! Empate :D"}}
+    where 
+        p1 = mP1 match
+        p2 = mP1 match
+        p1Score = pScore p1
+        p2Score = pScore p2
 
 skipPlayerTurn :: Match -> Match
 skipPlayerTurn match = (toggleMatchTurn match) {mSkips = mSkips match + 1}

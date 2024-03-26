@@ -52,7 +52,7 @@ valida match wordlist input
         (res, listaDeRes, points) = (initialValidation match wordlist input)
 
 
-gameLoop :: Match -> [String] -> UTCTime -> String -> IO ()
+gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
     printBoard match
     UT.__colorText lastMessage Green
@@ -61,9 +61,9 @@ gameLoop match wordList lastUpdate lastMessage = do
     input <- getLine
     (m, msg) <- valida match wordList input
     if mSkips m == 4 then do
-        finishMatch m
-    else do    
-
+        finishedMatch <- finishMatch m
+        return finishedMatch
+    else do
         currentTime <- getCurrentTime
         let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
             updatedTimer = mTimer match - realToFrac elapsed
