@@ -30,9 +30,22 @@ valida match wordlist ":?" = do
                         (m, msg)  <- (valida match wordlist i)
                         return (m, msg) -- TODO
 
-valida match _ (':':'*':t) = do
-                        putStrLn "TODO SWITCH LETTERS"
-                        return (skipPlayerTurn match, ("Trocou a letra " ++ t ++ "\n")) -- TODO
+valida match w (':':'*':[]) = do
+                    UT.__colorText ("Escolha um caracter válido \n > ") Blue
+                    c <- getLine
+                    valida match w (":*" ++ c)
+
+valida match w (':':'*':t) = 
+                    let lttr = UT.getLetterObject (head t)
+                    in case lttr of
+                    Just letter -> do
+                        switched <- switchPlayerLetter match letter
+                        return (skipPlayerTurn switched, ((map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " trocou uma letra.\n")) -- TODO
+                    Nothing -> do
+                        UT.__colorText ("Escolha um caracter válido \n > ") Blue
+                        c <- getLine
+                        valida match w (":*" ++ c)
+                        
 
 valida match wordlist input 
     |(res && ((length listaDeRes) == 0)) = do

@@ -10,6 +10,8 @@ import Data.List (sortBy)
 import Data.Ord (comparing)
 import Data.Fixed (mod')
 import System.Console.ANSI
+import Controllers.LettersController
+import Data.Char
 
 
 startPersistence :: IO()
@@ -108,4 +110,8 @@ __colorText text color = do
     putStr text
     setSGR [Reset]  -- Reset text attributes to default
 
-    
+getLetterObject :: Char -> Maybe Letter
+getLetterObject c
+    | value == 0 = Nothing
+    | otherwise = Just $ Letter {letter=toUpper c, letterScore=value}
+    where value = letterValue (toUpper c)
