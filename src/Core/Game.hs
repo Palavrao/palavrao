@@ -20,9 +20,7 @@ import Controllers.LettersController
 
 valida :: Match -> [String] -> String -> IO (Match, String)
 valida match wl ":c" = valida match wl ":C"
-valida match _ ":C" = do
-                    finishedMatch <- finishMatch match
-                    return (finishedMatch, "\nPartida encerrada, salvando...\n") -- TODO
+valida match _ ":C" = return (match, (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pausou o jogo!")
 valida match _ ":!" = do
                         return (skipPlayerTurn match, ">> " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pulou o turno!\n") -- TODO
 valida match wordlist ":?" = do
@@ -84,7 +82,7 @@ gameLoop match wordList lastUpdate lastMessage = do
     c <- getLine
     printBoard match
     UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match))))) Blue
-    putStrLn ("::LETRAS:: \n" ++ [letter l  | l <- pLetters (_getPlayerOnTurn match)])
+    putStrLn ("\n::LETRAS:: " ++ [letter l  | l <- pLetters (_getPlayerOnTurn match)])
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
     input <- getLine
@@ -93,7 +91,8 @@ gameLoop match wordList lastUpdate lastMessage = do
         finishedMatch <- finishMatch m
         return finishedMatch
     else do
-        if input == ":C" then do 
+        if input == ":C" || input == ":c" then do 
+            UT.__colorText "\n\n>> Pausando e saindo do jogo...\n\n" Green
             return match
         else do 
             currentTime <- getCurrentTime
