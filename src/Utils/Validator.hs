@@ -28,11 +28,11 @@ initialValidation match wordlist linha
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
-       {-  playerOnTurn = _getPlayerOnTurn -}
+        playerOnTurn = _getPlayerOnTurn match
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
         centroLivre = (((curTiles (mBoard match)) !! 7) !! 7) == '-'
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && {- (_playerHasLetter playerOnTurn word) &&  -}(_tileValidationLetters letrasNoBoard word) && (estaConectado || centroLivre) && (_coordCenterValidation match isHorizontal (x,y) word))
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_playerHasLetter (pLetters playerOnTurn) word) && (_tileValidationLetters letrasNoBoard word) && (estaConectado || centroLivre) && (_coordCenterValidation match isHorizontal (x,y) word))
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
@@ -83,10 +83,18 @@ _tileValidationSize isHorizontal (x, y) word
     | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
     | otherwise = (y <= 15 - (length word) && y >= 0) && (x >= 0 && x <= 14)
 
-{- _playerHasLetter :: Player -> [Char] -> Bool
+_playerHasLetter :: [Letter] -> [Char] -> Bool
 _playerHasLetter _ [] = True
-_playerHasLetter player (c:cs) = any (\letterObj -> letter letterObj == c) (pLetters player) && playerHasLetter player cs
- -}
+_playerHasLetter [] _ = False
+_playerHasLetter (l:ls) word
+    | l letter `elem` word = True && (_playerHasLetter ls (_removeChar (l letter) word))
+    | otherwise = _playerHasLetter ls word
+
+_removeChar :: Char -> [Char] -> [Char]
+_removeChar x (y:ys) 
+    | x == y = ys
+    | otherwise = y : _removeChar x ys
+
 readWordInput :: String -> Match -> (Int, Int, Bool, String)
 readWordInput linha match = (x, y, isHorizontal, word)
     where
