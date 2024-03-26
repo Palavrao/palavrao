@@ -8,6 +8,7 @@ import Controllers.PlayerController
 import Controllers.AccountsController
 import Data.Char
 import Controllers.MatchesController
+import Controllers.LettersController
 import Utils.Utils as UT
 
 isStringInt :: String -> Bool
@@ -87,7 +88,7 @@ _playerHasLetter :: [Letter] -> [Char] -> Bool
 _playerHasLetter _ [] = True
 _playerHasLetter [] _ = False
 _playerHasLetter (l:ls) word
-    | l letter `elem` word = True && (_playerHasLetter ls (_removeChar (l letter) word))
+    | (letter l) `elem` word = True && (_playerHasLetter ls (_removeChar (letter l) word))
     | otherwise = _playerHasLetter ls word
 
 _removeChar :: Char -> [Char] -> [Char]
