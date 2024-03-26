@@ -21,7 +21,8 @@ data Match = Match {
     mP2 :: Player,
     mLetters :: [Letter],
     mUsedWords :: [String],
-    mTimer :: Float
+    mTimer :: Float,
+    mSkips :: Int
 } deriving (Show, Generic, Eq)
 
 instance ToJSON Match
@@ -56,7 +57,8 @@ createMatch name acc1 acc2 = do
             mP2 = createPlayer acc2,
             mLetters = startLetters,
             mUsedWords = [],
-            mTimer = 300
+            mTimer = 300,
+            mSkips = 0
         }
 
     matchP1Letters <- updatePlayerLetters match
@@ -112,6 +114,12 @@ updatePlayerLetters match = do
             player
                 | mTurn match = mP2 match
                 | otherwise = mP1 match
+
+skipPlayerTurn :: Match -> Match
+skipPlayerTurn match = (toggleMatchTurn match) {mSkips = mSkips match + 1}
+
+resetMatchSkipsQtd :: Match -> Match
+resetMatchSkipsQtd match = match{mSkips = 0}
 
 toggleMatchTurn :: Match -> Match
 toggleMatchTurn match = match {mTurn = not (mTurn match)}

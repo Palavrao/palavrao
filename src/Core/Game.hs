@@ -17,8 +17,8 @@ import Utils.Utils as UT
 valida :: Match -> [String] -> String -> IO Match
 valida match _ ":C" = return (match) -- TODO
 valida match _ ":!" = do
-                        putStrLn ">> Pulou o turno"
-                        return (match) -- TODO
+                        let m = skipPlayerTurn match
+                        return $ m
 valida match wordlist ":?" = do
                         UT.manual
                         putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
@@ -34,7 +34,7 @@ valida match _ (':':'*':t) = do
 valida match wordlist input 
     |(res && ((length listaDeRes) == 0)) = do
         UT.__colorText ("Palavra válida! Pontos: " ++ (show points)) Green
-        let m = (updateMatchBoard match (updateBoard (placeWord (readWordInput input match) (mBoard match))))
+        let m = (resetMatchSkipsQtd (updateMatchBoard match (updateBoard (placeWord (readWordInput input match) (mBoard match)))))
         return m
     |(res && ((length listaDeRes) /= 0)) = do
         UT.__colorText ("\nPalavras inválidas: " ++ (show listaDeRes) ++ " \nTente novamente: \n") Red
@@ -61,19 +61,21 @@ gameLoop match wordList lastUpdate = do
     hFlush stdout
     input <- getLine
     m <- valida match wordList input
+    if mSkips m == 4 then do
+        finishMatch m
+    else do
+        currentTime <- getCurrentTime
+        let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
+            updatedTimer = mTimer match - realToFrac elapsed
 
-    currentTime <- getCurrentTime
-    let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
-        updatedTimer = mTimer match - realToFrac elapsed
-
-    if updatedTimer <= 0
-        then do
-            putStrLn "Your turn is over!"
-            let updatedMatch = updateMatchTimer m 300
-            let updatedMatch' = toggleMatchTurn updatedMatch
-            saveMatchJson updatedMatch
-            gameLoop updatedMatch' wordList currentTime
-        else do
-            let updatedMatch = updateMatchTimer m updatedTimer
-            threadDelay 100000
-            gameLoop updatedMatch wordList currentTime
+        if updatedTimer <= 0
+            then do
+                putStrLn "Your turn is over!"
+                let updatedMatch = updateMatchTimer m 300
+                let updatedMatch' = toggleMatchTurn updatedMatch
+                saveMatchJson updatedMatch
+                gameLoop updatedMatch' wordList currentTime
+            else do
+                let updatedMatch = updateMatchTimer m updatedTimer
+                threadDelay 100000
+                gameLoop updatedMatch wordList currentTime
