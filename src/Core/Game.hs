@@ -33,7 +33,7 @@ valida match _ (':':'*':t) = do
 
 valida match wordlist input 
     |(res && ((length listaDeRes) == 0)) = do
-        let m = (updateMatchBoard match (updateBoard (placeWord (readWordInput input match) (mBoard match))))
+        let m = (resetMatchSkipsQtd (updateMatchBoard match (updateBoard (placeWord (readWordInput input match) (mBoard match)))))
         return (m, ("Palavra válida! Pontos: " ++ (show points)))
     |(res && ((length listaDeRes) /= 0)) = do
         UT.__colorText ("\nPalavras inválidas: " ++ (show listaDeRes) ++ " \nTente novamente: \n") Red
@@ -61,20 +61,22 @@ gameLoop match wordList lastUpdate lastMessage = do
     hFlush stdout
     input <- getLine
     (m, msg) <- valida match wordList input
-    
+    if mSkips m == 4 then do
+        finishMatch m
+    else do    
 
-    currentTime <- getCurrentTime
-    let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
-        updatedTimer = mTimer match - realToFrac elapsed
+        currentTime <- getCurrentTime
+        let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
+            updatedTimer = mTimer match - realToFrac elapsed
 
-    if updatedTimer <= 0
-        then do
-            putStrLn "Your turn is over!"
-            let updatedMatch = updateMatchTimer m 300
-            let updatedMatch' = toggleMatchTurn updatedMatch
-            saveMatchJson updatedMatch
-            gameLoop updatedMatch' wordList currentTime ""
-        else do
-            let updatedMatch = updateMatchTimer m updatedTimer
-            threadDelay 100000
-            gameLoop updatedMatch wordList currentTime msg
+        if updatedTimer <= 0
+            then do
+                putStrLn "Your turn is over!"
+                let updatedMatch = updateMatchTimer m 300
+                let updatedMatch' = toggleMatchTurn updatedMatch
+                saveMatchJson updatedMatch
+                gameLoop updatedMatch' wordList currentTime ""
+            else do
+                let updatedMatch = updateMatchTimer m updatedTimer
+                threadDelay 100000
+                gameLoop updatedMatch wordList currentTime msg
