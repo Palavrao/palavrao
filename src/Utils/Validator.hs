@@ -88,7 +88,7 @@ _tileValidationSize isHorizontal (x, y) word
 _playerHasLetter :: [Char] -> [Char] -> [Char] -> Bool
 _playerHasLetter _ _ [] = True
 _playerHasLetter playerLetters (t:ts) (w:ws) -- (letrasNoBoard) (word)
-    | w == t = True && (_playerHasLetter playerLetters bs ws)
+    | w == t = True && (_playerHasLetter playerLetters ts ws)
     | w `elem` playerLetters = True && (_playerHasLetter (_removeChar w playerLetters) ts ws)
     | '<' `elem` playerLetters = True && (_playerHasLetter (_removeChar '<' playerLetters) ts ws)
     | otherwise = False
