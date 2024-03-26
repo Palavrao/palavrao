@@ -71,7 +71,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │           novo jogo           │   ",
+        "    │      iniciando novo jogo      │   ",
         "    └───────────────────────────────┘   "
     ], boxBefore = StartMenu, action = NewGame}
         ContinueGame -> menu { box = [
@@ -89,7 +89,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │           continuar           │   ",
+        "    │         continuando           │   ",
         "    └───────────────────────────────┘   "
     ], boxBefore = StartMenu, action = ContinueGame}
         Login -> menu { box = [
@@ -162,7 +162,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │          criar conta          │   ",
+        "    │        criando conta          │   ",
         "    └───────────────────────────────┘   "
     ], boxBefore = StartMenu, action = Register}
         RegisterMatch -> menu { box = [
@@ -180,7 +180,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │         criar partida         │   ",
+        "    │       criando partida         │   ",
         "    └───────────────────────────────┘   "
     ], boxBefore = StartMenu, action = RegisterMatch}
         Rank -> menu { box = ([
