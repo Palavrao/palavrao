@@ -17,8 +17,7 @@ import Utils.Utils as UT
 valida :: Match -> [String] -> String -> IO (Match, String)
 valida match _ ":C" = return (match, "") -- TODO
 valida match _ ":!" = do
-                        putStrLn ">> Pulou o turno"
-                        return (match, ">> Pulou o turno") -- TODO
+                        return (skipPlayerTurn match, ">> Pulou o turno") -- TODO
 valida match wordlist ":?" = do
                         UT.manual
                         putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
