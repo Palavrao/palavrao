@@ -15,6 +15,7 @@ import Utils.Utils as UT
 import Controllers.AccountsController
 import Controllers.PlayerController
 import Data.Char
+import Controllers.LettersController
 
 
 valida :: Match -> [String] -> String -> IO (Match, String)
@@ -83,6 +84,7 @@ gameLoop match wordList lastUpdate lastMessage = do
     c <- getLine
     printBoard match
     UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match))))) Blue
+    putStrLn ("::LETRAS:: \n" ++ [letter l  | l <- pLetters (_getPlayerOnTurn match)])
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
     input <- getLine
