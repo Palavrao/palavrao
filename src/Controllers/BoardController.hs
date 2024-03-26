@@ -142,9 +142,9 @@ getPointsWord tiles word = (wordBonuses tiles word) * (getPointsLetter tiles wor
 getPointsLetter :: [Char] -> [Char] -> Int
 getPointsLetter [] [] = 0
 getPointsLetter (hBoard:tBoard) (hWord:tWord)
-        | hBoard == '*' = 2 * (LC.letterValue hWord) -- azul dobra
-        | hBoard == '!' = 3 * (LC.letterValue hWord) -- verde triplica
-        | otherwise = LC.letterValue hWord
+        | hBoard == '*' = 2 * (LC.letterValue hWord) + getPointsLetter tBoard tWord-- azul dobra
+        | hBoard == '!' = 3 * (LC.letterValue hWord) + getPointsLetter tBoard tWord-- verde triplica
+        | otherwise = LC.letterValue hWord + getPointsLetter tBoard tWord
 
 bingo :: [Char] -> Int
 bingo tiles
