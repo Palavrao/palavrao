@@ -30,10 +30,11 @@ initialValidation match wordlist linha
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
         playerOnTurn = _getPlayerOnTurn match
+        playerLetters = [l | l <- letter pLetters playerOnTurn]
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
         centroLivre = (((curTiles (mBoard match)) !! 7) !! 7) == '-'
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_playerHasLetter (pLetters playerOnTurn) word) && (_tileValidationLetters letrasNoBoard word) && (estaConectado || centroLivre) && (_coordCenterValidation match isHorizontal (x,y) word))
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) && (_coordValidation coord) && (_tileValidationSize isHorizontal (x, y) word) && (_playerHasLetter playerLetters letrasNoBoard word) && (_tileValidationLetters letrasNoBoard word) && (estaConectado || centroLivre) && (_coordCenterValidation match isHorizontal (x,y) word))
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
@@ -65,7 +66,7 @@ _allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, (_wordExisten
 _coordValidation :: [Char] -> Bool
 _coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
 
-
+  
 _wordValidation :: String -> Bool
 _wordValidation word = [] == [l | l <- word, not (isLetter l)]
 
@@ -84,12 +85,12 @@ _tileValidationSize isHorizontal (x, y) word
     | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
     | otherwise = (y <= 15 - (length word) && y >= 0) && (x >= 0 && x <= 14)
 
-_playerHasLetter :: [Letter] -> [Char] -> Bool
-_playerHasLetter _ [] = True
-_playerHasLetter [] _ = False
-_playerHasLetter (l:ls) word
-    | (letter l) `elem` word = True && (_playerHasLetter ls (_removeChar (letter l) word))
-    | otherwise = _playerHasLetter ls word
+_playerHasLetter :: [Char] -> [Char] -> [Char] -> Bool
+_playerHasLetter _ _ [] = True
+_playerHasLetter playerLetters (b:bs) (w:ws) -- (letrasNoBoard) (word)
+    | b == w = True && (_playerHasLetter playerLetters bs ws)
+    | w `elem` playerLetters = True && (_playerHasLetter (_removeChar w playerLetters) (b:bs) ws)
+    | otherwise = False
 
 _removeChar :: Char -> [Char] -> [Char]
 _removeChar x (y:ys) 
