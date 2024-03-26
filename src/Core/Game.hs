@@ -68,14 +68,15 @@ gameLoop match wordList lastUpdate lastMessage = do
         let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
             updatedTimer = mTimer match - realToFrac elapsed
 
-        if updatedTimer <= 0
-            then do
-                putStrLn "Your turn is over!"
-                let updatedMatch = updateMatchTimer m 300
-                let updatedMatch' = toggleMatchTurn updatedMatch
-                saveMatchJson updatedMatch
-                gameLoop updatedMatch' wordList currentTime ""
-            else do
-                let updatedMatch = updateMatchTimer m updatedTimer
-                threadDelay 100000
-                gameLoop updatedMatch wordList currentTime msg
+        if updatedTimer <= 0 then do
+            putStrLn "Your turn is over!"
+            let updatedMatch = updateMatchTimer m 300
+            let updatedMatch' = toggleMatchTurn updatedMatch
+            updateMatchJson updatedMatch
+            gameLoop updatedMatch' wordList currentTime ""
+        else do
+            let updatedMatch = updateMatchTimer m updatedTimer
+            threadDelay 100000
+            updateMatchJson updatedMatch
+            gameLoop updatedMatch wordList currentTime msg
+        
