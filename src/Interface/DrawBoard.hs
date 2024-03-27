@@ -5,9 +5,12 @@ import System.Console.ANSI
 import Controllers.MatchesController
 import Controllers.AccountsController
 import Controllers.BoardController
+import Controllers.LettersController
+import Controllers.PlayerController
 import Data.Char
 import Controllers.PlayerController
 import Utils.Utils as UT
+import Utils.Validator
 
 
 -- █ ■
@@ -61,7 +64,8 @@ _buildBoard match i = do
     if i > 15 then 
         putStr (unlines
                 [printf "\n     X X X X X X X                  Tempo restante: %s" (UT.formatTime (mTimer match)),
-                 printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n"])
+                 printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n",
+                 printf " testando %s" (show playerLetters)])
     else do
         putStr "     "
         mapM_ __pintaBoard (lines!!i)
@@ -70,6 +74,8 @@ _buildBoard match i = do
     where 
         formattedLines = map printf (curTiles $ mBoard match)
         lines = ["A B C D E F G H I J K L M N O"] ++ formattedLines
+        playerOnTurn = _getPlayerOnTurn match
+        playerLetters = [letter l | l <- pLetters playerOnTurn]   
 
 
 printBoard :: Match -> IO ()
