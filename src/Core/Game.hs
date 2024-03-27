@@ -72,7 +72,7 @@ valida match wordlist input
         putStrLn "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
         hFlush stdout
         i <- getLine
-        (m, msg)  <- (valida match wordlist i)
+        (m, msg) <- (valida match wordlist i)
         return (m, msg)
     | otherwise = do
         UT.__colorText "\nCoordenada ou Formatação inválidas, tente novamente: \n" Red
@@ -88,7 +88,7 @@ valida match wordlist input
 
 gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
-    clearScreen
+    --clearScreen
     UT.__colorText lastMessage Green
     UT.__colorText "> Enter para seguir para a visão do próximo jogador!\n\n" Blue
     hFlush stdout
