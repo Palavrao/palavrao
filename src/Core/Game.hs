@@ -43,7 +43,7 @@ valida match w (':':'*':[]) = do
                     valida match w (":*" ++ c)
 
 valida match w (':':'*':t) = 
-                    let lttr = UT.getLetterObject (head t)
+                    let lttr = UT.getLetterObject (toUpper (head t))
                     in case lttr of
                     Just letter -> do
                         let hasLttr = playerHasLetter match letter
@@ -51,11 +51,11 @@ valida match w (':':'*':t) =
                             switched <- switchPlayerLetter match letter
                             return (skipPlayerTurn switched, ((map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " trocou uma letra.\n"))
                         else do
-                            UT.__colorText ("Letra inexistente \n > ") Blue
+                            UT.__colorText ("Escolha uma letra válida \n > ") Blue
                             c <- getLine
                             valida match w (":*" ++ c)
                     Nothing -> do
-                        UT.__colorText ("Escolha um caracter válido \n > ") Blue
+                        UT.__colorText ("Escolha uma letra válida \n > ") Blue
                         c <- getLine
                         valida match w (":*" ++ c)
                         
