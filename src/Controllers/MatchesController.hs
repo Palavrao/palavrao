@@ -134,7 +134,7 @@ resetMatchSkipsQtd :: Match -> Match
 resetMatchSkipsQtd match = match{mSkips = 0}
 
 toggleMatchTurn :: Match -> Match
-toggleMatchTurn match = match {mTurn = not (mTurn match)}
+toggleMatchTurn match = match {mTurn = not (mTurn match), mTimer = 300}
 
 updateMatchBoard :: Match -> Board -> Match
 updateMatchBoard match newBoard = match {mBoard = newBoard}

@@ -104,15 +104,14 @@ gameLoop match wordList lastUpdate lastMessage = do
     putStrLn ("\n::LETRAS:: " ++ [letter l  | l <- pLetters (_getPlayerOnTurn match)])
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
-    input <- getLine
-    (m, msg) <- valida match wordList input
-    if mSkips m == 4 then do
-        finishedMatch <- finishMatch m
+    if mSkips match == 4 then do
+        finishedMatch <- finishMatch match
         return finishedMatch
     else do
+        input <- getLine
         if input == ":C" || input == ":c" then do 
             UT.__colorText "\n\n>> Pausando e saindo do jogo...\n\n" Green
-            return m
+            return match
         else do 
             currentTime <- getCurrentTime
             let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
@@ -124,6 +123,9 @@ gameLoop match wordList lastUpdate lastMessage = do
                 updateMatchJson updatedMatch
                 gameLoop updatedMatch wordList currentTime ""
             else do
+                putStrLn("::mTimer match::" ++ show (mTimer match))
+                (m, msg) <- valida match wordList input
+                putStrLn("::mTimer m::" ++ show (mTimer m))
                 let updatedMatch = updateMatchTimer m updatedTimer
                 threadDelay 100000
                 updateMatchJson updatedMatch
