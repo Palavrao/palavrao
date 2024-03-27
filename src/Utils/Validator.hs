@@ -29,7 +29,7 @@ initialValidation match wordlist linha
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
-        playerOnTurn = _getPlayerOnTurn match
+        playerOnTurn = getPlayerOnTurn match
         playerLetters = [letter l | l <- pLetters playerOnTurn]
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
         letterUsageReport = _wordLetterReport playerLetters letrasNoBoard word
@@ -47,8 +47,8 @@ initialValidation match wordlist linha
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
-_getPlayerOnTurn :: Match -> Player
-_getPlayerOnTurn match 
+getPlayerOnTurn :: Match -> Player
+getPlayerOnTurn match 
     | mTurn match = mP2 match
     | otherwise = mP1 match
 
@@ -104,7 +104,7 @@ _wordLetterReport playerLetters (t:tileTail) (w:wordTail) -- (letrasNoBoard) (wo
 
 playerHasLetter :: Match -> Letter -> Bool
 playerHasLetter match letter = letter `elem` (pLetters player)
-    where player = _getPlayerOnTurn match
+    where player = getPlayerOnTurn match
 
 {-  
     O output é algo assim:
