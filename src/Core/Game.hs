@@ -54,7 +54,7 @@ valida match w (':':'*':t) =
                         valida match w (":*" ++ c)
                         
 valida match wordlist input 
-    |(res && ((length palavrasInvalidas) == 0)) = do
+    |(res && ((length palavrasInvalidas) == 0) && (length letrasInvalidas) == 0) = do
         updatedPlayer <- updatePlayerLetters (removePlayerLetters (incPlayerScore (resetMatchSkipsQtd (updateMatchBoard match boardAtualizado)) points) letrasUsadas)
         let m = toggleMatchTurn updatedPlayer
         return (m, ("Palavra válida! Pontos: " ++ (show points) ++ "\n"))
