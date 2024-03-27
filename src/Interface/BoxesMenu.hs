@@ -204,7 +204,7 @@ updateMenu action menu = case action of
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
         "    │                               │   "]
-        {-++ (geraMatchLines menu)-} ++
+        ++ (geraMatchLines getMatches pageIndex matchesPerPage) ++
        ["    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -232,3 +232,22 @@ updateMenu action menu = case action of
 
 geraRankLines :: Menu -> [String]
 geraRankLines menu = [( "    │     " ++ (show (i)) ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc))) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
+
+-- tentando exibir as partidas em uma página
+displayMatchesPage :: [Match] -> Int -> [String]
+displayMatchesPage matches pageIndex =
+    let matchesPerPage = 5
+        startIndex = pageIndex * matchesPerPage
+        endIndex = min (startIndex + matchesPerPage) (length matches)
+        matchesOnPage = take matchesPerPage (drop startIndex matches)
+        matchLines = map (\(i, match) -> printf "    │   %-2d. %-20s     │" (i + 1) (take 20 $ mName match)) (zip [startIndex..] matchesOnPage)
+    in matchLines
+
+-- atualizando geraMatchLines
+geraMatchLines :: [Match] -> Int -> Int -> [String]
+geraMatchLines matches pageIndex matchesPerPage =
+    let startIndex = pageIndex * matchesPerPage
+        endIndex = min (startIndex + matchesPerPage) (length matches)
+        matchesOnPage = take matchesPerPage (drop startIndex matches)
+        matchLines = map (\(i, match) -> printf "    │   %-2d. %-20s     │" (i + 1) (take 20 $ mName match)) (zip [startIndex..] matchesOnPage)
+    in ["    │                               │   "] ++ matchLines ++ ["    │                               │   "]

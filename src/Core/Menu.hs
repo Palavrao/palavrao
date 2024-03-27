@@ -22,13 +22,13 @@ _drawMenu menu = do
     clearScreen
     mapM_ putStrLn (box menu)
 
-menuLoop :: Menu -> IO ()
+menuLoop :: Menu -> Int -> IO ()
 menuLoop menu = do
     _drawMenu menu
     userInput <- getLine
     updatedMenu <- _menuFlux menu userInput
     case updatedMenu of 
-        Just updatedMenu -> menuLoop updatedMenu
+        Just updatedMenu -> menuLoop updatedMenu pageIndex
         Nothing -> return ()
 
 _menuFlux :: Menu -> String -> IO(Maybe Menu)
@@ -101,7 +101,19 @@ _menuFlux menu input = do
         Rank -> case input of
             _   -> Just <$> return (updateMenu (boxBefore menu) menu)
         Matches -> case input of
-            _   -> Just <$> return (updateMenu (boxBefore menu) menu)
+            "1" -> do
+                let updatedPageIndex = max 0 (pageIndex - 1)
+                    matchesPerPage = 5
+                    menuBox = box menu ++ geraMatchLines matches updatedPageIndex matchesPerPage
+                menuLoop menu updatedPageIndex
+                return Nothing -- página anterior
+            "2" -> do
+                let updatedPageIndex = pageIndex + 1
+                    matchesPerPage = 5
+                    menuBox = box menu ++ geraMatchLines matches updatedPageIndex matchesPerPage
+                menuLoop menu updatedPageIndex
+                return Nothing --  próxima página
+            _   -> Just <$> return (updateMenu (action menu) menu)
         FinishMatch -> case input of
             _   -> Just <$> return (updateMenu (boxBefore menu) beginGame)
         _ -> Just <$> return (updateMenu (action menu) menu)
