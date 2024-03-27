@@ -32,7 +32,7 @@ initialValidation match wordlist linha
         playerOnTurn = _getPlayerOnTurn match
         playerLetters = [letter l | l <- pLetters playerOnTurn]
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
-        letterUsageReport = _playerHasLetter playerLetters letrasNoBoard word
+        letterUsageReport = _wordLetterReport playerLetters letrasNoBoard word
         invalidLetters = _lettersMissing word letterUsageReport
         letrasUsadas = [l | l <- letterUsageReport, l /= '!', l /= ' ']
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
@@ -94,13 +94,17 @@ _tileValidationSize isHorizontal (x, y) word
     | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
     | otherwise = (y <= 15 - (length word) && y >= 0) && (x >= 0 && x <= 14)
 
-_playerHasLetter :: [Char] -> [Char] -> [Char] -> [Char]
-_playerHasLetter _ _ [] = []
-_playerHasLetter playerLetters (t:tileTail) (w:wordTail) -- (letrasNoBoard) (word)
-    | w == t = ' ':(_playerHasLetter playerLetters tileTail wordTail)
-    | w `elem` playerLetters = w:(_playerHasLetter (_removeChar w playerLetters) tileTail wordTail)
-    | '<' `elem` playerLetters = '<':(_playerHasLetter (_removeChar '<' playerLetters) tileTail wordTail)
-    | otherwise = '!':(_playerHasLetter playerLetters tileTail wordTail)
+_wordLetterReport :: [Char] -> [Char] -> [Char] -> [Char]
+_wordLetterReport _ _ [] = []
+_wordLetterReport playerLetters (t:tileTail) (w:wordTail) -- (letrasNoBoard) (word)
+    | w == t = ' ':(_wordLetterReport playerLetters tileTail wordTail)
+    | w `elem` playerLetters = w:(_wordLetterReport (_removeChar w playerLetters) tileTail wordTail)
+    | '<' `elem` playerLetters = '<':(_wordLetterReport (_removeChar '<' playerLetters) tileTail wordTail)
+    | otherwise = '!':(_wordLetterReport playerLetters tileTail wordTail)
+
+playerHasLetter :: Match -> Letter -> Bool
+playerHasLetter match letter = letter `elem` (pLetters player)
+    where player = _getPlayerOnTurn match
 
 {-  
     O output é algo assim:

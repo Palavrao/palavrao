@@ -46,8 +46,14 @@ valida match w (':':'*':t) =
                     let lttr = UT.getLetterObject (head t)
                     in case lttr of
                     Just letter -> do
-                        switched <- switchPlayerLetter match letter
-                        return (skipPlayerTurn switched, ((map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " trocou uma letra.\n"))
+                        let hasLttr = playerHasLetter match letter
+                        if hasLttr then do
+                            switched <- switchPlayerLetter match letter
+                            return (skipPlayerTurn switched, ((map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " trocou uma letra.\n"))
+                        else do
+                            UT.__colorText ("Letra inexistente \n > ") Blue
+                            c <- getLine
+                            valida match w (":*" ++ c)
                     Nothing -> do
                         UT.__colorText ("Escolha um caracter válido \n > ") Blue
                         c <- getLine
@@ -110,14 +116,13 @@ gameLoop match wordList lastUpdate lastMessage = do
         else do 
             currentTime <- getCurrentTime
             let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
-                updatedTimer = mTimer match - realToFrac elapsed
+            let updatedTimer = mTimer match - realToFrac elapsed
 
             if updatedTimer <= 0 then do
                 putStrLn "Your turn is over!"
-                let updatedMatch = updateMatchTimer m 300
-                let updatedMatch' = toggleMatchTurn updatedMatch
+                let updatedMatch = toggleMatchTurn match
                 updateMatchJson updatedMatch
-                gameLoop updatedMatch' wordList currentTime ""
+                gameLoop updatedMatch wordList currentTime ""
             else do
                 let updatedMatch = updateMatchTimer m updatedTimer
                 threadDelay 100000
