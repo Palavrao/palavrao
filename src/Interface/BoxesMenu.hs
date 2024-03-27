@@ -172,7 +172,7 @@ updateMenu action menu = case action of
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
         "    │                               │   ",
-        "    │     1. digitar nome           │   ",
+        "    │     1. criar nome da partida  │   ",
         "    │     2. voltar                 │   ",
         "    │                               │   ",
         "    │                               │   ",
