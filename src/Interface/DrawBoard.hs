@@ -64,8 +64,7 @@ _buildBoard :: Match -> Int -> IO ()
 _buildBoard match i = do
     if i > 15 then 
         putStr (unlines
-                [printf "  Tempo restante: %s" (UT.formatTime (mTimer match)),
-                 printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n",
+                [printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n",
                  printf  playerLetters])
     else do
         putStr "     "
@@ -75,7 +74,7 @@ _buildBoard match i = do
     where 
         formattedLines = map printf (curTiles $ mBoard match)
         lines = ["A B C D E F G H I J K L M N O"] ++ formattedLines
-        playerOnTurn = _getPlayerOnTurn match
+        playerOnTurn = getPlayerOnTurn match
         playerLetters = concatMap (\l -> [letter l, ' ']) (pLetters playerOnTurn)   
 
 printBoard :: Match -> IO ()
