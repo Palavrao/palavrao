@@ -134,7 +134,7 @@ resetMatchSkipsQtd :: Match -> Match
 resetMatchSkipsQtd match = match{mSkips = 0}
 
 toggleMatchTurn :: Match -> Match
-toggleMatchTurn match = match {mTurn = not (mTurn match)}
+toggleMatchTurn match = match {mTurn = not (mTurn match), mTimer = 300}
 
 updateMatchBoard :: Match -> Board -> Match
 updateMatchBoard match newBoard = match {mBoard = newBoard}
@@ -146,14 +146,13 @@ switchPlayerLetter :: Match -> Letter -> IO(Match)
 switchPlayerLetter match letter = do
     (newLetter, updatedLetters) <- UT.popRandomElements (mLetters match) 1
 
-    let playerLetters = (head newLetter:pLetters player)
+    let playerLetters = UT.removeOneElement (pLetters player) letter
+    let updatedPlayer = updateLetters player playerLetters 
 
-    let updatedPlayerLetters = UT.removeOneElement playerLetters letter
+    let updatedMatch = _updateMatchLetters match (letter:updatedLetters)
+    let updatedPlayer' = addLetters updatedPlayer newLetter
 
-    let updatedMatch = _updateMatchLetters match updatedLetters
-    let updatedPlayer = addLetters player updatedPlayerLetters
-
-    return $ _updateMatchPlayer updatedMatch updatedPlayer
+    return $ _updateMatchPlayer updatedMatch updatedPlayer'
     where
         player
             | mTurn match = mP2 match

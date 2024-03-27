@@ -21,16 +21,16 @@ import Controllers.LettersController
 valida :: Match -> [String] -> String -> IO (Match, String)
 -- CASOS ESPECIAIS : :C PAUSAR PARTIDA
 valida match wl ":c" = valida match wl ":C"
-valida match _ ":C" = return (match, (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pausou o jogo!")
+valida match _ ":C" = return (match, (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ " pausou o jogo!")
 
 -- CASOS ESPECIAIS: :! PULAR TURNO
 valida match _ ":!" = do
-                        return (skipPlayerTurn match, ">> " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pulou o turno!\n") 
+                        return (skipPlayerTurn match, ">> " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ " pulou o turno!\n") 
 
 -- CASOS ESPECIAIS: :! VER MANUAL
 valida match wordlist ":?" = do
                         UT.manual
-                        UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match))))) Blue
+                        UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match))))) Blue
                         putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
                         hFlush stdout
                         i <- getLine
@@ -43,18 +43,24 @@ valida match w (':':'*':[]) = do
                     valida match w (":*" ++ c)
 
 valida match w (':':'*':t) = 
-                    let lttr = UT.getLetterObject (head t)
+                    let lttr = UT.getLetterObject (toUpper (head t))
                     in case lttr of
                     Just letter -> do
-                        switched <- switchPlayerLetter match letter
-                        return (skipPlayerTurn switched, ((map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " trocou uma letra.\n"))
+                        let hasLttr = playerHasLetter match letter
+                        if hasLttr then do
+                            switched <- switchPlayerLetter match letter
+                            return (skipPlayerTurn switched, ((map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ " trocou uma letra.\n"))
+                        else do
+                            UT.__colorText ("Escolha uma letra válida \n > ") Blue
+                            c <- getLine
+                            valida match w (":*" ++ c)
                     Nothing -> do
-                        UT.__colorText ("Escolha um caracter válido \n > ") Blue
+                        UT.__colorText ("Escolha uma letra válida \n > ") Blue
                         c <- getLine
                         valida match w (":*" ++ c)
                         
 valida match wordlist input 
-    |(res && ((length palavrasInvalidas) == 0)) = do
+    |(res && ((length palavrasInvalidas) == 0) && (length letrasInvalidas) == 0) = do
         updatedPlayer <- updatePlayerLetters (removePlayerLetters (incPlayerScore (resetMatchSkipsQtd (updateMatchBoard match boardAtualizado)) points) letrasUsadas)
         let m = toggleMatchTurn updatedPlayer
         return (m, ("Palavra válida! Pontos: " ++ (show points) ++ "\n"))
@@ -72,7 +78,7 @@ valida match wordlist input
         putStrLn "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
         hFlush stdout
         i <- getLine
-        (m, msg)  <- (valida match wordlist i)
+        (m, msg) <- (valida match wordlist i)
         return (m, msg)
     | otherwise = do
         UT.__colorText "\nCoordenada ou Formatação inválidas, tente novamente: \n" Red
@@ -88,39 +94,42 @@ valida match wordlist input
 
 gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
-    clearScreen
+    --clearScreen
     UT.__colorText lastMessage Green
     UT.__colorText "> Enter para seguir para a visão do próximo jogador!\n\n" Blue
     hFlush stdout
     c <- getLine
     printBoard match
-    UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match))))) Blue
-    putStrLn ("\n::LETRAS:: " ++ [letter l  | l <- pLetters (_getPlayerOnTurn match)])
+    UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match))))) Blue
+    putStrLn ("\n::LETRAS:: " ++ [letter l  | l <- pLetters (getPlayerOnTurn match)])
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
-    input <- getLine
-    (m, msg) <- valida match wordList input
-    if mSkips m == 4 then do
-        finishedMatch <- finishMatch m
+    if mSkips match == 4 then do
+        finishedMatch <- finishMatch match
         return finishedMatch
     else do
+        input <- getLine
         if input == ":C" || input == ":c" then do 
             UT.__colorText "\n\n>> Pausando e saindo do jogo...\n\n" Green
-            return m
+            return match
         else do 
             currentTime <- getCurrentTime
             let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
-                updatedTimer = mTimer match - realToFrac elapsed
+            let updatedTimer = mTimer match - realToFrac elapsed
 
             if updatedTimer <= 0 then do
                 putStrLn "Your turn is over!"
-                let updatedMatch = updateMatchTimer m 300
-                let updatedMatch' = toggleMatchTurn updatedMatch
+                let updatedMatch = toggleMatchTurn match
                 updateMatchJson updatedMatch
-                gameLoop updatedMatch' wordList currentTime ""
+                gameLoop updatedMatch wordList currentTime ""
             else do
-                let updatedMatch = updateMatchTimer m updatedTimer
-                threadDelay 100000
-                updateMatchJson updatedMatch
-                gameLoop updatedMatch wordList currentTime msg
+                (m, msg) <- valida match wordList input
+                if getPlayerOnTurn match /= getPlayerOnTurn m then do
+                    updateMatchJson m
+                    gameLoop m wordList currentTime ""
+                else do 
+                    let updatedMatch = updateMatchTimer m updatedTimer
+                    threadDelay 100000
+                    updateMatchJson updatedMatch
+                    gameLoop updatedMatch wordList currentTime msg
             
