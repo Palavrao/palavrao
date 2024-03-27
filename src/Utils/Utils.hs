@@ -115,3 +115,12 @@ getLetterObject c
     | value == 0 = Nothing
     | otherwise = Just $ Letter {letter=toUpper c, letterScore=value}
     where value = letterValue (toUpper c)
+
+
+_removeChar :: Char -> [Char] -> [Char]
+_removeChar x (y:ys) 
+    | x == y = ys
+    | otherwise = y : _removeChar x ys
+
+removeChars :: [Char] -> [Char] -> [Char]
+removeChars toRemove list = foldr (\x acc -> _removeChar x acc) list toRemove

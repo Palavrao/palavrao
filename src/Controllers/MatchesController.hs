@@ -108,7 +108,7 @@ updatePlayerLetters match = do
     (playerLetters, updatedLetters) <- UT.popRandomElements (mLetters match) (7 - (length (pLetters player)))
 
     let updatedMatch = _updateMatchLetters match updatedLetters
-    let updatedPlayer = updateLetters player playerLetters
+    let updatedPlayer = addLetters player playerLetters
 
     return $ _updateMatchPlayer updatedMatch updatedPlayer
         where
@@ -151,10 +151,19 @@ switchPlayerLetter match letter = do
     let updatedPlayerLetters = UT.removeOneElement playerLetters letter
 
     let updatedMatch = _updateMatchLetters match updatedLetters
-    let updatedPlayer = updateLetters player updatedPlayerLetters
+    let updatedPlayer = addLetters player updatedPlayerLetters
 
     return $ _updateMatchPlayer updatedMatch updatedPlayer
     where
+        player
+            | mTurn match = mP2 match
+            | otherwise = mP1 match
+
+
+removePlayerLetters :: Match -> [Char] -> Match
+removePlayerLetters match toRemove = _updateMatchPlayer match (updateLetters player newLetters)
+    where 
+        newLetters = getLetterArray (UT.removeChars toRemove [letter l | l <- (pLetters player)])
         player
             | mTurn match = mP2 match
             | otherwise = mP1 match

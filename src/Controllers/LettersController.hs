@@ -4,6 +4,7 @@ module Controllers.LettersController where
 
 import Data.Aeson
 import GHC.Generics
+import Data.Char
 
 data Letter = Letter {
     letter :: Char,
@@ -138,7 +139,7 @@ startLetters = [
     ]
 
 letterValue :: Char -> Int
-letterValue c
+letterValue i
     | c == 'A' = 1
     | c == 'E' = 1
     | c == 'I' = 1
@@ -163,3 +164,8 @@ letterValue c
     | c == 'X' = 7
     | c == 'Z' = 7
     | otherwise = 0
+    where c  = toUpper i
+
+
+getLetterArray :: [Char] -> [Letter]
+getLetterArray characters = map (\c -> Letter { letter=toUpper c, letterScore=letterValue c}) characters

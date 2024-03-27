@@ -19,10 +19,15 @@ import Controllers.LettersController
 
 
 valida :: Match -> [String] -> String -> IO (Match, String)
+-- CASOS ESPECIAIS : :C PAUSAR PARTIDA
 valida match wl ":c" = valida match wl ":C"
 valida match _ ":C" = return (match, (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pausou o jogo!")
+
+-- CASOS ESPECIAIS: :! PULAR TURNO
 valida match _ ":!" = do
-                        return (skipPlayerTurn match, ">> " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pulou o turno!\n") -- TODO
+                        return (skipPlayerTurn match, ">> " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " pulou o turno!\n") 
+
+-- CASOS ESPECIAIS: :! VER MANUAL
 valida match wordlist ":?" = do
                         UT.manual
                         UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (_getPlayerOnTurn match))))) Blue
@@ -42,20 +47,28 @@ valida match w (':':'*':t) =
                     in case lttr of
                     Just letter -> do
                         switched <- switchPlayerLetter match letter
-                        return (skipPlayerTurn switched, ((map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " trocou uma letra.\n")) -- TODO
+                        return (skipPlayerTurn switched, ((map toUpper (accName (pAcc (_getPlayerOnTurn match)))) ++ " trocou uma letra.\n"))
                     Nothing -> do
                         UT.__colorText ("Escolha um caracter válido \n > ") Blue
                         c <- getLine
                         valida match w (":*" ++ c)
                         
-
 valida match wordlist input 
-    |(res && ((length listaDeRes) == 0)) = do
-        let m = toggleMatchTurn (incPlayerScore (resetMatchSkipsQtd (updateMatchBoard match boardAtualizado)) points)
+    |(res && ((length palavrasInvalidas) == 0)) = do
+        updatedPlayer <- updatePlayerLetters (removePlayerLetters (incPlayerScore (resetMatchSkipsQtd (updateMatchBoard match boardAtualizado)) points) letrasUsadas)
+        let m = toggleMatchTurn updatedPlayer
         return (m, ("Palavra válida! Pontos: " ++ (show points) ++ "\n"))
+    
+    |(res && ((length letrasInvalidas) /= 0)) = do
+        UT.__colorText ("\nVocê não tem as letras: " ++ (show letrasInvalidas) ++ " \nTente novamente: \n") Red
+        putStrLn "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
+        hFlush stdout
+        i <- getLine
+        (m, msg)  <- (valida match wordlist i)
+        return (m, msg)
 
-    |(res && ((length listaDeRes) /= 0)) = do
-        UT.__colorText ("\nPalavras inválidas: " ++ (show listaDeRes) ++ " \nTente novamente: \n") Red
+    |(res && ((length palavrasInvalidas) /= 0)) = do
+        UT.__colorText ("\nPalavras inválidas: " ++ (show palavrasInvalidas) ++ " \nTente novamente: \n") Red
         putStrLn "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
         hFlush stdout
         i <- getLine
@@ -69,7 +82,7 @@ valida match wordlist input
         (m, msg) <- (valida match wordlist i)
         return (m, msg)
     where 
-        (res, listaDeRes, points) = (initialValidation match wordlist input)
+        (res, palavrasInvalidas, points, letrasInvalidas, letrasUsadas) = (initialValidation match wordlist input)
         boardAtualizado = (updateBoard (placeWord (readWordInput input match) (mBoard match)))
 
 
@@ -93,7 +106,7 @@ gameLoop match wordList lastUpdate lastMessage = do
     else do
         if input == ":C" || input == ":c" then do 
             UT.__colorText "\n\n>> Pausando e saindo do jogo...\n\n" Green
-            return match
+            return m
         else do 
             currentTime <- getCurrentTime
             let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
