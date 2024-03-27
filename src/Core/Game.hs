@@ -94,8 +94,9 @@ valida match wordlist input
 
 gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
-    --clearScreen
+    clearScreen
     UT.__colorText lastMessage Green
+    hFlush stdout
     UT.__colorText "> Enter para seguir para a visão do próximo jogador!\n\n" Blue
     hFlush stdout
     c <- getLine
@@ -118,15 +119,14 @@ gameLoop match wordList lastUpdate lastMessage = do
             let updatedTimer = mTimer match - realToFrac elapsed
 
             if updatedTimer <= 0 then do
-                putStrLn "Your turn is over!"
                 let updatedMatch = toggleMatchTurn match
                 updateMatchJson updatedMatch
-                gameLoop updatedMatch wordList currentTime ""
+                gameLoop updatedMatch wordList currentTime "\nTempo de rodada excedido!\n"
             else do
                 (m, msg) <- valida match wordList input
                 if getPlayerOnTurn match /= getPlayerOnTurn m then do
                     updateMatchJson m
-                    gameLoop m wordList currentTime ""
+                    gameLoop m wordList currentTime msg
                 else do 
                     let updatedMatch = updateMatchTimer m updatedTimer
                     threadDelay 100000

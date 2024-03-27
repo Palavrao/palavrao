@@ -106,9 +106,8 @@ manual = do
 __colorText :: String -> Color -> IO ()
 __colorText text color = do
     setSGR [SetColor Foreground Vivid color]  -- Set the foreground color
-    --setSGR [SetColor Background Vivid color]
     putStr text
-    setSGR [Reset]  -- Reset text attributes to default
+    setSGR [Reset]
 
 getLetterObject :: Char -> Maybe Letter
 getLetterObject c

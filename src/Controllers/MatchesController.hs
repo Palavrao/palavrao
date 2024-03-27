@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# OPTIONS_GHC -Wno-missing-fields #-}
 
 module Controllers.MatchesController where
 
