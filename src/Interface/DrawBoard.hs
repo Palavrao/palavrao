@@ -11,7 +11,8 @@ import Data.Char
 import Controllers.PlayerController
 import Utils.Utils as UT
 import Utils.Validator
-
+import Data.Typeable
+import Data.List (intersperse)
 
 -- █ ■
 __pintaBoard :: Char -> IO ()
@@ -63,9 +64,9 @@ _buildBoard :: Match -> Int -> IO ()
 _buildBoard match i = do
     if i > 15 then 
         putStr (unlines
-                [printf "\n     X X X X X X X                  Tempo restante: %s" (UT.formatTime (mTimer match)),
+                [printf "  Tempo restante: %s" (UT.formatTime (mTimer match)),
                  printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n",
-                 printf " testando %s" (show playerLetters)])
+                 printf  playerLetters])
     else do
         putStr "     "
         mapM_ __pintaBoard (lines!!i)
@@ -75,8 +76,7 @@ _buildBoard match i = do
         formattedLines = map printf (curTiles $ mBoard match)
         lines = ["A B C D E F G H I J K L M N O"] ++ formattedLines
         playerOnTurn = _getPlayerOnTurn match
-        playerLetters = [letter l | l <- pLetters playerOnTurn]   
-
+        playerLetters = concatMap (\l -> [letter l, ' ']) (pLetters playerOnTurn)   
 
 printBoard :: Match -> IO ()
 printBoard match = do
