@@ -67,7 +67,7 @@ accExists name = do
 
 -- Retorna uma conta do json procuradaa pelo nome
 -- Recebe: nome da conta que será retornada
--- Retorna: conta que está armazenada no json
+-- Retorna: conta que está armazenada no json, ou nada se a conta nao existir
 getAccByName :: String -> IO (Maybe Account)
 getAccByName targetName = do
     accs <- getAccs
