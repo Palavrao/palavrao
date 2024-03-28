@@ -111,6 +111,10 @@ finishMatch match = do
 updateMatchTimer :: Match -> Float -> Match
 updateMatchTimer match time = match { mTimer = time }
 
+
+-- Verifica se uma partida existe no json
+-- Recebe: nome da partida que será verificada se existe
+-- Retorna: bool que indicará se a partida existe ou nao 
 matchExists :: String -> IO Bool
 matchExists name = do
     maybeMatch <- getMatchByName name
@@ -118,10 +122,17 @@ matchExists name = do
         Nothing -> False
         Just _ -> True
 
+
+-- Retorna todas as partidas salvas no json
+-- Retorna: array das partidas salvas no json
 getMatches :: IO [Match]
 getMatches = do
     UT.readJsonFile matchesPath
 
+
+-- Retorna uma partida salva no json, procurando-a pelo nome
+-- Recebe: nome da partida que será retornada
+-- Retorna: partida que está armazenada no json, ou nada se a partida nao existir
 getMatchByName :: String -> IO (Maybe Match)
 getMatchByName targetName = do
     matches <- getMatches
