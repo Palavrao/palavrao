@@ -20,7 +20,7 @@ initialValidation match wordlist linha
     where
         (x, y, isHorizontal, word) = readWordInput linha match
         palavras = words $ map toUpper linha
-        coord = (palavras !! 0)
+        coord = (head palavras)
         playerOnTurn = getPlayerOnTurn match
         playerLetters = [letter l | l <- pLetters playerOnTurn]
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
