@@ -15,7 +15,6 @@ import System.IO
 import Controllers.AccountsController
 import Controllers.MatchesController
 import Data.Time.Clock (getCurrentTime)
-import Data.Maybe (fromMaybe)
 import Utils.Utils as UT
 import Utils.Validator as VL
 import Core.Game
@@ -116,7 +115,8 @@ _menuFlux menu input = do
         FinishMatch -> return (Just (updateMenu (boxBefore menu) beginGame))
         _ -> return (Just (updateMenu (action menu) menu))
 
-
+-- Recebe: menu atual do jogo
+-- Retorna: menu atualizado depois que o jogo for carregado
 _loadMatch :: Menu -> IO (Maybe Menu)
 _loadMatch menu = do
     wordList <- UT.getWordList
@@ -216,6 +216,8 @@ _createAcc menu = do
 _updateCurrentMatch :: Menu -> Match -> Menu
 _updateCurrentMatch menu match = menu {currentMatch = match}
 
+-- Recebe: menu atual do jogo
+-- Retorna: menu contendo a partida a ser continuada
 _continueGame :: Menu -> IO Menu
 _continueGame menu = do
   putStr "nome_da_partida> "
