@@ -16,6 +16,8 @@ data Letter = Letter {
 instance ToJSON Letter
 instance FromJSON Letter
 
+-- Retorna as letras iniciais de uma partida
+-- Retorna: todas as letras 120 letras iniciais
 startLetters :: [Letter] 
 startLetters = [
         Letter {letter='<', letterScore=0},
@@ -140,6 +142,10 @@ startLetters = [
         Letter {letter='Z', letterScore=7}
     ]
 
+
+-- Mapeia cada caractere em um score
+-- Recebe: caractere que terá sua pontuacao retornada
+-- Retorna: valor da pontuacao do caractere recebido
 letterValue :: Char -> Int
 letterValue i
     | c == 'A' = 1
@@ -169,5 +175,8 @@ letterValue i
     where c  = toUpper i
 
 
+-- Recebe um array de caracteres e os retorna com suas pontuacoes
+-- Recebe: array de caracteres que será transformado em letter
+-- Retorna: array de letter possuindo os caracteres recebidos e suas pontuacoes
 getLetterArray :: [Char] -> [Letter]
 getLetterArray characters = map (\c -> Letter { letter=toUpper c, letterScore=letterValue c}) characters
