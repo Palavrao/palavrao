@@ -1,5 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Use null" #-}
 module Utils.Validator where
 
 import Controllers.MatchesController
@@ -7,7 +8,6 @@ import Controllers.BoardController
 import Controllers.PlayerController
 import Controllers.AccountsController
 import Data.Char
-import Controllers.MatchesController
 import Controllers.LettersController
 import Utils.Utils as UT
 
@@ -42,7 +42,7 @@ initialValidation match wordlist linha
 -- Obtém o jogador da vez
 -- Recebe: uma match
 getPlayerOnTurn :: Match -> Player
-getPlayerOnTurn match 
+getPlayerOnTurn match
     | mTurn match = mP2 match
     | otherwise = mP1 match
 
@@ -54,7 +54,7 @@ _coordCenterValidation match isHorizontal (x,y) word
     | centerValue /= '-' = True -- Centro já estava ocupado: não é a primeira palavra
     | isHorizontal = (y == 7) && (x <= 7 && 7 <= finalXInd)
     | otherwise = (x == 7) && (y <= 7 && 7 <= finalYInd)
-    where 
+    where
         finalXInd = x + (length word) - 1
         finalYInd = y + (length word) - 1
         matrix = curTiles (mBoard match)
@@ -70,7 +70,7 @@ _wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsed
 -- Verifica que todas as palavras formadas no tabuleiro existem
 -- Recebe: uma match, a lista de todas as palavras do português, a lista de palavras a testar
 _allWordsExist :: Match -> [String] -> [String] -> [String]
-_allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, (_wordExistenceValidation match wordlist x) == False] 
+_allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, not (_wordExistenceValidation match wordlist x)]
 
 
 -- Verifica que a coordenada passada é válida: o primeiro caracter é uma letra de A a O e a segunda é uma string com um int de 0 a 14
@@ -140,7 +140,7 @@ playerHasLetter match letter = letter `elem` (pLetters player)
 -- Recebe: palavra a ser testada, string do _wordLetterReport
 -- Retorna: as letras que o jogador não tinha para completar a palavra
 _lettersMissing :: [Char] -> [Char] -> [Char]
-_lettersMissing word filterString = 
+_lettersMissing word filterString =
     map fst $ filter (\(_, el) -> el == '!') $ zip word filterString
 
 
@@ -150,8 +150,8 @@ readWordInput :: String -> Match -> (Int, Int, Bool, String)
 readWordInput linha match = (x, y, isHorizontal, word)
     where
         palavras = words $ map toUpper linha
-        coord = (palavras !! 0)
-        isHorizontal = (palavras !! 1) == "H"       
+        coord = (head palavras)
+        isHorizontal = (palavras !! 1) == "H"
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
@@ -163,7 +163,7 @@ readWordInput linha match = (x, y, isHorizontal, word)
 accExistsValidation :: String -> IO(Bool)
 accExistsValidation accName = do
     acc <- getAccByName accName
-    case acc of 
+    case acc of
         Just acc -> return True
         Nothing -> return False
 
@@ -173,7 +173,7 @@ accExistsValidation accName = do
 matchExistsValidation :: String -> IO(Bool)
 matchExistsValidation matchName = do
     match <- getMatchByName matchName
-    case match of 
+    case match of
         Just match -> return True
         Nothing    -> return False
 

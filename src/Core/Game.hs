@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Redundant bracket" #-}
 {-# HLINT ignore "Redundant return" #-}
+{-# HLINT ignore "Use list literal pattern" #-}
+{-# HLINT ignore "Use null" #-}
 module Core.Game where
 
 import Controllers.MatchesController
