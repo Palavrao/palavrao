@@ -127,3 +127,8 @@ _removeChar x (y:ys)
 
 removeChars :: [Char] -> [Char] -> [Char]
 removeChars toRemove list = foldr (\x acc -> _removeChar x acc) list toRemove
+
+isStringInt :: String -> Bool
+isStringInt str = case reads str :: [(Int, String)] of
+    [(num, "")] -> True
+    _           -> False

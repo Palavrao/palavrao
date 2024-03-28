@@ -11,11 +11,6 @@ import Data.Char
 import Controllers.LettersController
 import Utils.Utils as UT
 
-isStringInt :: String -> Bool
-isStringInt str = case reads str :: [(Int, String)] of
-    [(num, "")] -> True
-    _           -> False
-
 
 initialValidation :: Match -> [String] -> String -> (Bool, [String], Int, [Char], [Char])
 initialValidation _ _ "" = (False, [], 0, [], [])
@@ -73,7 +68,7 @@ _allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, not (_wordExi
 
 
 _coordValidation :: [Char] -> Bool
-_coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
+_coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (UT.isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
 
 
 _wordValidation :: String -> String -> Bool
@@ -94,20 +89,8 @@ _tileValidationSize isHorizontal (x, y) word
     | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
     | otherwise = (y <= 15 - (length word) && y >= 0) && (x >= 0 && x <= 14)
 
-_wordLetterReport :: [Char] -> [Char] -> [Char] -> [Char]
-_wordLetterReport _ _ [] = []
-_wordLetterReport playerLetters (t:tileTail) (w:wordTail) -- (letrasNoBoard) (word)
-    | w == t = ' ':(_wordLetterReport playerLetters tileTail wordTail)
-    | w `elem` playerLetters = w:(_wordLetterReport (_removeChar w playerLetters) tileTail wordTail)
-    | '<' `elem` playerLetters = '<':(_wordLetterReport (_removeChar '<' playerLetters) tileTail wordTail)
-    | otherwise = '!':(_wordLetterReport playerLetters tileTail wordTail)
-
-playerHasLetter :: Match -> Letter -> Bool
-playerHasLetter match letter = letter `elem` (pLetters player)
-    where player = getPlayerOnTurn match
-
 {-  
-    O output é algo assim:
+    O output é assim:
     playerLetters = [A C E <] inicialmente
 
     PALAVRA: [A B C D E F] tinha A e D no board, não usou do player -> não tinha B e o player não tinha mas tinha curinga, usa o curinga -> ...
@@ -119,6 +102,19 @@ playerHasLetter match letter = letter `elem` (pLetters player)
      Assim, pra saber o que o player usou olha os caracteres e pra saber se passou na validação olha se tem exclamação
      As posições estão sendo respeitadas, então pra saber qual letra faltou basta olhar qual é a letra da palavra na posição exclamação.
  -}
+_wordLetterReport :: [Char] -> [Char] -> [Char] -> [Char]
+_wordLetterReport _ _ [] = []
+_wordLetterReport playerLetters (t:tileTail) (w:wordTail) -- (letrasNoBoard) (word)
+    | w == t = ' ':(_wordLetterReport playerLetters tileTail wordTail)
+    | w `elem` playerLetters = w:(_wordLetterReport (_removeChar w playerLetters) tileTail wordTail)
+    | '<' `elem` playerLetters = '<':(_wordLetterReport (_removeChar '<' playerLetters) tileTail wordTail)
+    | otherwise = '!':(_wordLetterReport playerLetters tileTail wordTail)
+
+
+playerHasLetter :: Match -> Letter -> Bool
+playerHasLetter match letter = letter `elem` (pLetters player)
+    where player = getPlayerOnTurn match
+
 
 _lettersMissing :: [Char] -> [Char] -> [Char]
 _lettersMissing word filterString =

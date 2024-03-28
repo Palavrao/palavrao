@@ -13,7 +13,7 @@ import Utils.Validator
 import Data.Typeable
 import Data.List (intersperse)
 
--- █ ■
+-- Desenha os quadrados e letras do tabuleiro
 __pintaBoard :: Char -> IO ()
 __pintaBoard a
     |a == '#' = UT.__colorText "■ " Red
@@ -29,11 +29,7 @@ __pintaBoard a
     |otherwise = return ()
 
 
-tt :: Board -> IO ()
-tt b = do
-    putStrLn (unlines $ workTiles b)
-
-
+-- Completa as informações na lateral do tabuleiro
 _suffixes :: Match -> Int -> String
 _suffixes match i
     |i == 1 = " 00                        "
@@ -59,6 +55,7 @@ _suffixes match i
         p2s = pScore (mP2 match)
 
 
+--Constrói o tabuleiro a partir das tiles, sufixos, letras de jogadores, e pontuação
 _buildBoard :: Match -> Int -> IO ()
 _buildBoard match i = do
     if i > 15 then
@@ -76,6 +73,7 @@ _buildBoard match i = do
         playerOnTurn = getPlayerOnTurn match
         playerLetters = concatMap (\l -> [letter l, ' ']) (pLetters playerOnTurn)
 
+--Encapsula a construção do board
 printBoard :: Match -> IO ()
 printBoard match = do
     clearScreen
