@@ -1,4 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant bracket" #-}
 
 module Controllers.AccountsController where
 
@@ -21,24 +23,23 @@ saveAccJson :: Account -> IO()
 saveAccJson acc = UT.incJsonFile acc accsPath
 
 deleteAccFromJson :: Account -> IO()
-deleteAccFromJson acc = do 
+deleteAccFromJson acc = do
     UT.deleteFromJson acc accsPath
 
-createAcc :: String -> IO(Account)
+createAcc :: String -> IO Account
 createAcc name = do
     let acc = Account {
-            accName = name, 
+            accName = name,
             accScore = 0
         }
     saveAccJson acc
     return acc
 
-getAccs :: IO([Account])
+getAccs :: IO[Account]
 getAccs = do
-    accs <- UT.readJsonFile accsPath
-    return accs
+    UT.readJsonFile accsPath
 
-accExists :: String -> IO (Bool)
+accExists :: String -> IO Bool
 accExists name = do
     maybeAcc <- getAccByName name
     return $ case maybeAcc of
@@ -56,11 +57,11 @@ incAccScore targetAccName incScore = do
     let updatedAccs = _getUpdatedAccs accs targetAccName incScore
     UT.writeJsonFile updatedAccs accsPath
 
-getAccRank :: IO([Account])
+getAccRank :: IO[Account]
 getAccRank = do
     accs <- getAccs
     let sortedAccs = UT.sortObjsByField accs accScore
-    return $ drop ((length sortedAccs) - 5) sortedAccs
+    return $ drop (length sortedAccs - 5) sortedAccs
 
 _getUpdatedAccs :: [Account] -> String -> Int -> [Account]
 _getUpdatedAccs [] _ _ = []

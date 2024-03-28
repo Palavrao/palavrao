@@ -1,4 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# OPTIONS_GHC -Wno-missing-fields #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant bracket" #-}
 
 module Controllers.MatchesController where
 
@@ -47,7 +50,7 @@ updateMatchJson updatedMatch = do
     where
         targetMatchName = mName updatedMatch
 
-createMatch :: String -> Account -> Account -> IO(Match)
+createMatch :: String -> Account -> Account -> IO Match
 createMatch name acc1 acc2 = do
     let match = Match {
             mName = name,
@@ -69,7 +72,7 @@ createMatch name acc1 acc2 = do
     saveMatchJson initMatch
     return initMatch
 
-finishMatch :: Match -> IO(Match)
+finishMatch :: Match -> IO Match
 finishMatch match = do
     incAccScore (accName (pAcc p1)) (pScore p1)
     incAccScore (accName (pAcc p2)) (pScore p2)
@@ -82,14 +85,14 @@ finishMatch match = do
 updateMatchTimer :: Match -> Float -> Match
 updateMatchTimer match time = match { mTimer = time }
 
-matchExists :: String -> IO (Bool)
+matchExists :: String -> IO Bool
 matchExists name = do
     maybeMatch <- getMatchByName name
     return $ case maybeMatch of
         Nothing -> False
         Just _ -> True
 
-getMatches :: IO ([Match])
+getMatches :: IO [Match]
 getMatches = do
     UT.readJsonFile matchesPath
 
@@ -103,7 +106,7 @@ incPlayerScore match score
     | mTurn match = match {mP2 = incScore (mP2 match) score}
     | otherwise = match {mP1 = incScore (mP1 match) score}
 
-updatePlayerLetters :: Match -> IO(Match)
+updatePlayerLetters :: Match -> IO Match
 updatePlayerLetters match = do
     (playerLetters, updatedLetters) <- UT.popRandomElements (mLetters match) (7 - (length (pLetters player)))
 
@@ -123,7 +126,7 @@ getBestPlayer match
     | otherwise = Player{pAcc = Account{accName = "Nenhum! Empate :D"}}
     where 
         p1 = mP1 match
-        p2 = mP1 match
+        p2 = mP2 match
         p1Score = pScore p1
         p2Score = pScore p2
 
@@ -134,7 +137,7 @@ resetMatchSkipsQtd :: Match -> Match
 resetMatchSkipsQtd match = match{mSkips = 0}
 
 toggleMatchTurn :: Match -> Match
-toggleMatchTurn match = match {mTurn = not (mTurn match)}
+toggleMatchTurn match = match {mTurn = not (mTurn match), mTimer = 300}
 
 updateMatchBoard :: Match -> Board -> Match
 updateMatchBoard match newBoard = match {mBoard = newBoard}
@@ -142,18 +145,17 @@ updateMatchBoard match newBoard = match {mBoard = newBoard}
 updateMUsedWords :: Match -> [String] -> Match
 updateMUsedWords match words = match {mUsedWords = words ++ mUsedWords match}
 
-switchPlayerLetter :: Match -> Letter -> IO(Match)
+switchPlayerLetter :: Match -> Letter -> IO Match
 switchPlayerLetter match letter = do
     (newLetter, updatedLetters) <- UT.popRandomElements (mLetters match) 1
 
-    let playerLetters = (head newLetter:pLetters player)
+    let playerLetters = UT.removeOneElement (pLetters player) letter
+    let updatedPlayer = updateLetters player playerLetters 
 
-    let updatedPlayerLetters = UT.removeOneElement playerLetters letter
+    let updatedMatch = _updateMatchLetters match (letter:updatedLetters)
+    let updatedPlayer' = addLetters updatedPlayer newLetter
 
-    let updatedMatch = _updateMatchLetters match updatedLetters
-    let updatedPlayer = addLetters player updatedPlayerLetters
-
-    return $ _updateMatchPlayer updatedMatch updatedPlayer
+    return $ _updateMatchPlayer updatedMatch updatedPlayer'
     where
         player
             | mTurn match = mP2 match

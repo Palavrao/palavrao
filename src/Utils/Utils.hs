@@ -1,3 +1,7 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Eta reduce" #-}
+{-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Avoid lambda" #-}
 module Utils.Utils where
 
 import qualified Data.ByteString.Lazy as B
@@ -106,9 +110,8 @@ manual = do
 __colorText :: String -> Color -> IO ()
 __colorText text color = do
     setSGR [SetColor Foreground Vivid color]  -- Set the foreground color
-    --setSGR [SetColor Background Vivid color]
     putStr text
-    setSGR [Reset]  -- Reset text attributes to default
+    setSGR [Reset]
 
 getLetterObject :: Char -> Maybe Letter
 getLetterObject c
@@ -124,3 +127,8 @@ _removeChar x (y:ys)
 
 removeChars :: [Char] -> [Char] -> [Char]
 removeChars toRemove list = foldr (\x acc -> _removeChar x acc) list toRemove
+
+isStringInt :: String -> Bool
+isStringInt str = case reads str :: [(Int, String)] of
+    [(num, "")] -> True
+    _           -> False

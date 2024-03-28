@@ -1,5 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Use null" #-}
 module Utils.Validator where
 
 import Controllers.MatchesController
@@ -7,14 +8,8 @@ import Controllers.BoardController
 import Controllers.PlayerController
 import Controllers.AccountsController
 import Data.Char
-import Controllers.MatchesController
 import Controllers.LettersController
 import Utils.Utils as UT
-
-isStringInt :: String -> Bool
-isStringInt str = case reads str :: [(Int, String)] of
-    [(num, "")] -> True
-    _           -> False
 
 
 initialValidation :: Match -> [String] -> String -> (Bool, [String], Int, [Char], [Char])
@@ -24,31 +19,31 @@ initialValidation match wordlist linha
     | otherwise = (resCoordenadas, resPalavras, getPointsWord letrasNoBoard word, invalidLetters, letrasUsadas)
     where
         palavras = words $ map toUpper linha
-        coord = (palavras !! 0)
-        isHorizontal = (palavras !! 1) == "H"       
+        coord = (head palavras)
+        isHorizontal = (palavras !! 1) == "H"
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
-        playerOnTurn = _getPlayerOnTurn match
+        playerOnTurn = getPlayerOnTurn match
         playerLetters = [letter l | l <- pLetters playerOnTurn]
         letrasNoBoard = _takeUpTo isHorizontal match (x,y) (length word)
-        letterUsageReport = _playerHasLetter playerLetters letrasNoBoard word
+        letterUsageReport = _wordLetterReport playerLetters letrasNoBoard word
         invalidLetters = _lettersMissing word letterUsageReport
         letrasUsadas = [l | l <- letterUsageReport, l /= '!', l /= ' ']
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
         centroLivre = (((curTiles (mBoard match)) !! 7) !! 7) == '-'
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) 
-                            && (_coordValidation coord) 
-                            && (_wordValidation word letrasNoBoard) 
-                            && (_tileValidationSize isHorizontal (x, y) word) 
-                            && (_tileValidationLetters letrasNoBoard word) 
-                            && (estaConectado || centroLivre) 
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"])
+                            && (_coordValidation coord)
+                            && (_wordValidation word letrasNoBoard)
+                            && (_tileValidationSize isHorizontal (x, y) word)
+                            && (_tileValidationLetters letrasNoBoard word)
+                            && (estaConectado || centroLivre)
                             && (_coordCenterValidation match isHorizontal (x,y) word))
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
-_getPlayerOnTurn :: Match -> Player
-_getPlayerOnTurn match 
+getPlayerOnTurn :: Match -> Player
+getPlayerOnTurn match
     | mTurn match = mP2 match
     | otherwise = mP1 match
 
@@ -61,7 +56,7 @@ _coordCenterValidation match isHorizontal (x,y) word
     | centerValue /= '-' = True
     | isHorizontal = (y == 7) && (x <= 7 && 7 <= finalXInd)
     | otherwise = (x == 7) && (y <= 7 && 7 <= finalYInd)
-    where 
+    where
         finalXInd = x + (length word) - 1
         finalYInd = y + (length word) - 1
         matrix = curTiles (mBoard match)
@@ -69,13 +64,13 @@ _coordCenterValidation match isHorizontal (x,y) word
 
 
 _allWordsExist :: Match -> [String] -> [String] -> [String]
-_allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, (_wordExistenceValidation match wordlist x) == False] 
+_allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, not (_wordExistenceValidation match wordlist x)]
 
 
 _coordValidation :: [Char] -> Bool
-_coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
+_coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (UT.isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
 
-  
+
 _wordValidation :: String -> String -> Bool
 _wordValidation word letrasNoBoard = ([] == [l | l <- word, not (isLetter l)]) && (length word /= length [l | l <- letrasNoBoard, isLetter l])
 
@@ -94,16 +89,8 @@ _tileValidationSize isHorizontal (x, y) word
     | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
     | otherwise = (y <= 15 - (length word) && y >= 0) && (x >= 0 && x <= 14)
 
-_playerHasLetter :: [Char] -> [Char] -> [Char] -> [Char]
-_playerHasLetter _ _ [] = []
-_playerHasLetter playerLetters (t:tileTail) (w:wordTail) -- (letrasNoBoard) (word)
-    | w == t = ' ':(_playerHasLetter playerLetters tileTail wordTail)
-    | w `elem` playerLetters = w:(_playerHasLetter (_removeChar w playerLetters) tileTail wordTail)
-    | '<' `elem` playerLetters = '<':(_playerHasLetter (_removeChar '<' playerLetters) tileTail wordTail)
-    | otherwise = '!':(_playerHasLetter playerLetters tileTail wordTail)
-
 {-  
-    O output é algo assim:
+    O output é assim:
     playerLetters = [A C E <] inicialmente
 
     PALAVRA: [A B C D E F] tinha A e D no board, não usou do player -> não tinha B e o player não tinha mas tinha curinga, usa o curinga -> ...
@@ -115,9 +102,22 @@ _playerHasLetter playerLetters (t:tileTail) (w:wordTail) -- (letrasNoBoard) (wor
      Assim, pra saber o que o player usou olha os caracteres e pra saber se passou na validação olha se tem exclamação
      As posições estão sendo respeitadas, então pra saber qual letra faltou basta olhar qual é a letra da palavra na posição exclamação.
  -}
+_wordLetterReport :: [Char] -> [Char] -> [Char] -> [Char]
+_wordLetterReport _ _ [] = []
+_wordLetterReport playerLetters (t:tileTail) (w:wordTail) -- (letrasNoBoard) (word)
+    | w == t = ' ':(_wordLetterReport playerLetters tileTail wordTail)
+    | w `elem` playerLetters = w:(_wordLetterReport (_removeChar w playerLetters) tileTail wordTail)
+    | '<' `elem` playerLetters = '<':(_wordLetterReport (_removeChar '<' playerLetters) tileTail wordTail)
+    | otherwise = '!':(_wordLetterReport playerLetters tileTail wordTail)
+
+
+playerHasLetter :: Match -> Letter -> Bool
+playerHasLetter match letter = letter `elem` (pLetters player)
+    where player = getPlayerOnTurn match
+
 
 _lettersMissing :: [Char] -> [Char] -> [Char]
-_lettersMissing word filterString = 
+_lettersMissing word filterString =
     map fst $ filter (\(_, el) -> el == '!') $ zip word filterString
 
 
@@ -125,8 +125,8 @@ readWordInput :: String -> Match -> (Int, Int, Bool, String)
 readWordInput linha match = (x, y, isHorizontal, word)
     where
         palavras = words $ map toUpper linha
-        coord = (palavras !! 0)
-        isHorizontal = (palavras !! 1) == "H"       
+        coord = (head palavras)
+        isHorizontal = (palavras !! 1) == "H"
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
@@ -135,14 +135,14 @@ readWordInput linha match = (x, y, isHorizontal, word)
 accExistsValidation :: String -> IO(Bool)
 accExistsValidation accName = do
     acc <- getAccByName accName
-    case acc of 
+    case acc of
         Just acc -> return True
         Nothing -> return False
 
 matchExistsValidation :: String -> IO(Bool)
 matchExistsValidation matchName = do
     match <- getMatchByName matchName
-    case match of 
+    case match of
         Just match -> return True
         Nothing    -> return False
 
