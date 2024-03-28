@@ -19,7 +19,8 @@ data Menu = Menu {
     accsRank :: [Account],
     action :: Action,
     boxBefore :: Action,
-    currentMatch :: Match
+    currentMatch :: Match,
+    indexMatch :: Int
 } deriving (Show, Eq)
 
 beginGame :: Menu
@@ -199,18 +200,18 @@ updateMenu action menu = case action of
     ]), boxBefore = StartMenu, action = Rank}
         Matches -> menu { box = ([
         "    ┌───────────────────────────────┐   ",
-        "    │                               │   ",
+        "    │  1. avançar        2. voltar  │   ",
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
         "    │                               │   "]
-        ++ (geraMatchLines getMatches pageIndex matchesPerPage) ++
+        {-++ (geraMatchLines getMatches 0 5) ++-}++
        ["    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ]), boxBefore = ContinueGame, action = Matches}
+    ]), boxBefore = ContinueGame, action = Matches, indexMatch = 1}
         FinishMatch -> menu { box = ([
         "    ┌───────────────────────────────┐   ",
         printf "    │  %-5s                 %-5s  │   " (take 5 $ (accName (p1 menu))) (take 5 $ (accName (p2 menu))),
@@ -233,21 +234,39 @@ updateMenu action menu = case action of
 geraRankLines :: Menu -> [String]
 geraRankLines menu = [( "    │     " ++ (show (i)) ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc))) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
 
--- tentando exibir as partidas em uma página
-displayMatchesPage :: [Match] -> Int -> [String]
-displayMatchesPage matches pageIndex =
-    let matchesPerPage = 5
-        startIndex = pageIndex * matchesPerPage
-        endIndex = min (startIndex + matchesPerPage) (length matches)
-        matchesOnPage = take matchesPerPage (drop startIndex matches)
-        matchLines = map (\(i, match) -> printf "    │   %-2d. %-20s     │" (i + 1) (take 20 $ mName match)) (zip [startIndex..] matchesOnPage)
-    in matchLines
+_geraMatchLines :: [Match] -> Int -> [String]
+_geraMatchLines matches indexMatch =
+    let listNames = map mName matches
+        names = take 5 $ drop (5 * indexMatch) listNames
+        maxLength = maximum (map length names)
+        paddedNames = map (\name -> name ++ replicate (maxLength - length name) ' ') names
+        boxMiddle = map (\name -> "│ " ++ name ++ " │") paddedNames
+        emptyLines = replicate (5 - length names) "    │                               │"
+    in boxMiddle ++ emptyLines
 
--- atualizando geraMatchLines
-geraMatchLines :: [Match] -> Int -> Int -> [String]
-geraMatchLines matches pageIndex matchesPerPage =
-    let startIndex = pageIndex * matchesPerPage
-        endIndex = min (startIndex + matchesPerPage) (length matches)
-        matchesOnPage = take matchesPerPage (drop startIndex matches)
-        matchLines = map (\(i, match) -> printf "    │   %-2d. %-20s     │" (i + 1) (take 20 $ mName match)) (zip [startIndex..] matchesOnPage)
-    in ["    │                               │   "] ++ matchLines ++ ["    │                               │   "]
+updateMatchesMenu :: Menu -> Int -> IO(Maybe Menu)
+updateMatchesMenu menu indexMatch = do
+  matches <- getMatches
+  Just <$> return (_updateMatchesMenu menu matches indexMatch)
+
+_updateMatchesMenu :: Menu -> [Match] -> Int -> Menu
+_updateMatchesMenu menu matches indexMatch =
+    menu {
+        box = [
+            "    ┌───────────────────────────────┐   ",
+            "    │  1. avançar        2. voltar  │   ",
+            "    │                               │   ",
+            "    │           PALAVRÃO            │   ",
+            "    │                               │   ",
+            "    │                               │   "
+        ] ++ _geraMatchLines matches indexMatch ++ [
+            "    │                               │   ",
+            "    │                               │   ",
+            "    │                               │   ",
+            "    │                               │   ",
+            "    └───────────────────────────────┘   "
+        ],
+        boxBefore = ContinueGame,
+        action = Matches, indexMatch = indexMatch
+    }
+
