@@ -76,11 +76,7 @@ _menuFlux menu input = do
         ContinueGame -> case input of
             "1" -> do
                 matchMenu <- _continueGame menu
-                wordList <- UT.getWordList
-                startTime <- getCurrentTime
-                updatedMatch <- gameLoop (currentMatch matchMenu) wordList startTime ""
-                updatedMenu <- _menuPauseOrEnd matchMenu updatedMatch
-                return (Just updatedMenu)
+                _loadMatch matchMenu
             "2" -> do
                 let updatedMenu = updateMatchesMenu menu 1
                 updatedMenu
@@ -88,12 +84,7 @@ _menuFlux menu input = do
             _   -> return (Just (updateMenu (action menu) menu))
         Rules -> return (Just (updateMenu (boxBefore menu) menu))
         BeforeGame -> case input of
-            "1" -> do
-                wordList <- UT.getWordList
-                startTime <- getCurrentTime
-                updatedMatch <- gameLoop (currentMatch menu) wordList startTime ""
-                updatedMenu <- _menuPauseOrEnd menu updatedMatch
-                return (Just updatedMenu)
+            "1" -> _loadMatch menu
             "2" -> do
                 let updatedMenu = menu {p1 = p2 menu}
                 let updatedMenu' = _updateAccs updatedMenu Account{accName = ""}
@@ -124,6 +115,15 @@ _menuFlux menu input = do
             _ -> return $ Just menu
         FinishMatch -> return (Just (updateMenu (boxBefore menu) beginGame))
         _ -> return (Just (updateMenu (action menu) menu))
+
+
+_loadMatch :: Menu -> IO (Maybe Menu)
+_loadMatch menu = do
+    wordList <- UT.getWordList
+    startTime <- getCurrentTime
+    updatedMatch <- gameLoop (currentMatch menu) wordList startTime ""
+    updatedMenu <- _menuPauseOrEnd menu updatedMatch
+    return (Just updatedMenu)
 
 _menuPauseOrEnd :: Menu -> Match -> IO Menu
 _menuPauseOrEnd menu updatedMatch = do
