@@ -22,13 +22,13 @@ _drawMenu menu = do
     clearScreen
     mapM_ putStrLn (box menu)
 
-menuLoop :: Menu -> Int -> IO ()
+menuLoop :: Menu -> IO ()
 menuLoop menu = do
     _drawMenu menu
     userInput <- getLine
     updatedMenu <- _menuFlux menu userInput
     case updatedMenu of 
-        Just updatedMenu -> menuLoop updatedMenu pageIndex
+        Just updatedMenu -> menuLoop updatedMenu
         Nothing -> return ()
 
 _menuFlux :: Menu -> String -> IO(Maybe Menu)
