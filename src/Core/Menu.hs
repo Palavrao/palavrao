@@ -165,6 +165,10 @@ _login menu = do
                         else do
                             return $ updateMenu NewGame updatedAccs
 
+
+-- Recebe input do usuário para criar uma conta dentro de um menu, evitando duplicatas
+-- Recebe: um Menu
+-- Retorna: um Menu com uma conta adicionada
 _createAcc :: Menu -> IO Menu
 _createAcc menu = do
     putStr "nome_de_usuario> "
@@ -185,15 +189,26 @@ _createAcc menu = do
             else do
                 return $ updateMenu NewGame updatedAccs
 
+
+-- Recebe: um menu
+-- Recebe: uma match nova
+-- Retorna: o menu com sua match substituída pela nova passada como argumento
 _updateCurrentMatch :: Menu -> Match -> Menu
 _updateCurrentMatch menu match = menu {currentMatch = match}
 
+
+-- Recebe: um Menu
+-- Recebe: uma Account
+-- Retorna: Um menu com a account do player adicionada como jogador
 _updateAccs :: Menu -> Account -> Menu
 _updateAccs menu acc
   | p1 menu == acc = menu
   | accName (p1 menu) == "" = menu {p1 = acc}
   | otherwise = menu {p2 = acc}
 
+
+-- Recebe: um Menu
+-- Retorna: o menu com o rank atualizado
 _getRank :: Menu -> IO Menu
 _getRank menu = do
     accs <- getAccRank
@@ -201,5 +216,7 @@ _getRank menu = do
     return $ updateMenu Rank updatedRank
 
 
+-- Recebe: um Menu e um array de Accounts
+-- Retorna: o menu com o rank substituído pelo array
 _updateRank :: Menu -> [Account] -> Menu
 _updateRank menu accs = menu {accsRank = accs}
