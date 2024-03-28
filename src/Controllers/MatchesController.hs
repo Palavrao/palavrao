@@ -124,7 +124,7 @@ getBestPlayer match
     | otherwise = Player{pAcc = Account{accName = "Nenhum! Empate :D"}}
     where 
         p1 = mP1 match
-        p2 = mP1 match
+        p2 = mP2 match
         p1Score = pScore p1
         p2Score = pScore p2
 
