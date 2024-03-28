@@ -12,6 +12,12 @@ import Controllers.LettersController
 import Utils.Utils as UT
 
 -- Encapsula lógica de validação
+-- Recebe: uma match, a lista de palavras do portuguÊs, uma string de input
+-- Retorna: um a tupla com: (True se a coordenada e posicionamento forem válidos,
+--                            A string de palavras inválidas,
+--                            A quantidade de pontos obtidos,
+--                            String de letras inválidas,
+--                            String de letras usadas pelo jogador)
 initialValidation :: Match -> [String] -> String -> (Bool, [String], Int, [Char], [Char])
 initialValidation _ _ "" = (False, [], 0, [], [])
 initialValidation match wordlist linha
@@ -39,16 +45,16 @@ initialValidation match wordlist linha
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
--- Obtém o jogador da vez
 -- Recebe: uma match
+-- Retorna: o jogador da vez
 getPlayerOnTurn :: Match -> Player
 getPlayerOnTurn match
     | mTurn match = mP2 match
     | otherwise = mP1 match
 
 
--- Verifica: se for a primeira palavra deve ocupar o centro
 -- Recebe: uma match, o booleano que informa se é horizontal, as coordenadas x e y, a palavra
+-- Retorna: True se for a primeira palavra deve ocupar o centro, False se não
 _coordCenterValidation :: Match -> Bool -> (Int, Int) -> String -> Bool
 _coordCenterValidation match isHorizontal (x,y) word
     | centerValue /= '-' = True -- Centro já estava ocupado: não é a primeira palavra
@@ -61,8 +67,8 @@ _coordCenterValidation match isHorizontal (x,y) word
         centerValue = (matrix !! 7) !! 7
 
 
--- Verifica se uma palavra está no arquivo de palavras
 -- Recebe: uma match, a lista de palavras do português, a palvra a ser testada
+-- Retorna: True se uma palavra está no arquivo de palavras, False se não
 _wordExistenceValidation :: Match -> [String] -> String -> Bool
 _wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsedWords match)) || ((map toLower word) `elem` wordList)
 
@@ -96,8 +102,8 @@ _tileValidationDifferentLettersDontOverlap (tileHead:tileTail) (wordHead:wordTai
     | otherwise = _tileValidationDifferentLettersDontOverlap tileTail wordTail
 
 
--- Verifica se a palavra cabe no espaço disponível no board
 -- Recebe: o booleano que informa se eh horizontal, as coordenadas x e y (col, row) indexadas em zero, e a palavra
+-- Retorna: True se a palavra cabe no espaço disponível no board, False se não
 _wordFitsInSpace :: Bool -> (Int, Int) -> String -> Bool
 _wordFitsInSpace isHorizontal (x, y) word
     | isHorizontal = (x <= 15 - (length word) && x >= 0) && (y >= 0 && y <= 14)
@@ -130,8 +136,8 @@ _wordLetterReport playerLetters (t:tileTail) (w:wordTail) -- (letrasNoBoard) (wo
     | otherwise = '!':(_wordLetterReport playerLetters tileTail wordTail)
 
 
--- Verifica se o jogador tem uma Letter
 -- Recebe: uma Match e uma letter, obtém o jogador a partir da match
+-- Retorna: True se o jogador tem a Letter passada, false se não 
 playerHasLetter :: Match -> Letter -> Bool
 playerHasLetter match letter = letter `elem` (pLetters player)
     where player = getPlayerOnTurn match
@@ -160,6 +166,7 @@ readWordInput linha match = (x, y, isHorizontal, word)
 
 -- Verifica se uma conta existe baseado no nome
 -- Recebe: nome da conta
+-- Retorna: True se a conta existir, False se não
 accExistsValidation :: String -> IO(Bool)
 accExistsValidation accName = do
     acc <- getAccByName accName
@@ -170,12 +177,14 @@ accExistsValidation accName = do
 
 -- Verifica se uma conta existe baseado no nome
 -- Recebe: nome da conta
+-- Retorna: True se a conta existir, False se não
 matchExistsValidation :: String -> IO(Bool)
 matchExistsValidation matchName = do
     match <- getMatchByName matchName
     case match of
         Just match -> return True
         Nothing    -> return False
+
 
 -- Obtém as tiles presentes no board no intervalo especificado
 -- Recebe: o booleano se informa se é horizontal, uma match, coordenadas x e y, o tamanho do intervalo
