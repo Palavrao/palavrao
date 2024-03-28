@@ -1,5 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# OPTIONS_GHC -Wno-missing-fields #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant bracket" #-}
 
 module Controllers.MatchesController where
 
@@ -48,7 +50,7 @@ updateMatchJson updatedMatch = do
     where
         targetMatchName = mName updatedMatch
 
-createMatch :: String -> Account -> Account -> IO(Match)
+createMatch :: String -> Account -> Account -> IO Match
 createMatch name acc1 acc2 = do
     let match = Match {
             mName = name,
@@ -70,7 +72,7 @@ createMatch name acc1 acc2 = do
     saveMatchJson initMatch
     return initMatch
 
-finishMatch :: Match -> IO(Match)
+finishMatch :: Match -> IO Match
 finishMatch match = do
     incAccScore (accName (pAcc p1)) (pScore p1)
     incAccScore (accName (pAcc p2)) (pScore p2)
@@ -83,14 +85,14 @@ finishMatch match = do
 updateMatchTimer :: Match -> Float -> Match
 updateMatchTimer match time = match { mTimer = time }
 
-matchExists :: String -> IO (Bool)
+matchExists :: String -> IO Bool
 matchExists name = do
     maybeMatch <- getMatchByName name
     return $ case maybeMatch of
         Nothing -> False
         Just _ -> True
 
-getMatches :: IO ([Match])
+getMatches :: IO [Match]
 getMatches = do
     UT.readJsonFile matchesPath
 
@@ -104,7 +106,7 @@ incPlayerScore match score
     | mTurn match = match {mP2 = incScore (mP2 match) score}
     | otherwise = match {mP1 = incScore (mP1 match) score}
 
-updatePlayerLetters :: Match -> IO(Match)
+updatePlayerLetters :: Match -> IO Match
 updatePlayerLetters match = do
     (playerLetters, updatedLetters) <- UT.popRandomElements (mLetters match) (7 - (length (pLetters player)))
 
@@ -143,7 +145,7 @@ updateMatchBoard match newBoard = match {mBoard = newBoard}
 updateMUsedWords :: Match -> [String] -> Match
 updateMUsedWords match words = match {mUsedWords = words ++ mUsedWords match}
 
-switchPlayerLetter :: Match -> Letter -> IO(Match)
+switchPlayerLetter :: Match -> Letter -> IO Match
 switchPlayerLetter match letter = do
     (newLetter, updatedLetters) <- UT.popRandomElements (mLetters match) 1
 

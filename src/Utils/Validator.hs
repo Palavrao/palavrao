@@ -1,5 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Use null" #-}
 module Utils.Validator where
 
 import Controllers.MatchesController
@@ -7,7 +8,6 @@ import Controllers.BoardController
 import Controllers.PlayerController
 import Controllers.AccountsController
 import Data.Char
-import Controllers.MatchesController
 import Controllers.LettersController
 import Utils.Utils as UT
 
@@ -19,8 +19,8 @@ initialValidation match wordlist linha
     | otherwise = (resCoordenadas, resPalavras, getPointsWord letrasNoBoard word, invalidLetters, letrasUsadas)
     where
         palavras = words $ map toUpper linha
-        coord = (palavras !! 0)
-        isHorizontal = (palavras !! 1) == "H"       
+        coord = (head palavras)
+        isHorizontal = (palavras !! 1) == "H"
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
@@ -32,18 +32,18 @@ initialValidation match wordlist linha
         letrasUsadas = [l | l <- letterUsageReport, l /= '!', l /= ' ']
         estaConectado = 0 /= (length [x | x <- letrasNoBoard, x `elem` ['A'..'Z']])
         centroLivre = (((curTiles (mBoard match)) !! 7) !! 7) == '-'
-        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"]) 
-                            && (_coordValidation coord) 
-                            && (_wordValidation word letrasNoBoard) 
-                            && (_tileValidationSize isHorizontal (x, y) word) 
-                            && (_tileValidationLetters letrasNoBoard word) 
-                            && (estaConectado || centroLivre) 
+        resCoordenadas = (((palavras !! 1) `elem` ["V", "H"])
+                            && (_coordValidation coord)
+                            && (_wordValidation word letrasNoBoard)
+                            && (_tileValidationSize isHorizontal (x, y) word)
+                            && (_tileValidationLetters letrasNoBoard word)
+                            && (estaConectado || centroLivre)
                             && (_coordCenterValidation match isHorizontal (x,y) word))
         resPalavras = (_allWordsExist match wordlist (getWords (placeWord (x,y,isHorizontal,word) (mBoard match))))
 
 
 getPlayerOnTurn :: Match -> Player
-getPlayerOnTurn match 
+getPlayerOnTurn match
     | mTurn match = mP2 match
     | otherwise = mP1 match
 
@@ -56,7 +56,7 @@ _coordCenterValidation match isHorizontal (x,y) word
     | centerValue /= '-' = True
     | isHorizontal = (y == 7) && (x <= 7 && 7 <= finalXInd)
     | otherwise = (x == 7) && (y <= 7 && 7 <= finalYInd)
-    where 
+    where
         finalXInd = x + (length word) - 1
         finalYInd = y + (length word) - 1
         matrix = curTiles (mBoard match)
@@ -64,13 +64,13 @@ _coordCenterValidation match isHorizontal (x,y) word
 
 
 _allWordsExist :: Match -> [String] -> [String] -> [String]
-_allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, (_wordExistenceValidation match wordlist x) == False] 
+_allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, not (_wordExistenceValidation match wordlist x)]
 
 
 _coordValidation :: [Char] -> Bool
 _coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (UT.isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
 
-  
+
 _wordValidation :: String -> String -> Bool
 _wordValidation word letrasNoBoard = ([] == [l | l <- word, not (isLetter l)]) && (length word /= length [l | l <- letrasNoBoard, isLetter l])
 
@@ -117,7 +117,7 @@ playerHasLetter match letter = letter `elem` (pLetters player)
 
 
 _lettersMissing :: [Char] -> [Char] -> [Char]
-_lettersMissing word filterString = 
+_lettersMissing word filterString =
     map fst $ filter (\(_, el) -> el == '!') $ zip word filterString
 
 
@@ -125,8 +125,8 @@ readWordInput :: String -> Match -> (Int, Int, Bool, String)
 readWordInput linha match = (x, y, isHorizontal, word)
     where
         palavras = words $ map toUpper linha
-        coord = (palavras !! 0)
-        isHorizontal = (palavras !! 1) == "H"       
+        coord = (head palavras)
+        isHorizontal = (palavras !! 1) == "H"
         word = (palavras !! 2)
         x = ord (head coord ) - ord 'A'
         y = (read (tail coord) :: Int)
@@ -135,14 +135,14 @@ readWordInput linha match = (x, y, isHorizontal, word)
 accExistsValidation :: String -> IO(Bool)
 accExistsValidation accName = do
     acc <- getAccByName accName
-    case acc of 
+    case acc of
         Just acc -> return True
         Nothing -> return False
 
 matchExistsValidation :: String -> IO(Bool)
 matchExistsValidation matchName = do
     match <- getMatchByName matchName
-    case match of 
+    case match of
         Just match -> return True
         Nothing    -> return False
 

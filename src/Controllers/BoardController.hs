@@ -1,4 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant bracket" #-}
 
 module Controllers.BoardController where
 
@@ -133,7 +135,7 @@ placeLetters False x y (h:t) b = placeLetters False x (y+1) t (replaceElement b 
 
 
 verifyWord :: [String] -> String -> Bool
-verifyWord words word = elem word words
+verifyWord words word = word `elem` words
 
 
 getPointsWord :: [Char] -> [Char]-> Int
