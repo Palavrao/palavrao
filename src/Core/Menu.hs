@@ -13,6 +13,7 @@ import System.IO
 import Controllers.AccountsController
 import Controllers.MatchesController
 import Data.Time.Clock (getCurrentTime)
+import Data.Maybe (fromMaybe)
 import Utils.Utils as UT
 import Utils.Validator as VL
 import Core.Game
@@ -71,7 +72,9 @@ _menuFlux menu input = do
             _   -> Just <$> return (updateMenu (action menu) menu)
         ContinueGame -> case input of 
             "1" -> Just <$> return (updateMenu BeforeGame menu)
-            "2" -> Just <$> return (updateMenu Matches menu)
+            "2" -> do
+                let updatedMenu = updateMatchesMenu menu 1
+                updatedMenu
             "3" -> Just <$> return (updateMenu (boxBefore menu) menu)
             _   -> Just <$> return (updateMenu (action menu) menu)
         Rules -> case input of 
@@ -102,18 +105,16 @@ _menuFlux menu input = do
             _   -> Just <$> return (updateMenu (boxBefore menu) menu)
         Matches -> case input of
             "1" -> do
-                let updatedPageIndex = max 0 (pageIndex - 1)
-                    matchesPerPage = 5
-                    menuBox = box menu ++ geraMatchLines matches updatedPageIndex matchesPerPage
-                menuLoop menu updatedPageIndex
-                return Nothing -- página anterior
+                let idxMatch = (indexMatch menu) + 1
+                let updatedMenu = updateMatchesMenu menu idxMatch
+                updatedMenu
             "2" -> do
-                let updatedPageIndex = pageIndex + 1
-                    matchesPerPage = 5
-                    menuBox = box menu ++ geraMatchLines matches updatedPageIndex matchesPerPage
-                menuLoop menu updatedPageIndex
-                return Nothing --  próxima página
-            _   -> Just <$> return (updateMenu (action menu) menu)
+                let idxMatch = (indexMatch menu) - 1
+                updatedMenu <- if idxMatch == 0
+                                then Just <$> return (updateMenu (boxBefore menu) menu)
+                                else updateMatchesMenu menu idxMatch
+                return updatedMenu
+            _ -> return $ Just menu
         FinishMatch -> case input of
             _   -> Just <$> return (updateMenu (boxBefore menu) beginGame)
         _ -> Just <$> return (updateMenu (action menu) menu)
