@@ -74,7 +74,13 @@ _menuFlux menu input = do
             "2" -> return (Just (updateMenu (boxBefore menu) menu))
             _   -> return (Just (updateMenu (action menu) menu))
         ContinueGame -> case input of
-            "1" -> Just <$> return (updateMenu BeforeGame menu)
+            "1" -> do
+                matchMenu <- _continueGame menu
+                wordList <- UT.getWordList
+                startTime <- getCurrentTime
+                updatedMatch <- gameLoop (currentMatch matchMenu) wordList startTime ""
+                updatedMenu <- _menuPauseOrEnd matchMenu updatedMatch
+                return (Just updatedMenu)
             "2" -> do
                 let updatedMenu = updateMatchesMenu menu 1
                 updatedMenu
@@ -201,6 +207,18 @@ _createAcc menu = do
 
 _updateCurrentMatch :: Menu -> Match -> Menu
 _updateCurrentMatch menu match = menu {currentMatch = match}
+
+_continueGame :: Menu -> IO Menu
+_continueGame menu = do
+  putStr "nome_da_partida> "
+  hFlush stdout
+  matchName <- getLine
+  maybeMatch <- getMatchByName matchName
+  case maybeMatch of
+    Just match -> return $ (_updateCurrentMatch menu match)
+    Nothing    -> do
+               putStrLn "partida não encontrada"
+               _continueGame menu
 
 _updateAccs :: Menu -> Account -> Menu
 _updateAccs menu acc
