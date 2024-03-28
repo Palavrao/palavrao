@@ -12,7 +12,9 @@ import Controllers.LettersController
 import Utils.Utils as UT
 
 -- Encapsula lógica de validação
--- Recebe: uma match, a lista de palavras do portuguÊs, uma string de input
+-- Recebe: uma match
+-- Recebe: a lista de palavras do portuguÊs
+-- Recebe: uma string de input
 -- Retorna: um a tupla com: (True se a coordenada e posicionamento forem válidos,
 --                            A string de palavras inválidas,
 --                            A quantidade de pontos obtidos,
@@ -53,7 +55,10 @@ getPlayerOnTurn match
     | otherwise = mP1 match
 
 
--- Recebe: uma match, o booleano que informa se é horizontal, as coordenadas x e y, a palavra
+-- Recebe: uma match
+-- Recebe: o booleano que informa se é horizontal
+-- Recebe: as coordenadas x e y
+-- Recebe: a palavra
 -- Retorna: True se for a primeira palavra deve ocupar o centro, False se não
 _coordCenterValidation :: Match -> Bool -> (Int, Int) -> String -> Bool
 _coordCenterValidation match isHorizontal (x,y) word
@@ -67,33 +72,37 @@ _coordCenterValidation match isHorizontal (x,y) word
         centerValue = (matrix !! 7) !! 7
 
 
--- Recebe: uma match, a lista de palavras do português, a palvra a ser testada
+-- Recebe: uma match
+-- Recebe: a lista de palavras do português
+-- Recebe: a palvra a ser testada
 -- Retorna: True se uma palavra está no arquivo de palavras, False se não
 _wordExistenceValidation :: Match -> [String] -> String -> Bool
 _wordExistenceValidation match wordList word = ((map toLower word) `elem` (mUsedWords match)) || ((map toLower word) `elem` wordList)
 
 
--- Verifica que todas as palavras formadas no tabuleiro existem
 -- Recebe: uma match, a lista de todas as palavras do português, a lista de palavras a testar
+-- Retorna: True se todas as palavras formadas no tabuleiro existem
 _allWordsExist :: Match -> [String] -> [String] -> [String]
 _allWordsExist match wordlist wordsToTest = [x | x <- wordsToTest, not (_wordExistenceValidation match wordlist x)]
 
 
--- Verifica que a coordenada passada é válida: o primeiro caracter é uma letra de A a O e a segunda é uma string com um int de 0 a 14
 -- Recebe: "coord", a primeira palavra do input
+-- Retorna: True se a coordenada passada é válida: o primeiro caracter é uma letra de A a O e a segunda é uma string com um int de 0 a 14
 _coordValidation :: [Char] -> Bool
 _coordValidation (x:y) = (x `elem` ['A' .. 'O']) && (UT.isStringInt y) && ((read y :: Int) >= 0 && (read y :: Int) <= 14)
 
 
 -- Verifica que a palavra jogada pelo jogador é composta apenas de letras e que ela adiciona alguma letra nova ao board
--- Recebe: palavra, letras na posição que ela vai ocupar
+-- Recebe: uma palavra
+-- Recebe: letras na posição que a palavra vai ocupar
 -- Retorna: se é uma posição válida
 _wordHasOnlyLettersAndAddsNewLetters :: String -> String -> Bool
 _wordHasOnlyLettersAndAddsNewLetters word letrasNoBoard = ([] == [l | l <- word, not (isLetter l)]) && (length word /= length [l | l <- letrasNoBoard, isLetter l])
 
 
 -- Verifica que não haverá sobreposição de letras: o jogador não vai colocar uma letra diferente em um espaço já ocupado por outra
--- Recebe: as letras/simbolos do board na posição que será ocupada, a palavra
+-- Recebe: as letras/simbolos do board na posição que será ocupada
+-- Recebe: a palavra
 -- Retorna: falso se a uma letra das tiles for diferente de uma letra na palavra na mesma posição
 _tileValidationDifferentLettersDontOverlap :: String -> String -> Bool
 _tileValidationDifferentLettersDontOverlap [] [] = True
@@ -102,7 +111,9 @@ _tileValidationDifferentLettersDontOverlap (tileHead:tileTail) (wordHead:wordTai
     | otherwise = _tileValidationDifferentLettersDontOverlap tileTail wordTail
 
 
--- Recebe: o booleano que informa se eh horizontal, as coordenadas x e y (col, row) indexadas em zero, e a palavra
+-- Recebe: o booleano que informa se eh horizontal
+-- Recebe: as coordenadas x e y (col, row) indexadas em zero
+-- Recebe: a palavra
 -- Retorna: True se a palavra cabe no espaço disponível no board, False se não
 _wordFitsInSpace :: Bool -> (Int, Int) -> String -> Bool
 _wordFitsInSpace isHorizontal (x, y) word
@@ -111,7 +122,9 @@ _wordFitsInSpace isHorizontal (x, y) word
 
 
 -- A função gera um relatório que traz informações sobre as letras usadas
--- Recebe: letras (chars) do jogador, tiles do board na posição que será ocupada, palavra que será colocada
+-- Recebe: letras (chars) do jogador
+-- Recebe: tiles do board na posição que será ocupada
+-- Recebe: palavra que será colocada
 -- Retorna: [Char] que traz informações sobre quais letras do player foram consumidas, quais estavam no board, e quais o jogador não tinha
 {-  
     Exemplo de output:
@@ -143,14 +156,16 @@ playerHasLetter match letter = letter `elem` (pLetters player)
     where player = getPlayerOnTurn match
 
 
--- Recebe: palavra a ser testada, string do _wordLetterReport
+-- Recebe: palavra a ser testada
+-- Recebe: string do _wordLetterReport
 -- Retorna: as letras que o jogador não tinha para completar a palavra
 _lettersMissing :: [Char] -> [Char] -> [Char]
 _lettersMissing word filterString =
     map fst $ filter (\(_, el) -> el == '!') $ zip word filterString
 
 
--- Recebe: um input em string, uma match
+-- Recebe: um input em string
+-- Recebe: uma match
 -- Retorna: extrai as informações necessárias para validar o input e retorna as informações contidas na string
 readWordInput :: String -> Match -> (Int, Int, Bool, String)
 readWordInput linha match = (x, y, isHorizontal, word)
@@ -187,7 +202,10 @@ matchExistsValidation matchName = do
 
 
 -- Obtém as tiles presentes no board no intervalo especificado
--- Recebe: o booleano se informa se é horizontal, uma match, coordenadas x e y, o tamanho do intervalo
+-- Recebe: o booleano se informa se é horizontal
+-- Recebe: uma match
+-- Recebe: coordenadas x e y
+-- Recebe: o tamanho do intervalo
 -- Retorna: as tiles no intervalo especificado
 _takeUpTo :: Bool -> Match -> (Int, Int) -> Int -> [Char]
 _takeUpTo isHorizontal match (x, y) len
