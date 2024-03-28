@@ -15,7 +15,6 @@ import Utils.Utils as UT
 import Data.Time.Clock
 import System.Console.ANSI
 
-
 data Match = Match {
     mName :: String,
     mBoard :: Board,
@@ -31,17 +30,28 @@ data Match = Match {
 instance ToJSON Match
 instance FromJSON Match
 
+-- Constante do path para as matches.json
+-- Retorna: path do matches.json
 matchesPath :: String
 matchesPath = "data/matches.json"
 
+
+-- Salva uma partida no json
+-- Recebe: partida que será salva no json
 saveMatchJson :: Match -> IO()
 saveMatchJson match = UT.incJsonFile match matchesPath
 
+
+-- Deleta uma partida do json
+-- Recebe: partida que será deletada no json
 deleteMatchFromJson :: String -> IO()
 deleteMatchFromJson name = do
     match <- getMatchByName name
     UT.deleteFromJson match matchesPath
 
+
+-- Atualiza uma partida do json
+-- Recebe: partida que será atualizada no json
 updateMatchJson :: Match -> IO()
 updateMatchJson updatedMatch = do
     accs <- getMatches
@@ -50,6 +60,12 @@ updateMatchJson updatedMatch = do
     where
         targetMatchName = mName updatedMatch
 
+
+-- Cria uma partida e a retorna, adicionando-a no json
+-- Recebe: nome da partida que será criada
+-- Recebe: conta do player 1 que jogará a partida
+-- Recebe: conta do player 2 que jogará a partida
+-- Retorna: partida criada com as configuracoes iniciais
 createMatch :: String -> Account -> Account -> IO Match
 createMatch name acc1 acc2 = do
     let match = Match {
@@ -72,6 +88,11 @@ createMatch name acc1 acc2 = do
     saveMatchJson initMatch
     return initMatch
 
+
+-- Finaliza uma partida, apagando-a do json, atualizando a pontuacao das contas que jogaram
+-- e retornando os status final da partida
+-- Recebe: partida que será finalizada
+-- Retorna: partida finalizada com seus status finais
 finishMatch :: Match -> IO Match
 finishMatch match = do
     incAccScore (accName (pAcc p1)) (pScore p1)
@@ -82,6 +103,11 @@ finishMatch match = do
         p1 = mP1 match
         p2 = mP2 match
 
+
+-- Atualiza o timer da partida
+-- Recebe: partida que terá o timer atualizado
+-- Recebe: tempo que o timer da partida terá
+-- Retorna: partida com timer atualizado
 updateMatchTimer :: Match -> Float -> Match
 updateMatchTimer match time = match { mTimer = time }
 
