@@ -78,8 +78,8 @@ _menuFlux menu input = do
             "2" -> do
                 let updatedMenu = updateMatchesMenu menu 1
                 updatedMenu
-            "3" -> Just <$> return (updateMenu (boxBefore menu) menu)
-            _   -> Just <$> return (updateMenu (action menu) menu)
+            "3" -> return (Just (updateMenu (boxBefore menu) menu))
+            _   -> return (Just (updateMenu (action menu) menu))
         Rules -> return (Just (updateMenu (boxBefore menu) menu))
         BeforeGame -> case input of
             "1" -> do
