@@ -58,22 +58,15 @@ _menuFlux menu input = do
                     return (updateMenu NewGame menu)
             -- Redirecionamento para tela de continuar jogos
             "2" -> return (updateMenu ContinueGame menu)
-            -- Redirecionamento para tela de criar conta caso 2 contas não estejam logadas
-            -- ou nada caso já esteja no limite de login
-            "3" ->
-                if _accsFull menu then do
-                    return (updateMenu (action menu) menu)
-                else do
-                    return (updateMenu Register menu)
             -- Redirecionamento para tela de regras
-            "4" -> return (updateMenu Rules menu)
+            "3" -> return (updateMenu Rules menu)
             -- Redirecionamento para tela de rank de contas e suas pontuações, atualizando
             -- o rank armazenado pelo menu
-            "5" -> do
+            "4" -> do
                 updatedMenu <- _getRank menu
                 return updatedMenu
             -- Saída do jogo
-            "6" -> exitSuccess >> return menu
+            "5" -> exitSuccess >> return menu
             -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
 
