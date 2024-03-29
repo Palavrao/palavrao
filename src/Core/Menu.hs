@@ -112,6 +112,7 @@ _menuFlux menu input = do
             -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
 
+        -- documentar
         ContinueGame -> case input of
             "1" -> do
                 matchMenu <- _continueGame menu
@@ -155,6 +156,7 @@ _menuFlux menu input = do
         -- com qualquer input do usuário
         Rank -> return (updateMenu (boxBefore menu) menu)
 
+        -- documentar
         Matches -> case input of
             "1" -> do
                 let idxMatch = (indexMatch menu) + 1

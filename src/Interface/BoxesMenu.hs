@@ -8,8 +8,6 @@ import Controllers.AccountsController
 import Controllers.PlayerController
 import Controllers.MatchesController
 
-
-
 -- Ação que representa cada tela do jogo
 data Action = NewGame | ContinueGame | Rules | Login | Register | RegisterMatch | StartMenu | Rank | InvalidAction | BeforeGame | FinishMatch | Matches deriving (Show, Eq)
 
@@ -33,7 +31,6 @@ data Menu = Menu {
     indexMatch :: Int
 } deriving (Show, Eq)
 
-
 -- Tela inicial do jogo, que mostra ao usuário os limites do terminal que devem ser seguidos, inicializando
 -- também os dados do menu, como vazio e valor default
 beginGame :: Menu
@@ -50,14 +47,13 @@ beginGame = Menu {
         "                 └─────────────────────────────┘                "
     ], boxBefore = InvalidAction, action = StartMenu, p1 = Account{accName = ""}, p2 = Account{accName = ""}, currentMatch = Match{mName = ""}}
 
-
 -- Atualiza o menu de acordo com a action recebida
 -- Recebe: ação do player que será utilizada para redirecionamento da tela
 -- Recebe: tela atual do jogador com as informações atuais
 -- Retorna: tela redirecionada com as informações do menu anterior
 updateMenu :: Action -> Menu -> Menu
 updateMenu action menu = case action of
-    -- Tela de menu inicial
+      -- Tela de menu inicial
         StartMenu -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
@@ -75,9 +71,8 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-     ],
+     ], boxBefore = StartMenu, action = StartMenu}
     -- Tela de iniciação de novo jogo
-     boxBefore = StartMenu, action = StartMenu}
         NewGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
@@ -95,9 +90,8 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │      iniciando novo jogo      │   ",
         "    └───────────────────────────────┘   "
-    ],
+    ], boxBefore = StartMenu, action = NewGame}
     -- Tela de iniciação de continuar jogo
-     boxBefore = StartMenu, action = NewGame}
         ContinueGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
@@ -115,9 +109,8 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │        continuar jogo         │   ",
         "    └───────────────────────────────┘   "
-    ],
+    ], boxBefore = StartMenu, action = ContinueGame}
     -- Tela de iniciação de login de conta
-     boxBefore = StartMenu, action = ContinueGame}
         Login -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
@@ -135,9 +128,8 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │            login              │   ",
         "    └───────────────────────────────┘   "
-    ],
+    ], boxBefore = StartMenu, action = Login}
     -- Tela de regras do jogo
-     boxBefore = StartMenu, action = Login}
         Rules -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
@@ -155,9 +147,8 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │            regras             │   ",
         "    └───────────────────────────────┘   "
-    ],
+    ], boxBefore = StartMenu, action = Rules}
     -- Tela antes do jogo contendo as informações da partida
-     boxBefore = StartMenu, action = Rules}
         BeforeGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
@@ -176,9 +167,8 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │        opcoes de jogo         │   ",
         "    └───────────────────────────────┘   "
-    ],
+    ], boxBefore = StartMenu, action = BeforeGame}
     -- Tela de criação de conta
-     boxBefore = StartMenu, action = BeforeGame}
         Register -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
@@ -196,9 +186,8 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │        criando conta          │   ",
         "    └───────────────────────────────┘   "
-    ],
+    ], boxBefore = StartMenu, action = Register}
     -- Tela de criação de partida
-     boxBefore = StartMenu, action = Register}
         RegisterMatch -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
@@ -216,9 +205,8 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │       criando partida         │   ",
         "    └───────────────────────────────┘   "
-    ],
+    ], boxBefore = StartMenu, action = RegisterMatch}
     -- Tela de rank das contas, com as 5 contas com maior pontuação
-     boxBefore = StartMenu, action = RegisterMatch}
         Rank -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
@@ -232,9 +220,8 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │             rank              │   ",
         "    └───────────────────────────────┘   "
-    ],
-    -- Tela de rank que possui a listagem de partidas criadas
-     boxBefore = StartMenu, action = Rank}
+    ], boxBefore = StartMenu, action = Rank}
+    -- Tela de listagem das partidas criadas
         Matches -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         "    │  1. avançar        2. voltar  │   ",
@@ -277,6 +264,7 @@ updateMenu action menu = case action of
 _geraRankLines :: Menu -> [String]
 _geraRankLines menu = ["    │     " ++ show i ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc)) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
 
+-- faltando doc
 _geraMatchLines :: [Match] -> Int -> [String]
 _geraMatchLines matches indexMatch =
     let listNames = map mName matches
@@ -287,11 +275,13 @@ _geraMatchLines matches indexMatch =
         emptyLines = replicate (5 - length names) "    │                               │"
     in boxMiddle ++ emptyLines
 
+-- faltando doc
 updateMatchesMenu :: Menu -> Int -> IO(Maybe Menu)
 updateMatchesMenu menu indexMatch = do
   matches <- getMatches
   Just <$> return (_updateMatchesMenu menu matches indexMatch)
 
+-- faltando doc
 _updateMatchesMenu :: Menu -> [Match] -> Int -> Menu
 _updateMatchesMenu menu matches indexMatch =
     menu {
