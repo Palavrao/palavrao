@@ -181,13 +181,13 @@ _menuFlux menu input = do
 -- disponíveis pro jogo, atualizando o menu com os dados da partida e
 -- retornando para a tela de finalização do jogo caso o jogo tenha acabado
 -- ou para tela inicial caso o jogo tenha sido pausado
-_loadMatch :: Menu -> IO (Maybe Menu)
+_loadMatch :: Menu -> IO (Menu)
 _loadMatch menu = do
     wordList <- UT.getWordList
     startTime <- getCurrentTime
     updatedMatch <- gameLoop (currentMatch menu) wordList startTime ""
     updatedMenu <- _menuPauseOrEnd menu updatedMatch
-    return (Just updatedMenu)
+    return updatedMenu
 
 -- Função interna que retornará um menu atualizado com informações do termino da partida, caso
 -- a partida tenha terminado, ou com o menu inicial caso o jogo tenha sido pausado

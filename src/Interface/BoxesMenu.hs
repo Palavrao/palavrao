@@ -276,10 +276,10 @@ _geraMatchLines matches indexMatch =
     in boxMiddle ++ emptyLines
 
 -- faltando doc
-updateMatchesMenu :: Menu -> Int -> IO(Maybe Menu)
+updateMatchesMenu :: Menu -> Int -> IO(Menu)
 updateMatchesMenu menu indexMatch = do
   matches <- getMatches
-  Just <$> return (_updateMatchesMenu menu matches indexMatch)
+  return (_updateMatchesMenu menu matches indexMatch)
 
 -- faltando doc
 _updateMatchesMenu :: Menu -> [Match] -> Int -> Menu
