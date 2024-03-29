@@ -187,12 +187,16 @@ getBestPlayer :: Match -> Player
 getBestPlayer match
     | p1Score > p2Score = p1
     | p1Score < p2Score = p2
+    | p1Score == p2Score && p1RemainingScore < p2RemainingScore = p1
+    | p1Score == p2Score && p2RemainingScore > p1RemainingScore = p2
     | otherwise = Player{pAcc = Account{accName = "Empate :D"}, pScore = p1Score}
     where 
         p1 = mP1 match
         p2 = mP2 match
         p1Score = pScore p1
         p2Score = pScore p2
+        p1RemainingScore = getLetterSum $ pLetters p1
+        p2RemainingScore = getLetterSum $ pLetters p2
 
 
 -- Muda o turno da partida e soma 1 skip na contagem de skips da partida

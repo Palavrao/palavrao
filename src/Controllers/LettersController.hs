@@ -182,3 +182,11 @@ letterValue i
 -- Retorna: array de letter possuindo os caracteres recebidos e suas pontuacoes
 getLetterArray :: [Char] -> [Letter]
 getLetterArray characters = map (\c -> Letter { letter=toUpper c, letterScore=letterValue c}) characters
+
+
+-- Recebe um array de letters e retorna a soma de suas pontuações
+-- Recebe: um array de Letters
+-- Retorna: a soma de suas pontuações
+getLetterSum :: [Letter] -> Int
+getLetterSum [] = 0
+getLetterSum (l:tail) = (letterScore l) + getLetterSum tail

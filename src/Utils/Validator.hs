@@ -63,8 +63,8 @@ getPlayerOnTurn match
 _coordCenterValidation :: Match -> Bool -> (Int, Int) -> String -> Bool
 _coordCenterValidation match isHorizontal (x,y) word
     | centerValue /= '-' = True -- Centro já estava ocupado: não é a primeira palavra
-    | isHorizontal = (y == 7) && (x <= 7 && 7 <= finalXInd)
-    | otherwise = (x == 7) && (y <= 7 && 7 <= finalYInd)
+    | isHorizontal = (y == 7) && (x <= 7 && 7 <= finalXInd) && (length word > 1)
+    | otherwise = (x == 7) && (y <= 7 && 7 <= finalYInd) && (length word > 1)
     where
         finalXInd = x + (length word) - 1
         finalYInd = y + (length word) - 1
