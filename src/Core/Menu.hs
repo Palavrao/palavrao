@@ -116,7 +116,7 @@ _menuFlux menu input = do
         ContinueGame -> case input of
             "1" -> do
                 matchMenu <- _continueGame menu
-                _loadMatch matchMenu
+                if mName (currentMatch menu) /= "" then _loadMatch matchMenu else return menu
             "2" -> do
                 let updatedMenu = updateMatchesMenu menu 0
                 updatedMenu
@@ -162,12 +162,12 @@ _menuFlux menu input = do
                 let idxMatch = (indexMatch menu) + 1
                     updatedMenu = updateMatchesMenu menu idxMatch
                 updatedMenu
-            {-"2" -> do
+            "2" -> do
                 let idxMatch = (indexMatch menu) - 1
-                    updatedMenu <- if idxMatch == 0
-                                   then return (updateMenu (boxBefore menu) menu)
-                                   else updateMatchesMenu menu idxMatch
-                return updatedMenu-}
+                updatedMenu <- if idxMatch == 0
+                               then return (updateMenu (boxBefore menu) menu)
+                               else (updateMatchesMenu menu idxMatch)
+                return updatedMenu
             _ -> return menu
 
         -- Tela de finalização do jogo, mostrando os dados finais da partida,
