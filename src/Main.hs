@@ -20,4 +20,3 @@ main = do
     UT.startPersistence
     menuLoop beginGame
     
-    
