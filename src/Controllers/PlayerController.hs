@@ -10,6 +10,8 @@ import Data.Aeson
 import Controllers.AccountsController
 import Controllers.LettersController
 
+
+
 -- Um player é uma entidade que existe durante uma partida, ele deve ter associado a ele:
 -- Uma conta
 -- Um conjunto de até 7 letras
