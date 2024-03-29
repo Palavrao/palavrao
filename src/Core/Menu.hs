@@ -112,15 +112,19 @@ _menuFlux menu input = do
             -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
 
-        -- documentar
+        -- Tela de continuação de jogo
         ContinueGame -> case input of
+            -- Recupera match pelo nome, a partir de onde foi pausada, caso exista
             "1" -> do
                 matchMenu <- _continueGame menu
                 if mName (currentMatch menu) /= "" then _loadMatch matchMenu else return menu
+            -- Redireciona para a box que contém a lista de partidas criadas
             "2" -> do
                 let updatedMenu = updateMatchesMenu menu 0
                 updatedMenu
+            -- Retorna a box de menu inicial
             "3" -> return (updateMenu (boxBefore menu) menu)
+            -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
 
         -- Tela de regras, que retorna para a tela anterior com qualquer input
@@ -177,7 +181,7 @@ _menuFlux menu input = do
         -- Caso base o qual so retorna
         _ -> return (updateMenu (action menu) menu)
 
-{-  Redirecionamento para o jogo, passando o stattime e a lista de palavras
+{-  Redirecionamento para o jogo, passando o starttime e a lista de palavras
  disponíveis pro jogo, atualizando o menu com os dados da partida e
  retornando para a tela de finalização do jogo caso o jogo tenha acabado
  ou para tela inicial caso o jogo tenha sido pausado -}
