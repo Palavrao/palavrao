@@ -61,7 +61,7 @@ _buildBoard match i = do
     if i > 15 then
         putStr (unlines
                 [printf  "\n     %s" playerLetters,
-                 printf  "     %s                        Letras Restantes: 00\n" scoreLetters])
+                 printf  "     %s                        Letras Restantes: %-3s\n" scoreLetters (show (length (mLetters match)))])
     else do
         putStr "     "
         mapM_ __pintaBoard (lines!!i)
