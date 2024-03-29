@@ -117,7 +117,7 @@ _menuFlux menu input = do
             -- Recupera match pelo nome, a partir de onde foi pausada, caso exista
             "1" -> do
                 matchMenu <- _continueGame menu
-                if mName (currentMatch menu) /= "" then _loadMatch matchMenu else return menu
+                if mName (currentMatch matchMenu) /= "" then _loadMatch matchMenu else return menu
             -- Redireciona para a box que contém a lista de partidas criadas
             "2" -> do
                 let updatedMenu = updateMatchesMenu menu 0
