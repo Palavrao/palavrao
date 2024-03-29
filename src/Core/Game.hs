@@ -37,12 +37,8 @@ fluxHandler match _ ":!" = do
 fluxHandler match wordlist ":?" = do
                         -- UT.manual
                         _printRules
-                        UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match))))) Blue
-                        putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
-                        hFlush stdout
-                        i <- getLine
-                        (m, msg)  <- (fluxHandler match wordlist i)
-                        return (m, msg) -- TODO
+                        c <- getLine
+                        return (match, "Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ "\n")
 -- CASOS ESPECIAIS: :* trocar letra : sem letra
 fluxHandler match w (':':'*':[]) = do
                     UT.__colorText ("Escolha um caracter válido \n > ") Blue
@@ -178,7 +174,7 @@ gameLoop match wordList lastUpdate lastMessage = do
         clearScreen
         UT.__colorText lastMessage Green
         hFlush stdout
-        UT.__colorText "> Enter para seguir para a visão do próximo jogador!\n\n" Blue
+        UT.__colorText "> Enter para ver o tabuleiro do jogador da vez!\n\n" Blue
         hFlush stdout
         c <- getLine
 
