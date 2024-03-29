@@ -178788,6 +178788,7 @@ pautou
 pauzinho
 pauzinhos
 pavao
+pave
 pavilhao
 pavilhoes
 pavimenta
@@ -193691,6 +193692,7 @@ pulverizemos
 pulverizes
 pulverizo
 pulverizou
+pum
 puma
 pumas
 puna
