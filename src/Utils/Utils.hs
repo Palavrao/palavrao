@@ -138,10 +138,17 @@ getLetterObject c
     where value = letterValue (toUpper c)
 
 
+-- Remove caracteres de uma lista de caracteres
+-- Recebe: uma lista inicial de caracteres
+-- Recebe: uma lista de caracteres a ser removidos
+-- Retorna: a lista inicial com os caracteres removidos, um caracter que aparece N vezes tem suas primeiras N instâncias removidas
 removeChars :: [Char] -> [Char] -> [Char]
 removeChars toRemove list = foldr (\x acc -> _removeChar x acc) list toRemove
 
 
+-- Verifica se uma string é composta de dígitos e se pode ser lida como int
+-- Recebe: uma string
+-- Retorna: True se ela puder ser lida como int, False se não
 isStringInt :: String -> Bool
 isStringInt str = case reads str :: [(Int, String)] of
     [(num, "")] -> True
@@ -165,6 +172,10 @@ _popRandomElements removedElements elements qtdElements = do
     _popRandomElements (removedElements ++ [randElement]) updatedElements (qtdElements - 1)
 
 
+-- Imprime texto colorido no terminal
+-- Recebe: a string a ser impressa
+-- Recebe: a cor da string a ser impressa
+-- Retorna: não tem retorno, printa no terminal a string na cor especificada
 __colorText :: String -> Color -> IO ()
 __colorText text color = do
     setSGR [SetColor Foreground Vivid color]  -- Set the foreground color
@@ -172,6 +183,10 @@ __colorText text color = do
     setSGR [Reset]
 
 
+-- Remove um caracter de uma lista de caracteres
+-- Recebe: o caracter a ser removido
+-- Recebe: uma lista de caracteres
+-- Retorna: a lista com aquele caracter removido
 _removeChar :: Char -> [Char] -> [Char]
 _removeChar x (y:ys) 
     | x == y = ys
