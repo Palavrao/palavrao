@@ -286,7 +286,7 @@ _updateMatchesMenu menu namesMatches indexMatch lengthList numPages =
     menu {
         box = [
             "    ┌───────────────────────────────┐   ",
-            "    │  1. avançar        2. voltar  │   ",
+            "    │  1. voltar        2. avançar  │   ",
             "    │                               │   ",
             "    │           PALAVRÃO            │   ",
             "    │                               │   "

@@ -40,9 +40,7 @@ fluxHandler match wordlist ":?" = do
                         return (match, "Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ "\n")
 -- CASOS ESPECIAIS: :* trocar letra : sem letra
 fluxHandler match w (':':'*':[]) = do
-                    UT.__colorText ("Escolha um caracter válido \n > ") Blue
-                    c <- getLine
-                    fluxHandler match w (":*" ++ c)
+                    return (match, "Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ "\n")
 -- CASOS ESPECIAIS: :* trocar letra : letras válidas e inválidas
 fluxHandler match w (':':'*':t) = 
                     -- obtém o objeto letter a partir de um char
