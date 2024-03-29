@@ -111,7 +111,6 @@ gameLoop match wordList lastUpdate lastMessage = do
     -- Mostra a tela de jogo 
     printBoard match
     UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match))))) Blue
-    putStrLn ("\n::LETRAS:: " ++ [letter l  | l <- pLetters (getPlayerOnTurn match)])
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
     
