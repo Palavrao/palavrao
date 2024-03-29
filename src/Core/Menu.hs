@@ -157,18 +157,18 @@ _menuFlux menu input = do
         Rank -> return (updateMenu (boxBefore menu) menu)
 
         -- documentar
-        {-Matches -> case input of
+        Matches -> case input of
             "1" -> do
                 let idxMatch = (indexMatch menu) + 1
                     updatedMenu = updateMatchesMenu menu idxMatch
                 updatedMenu
-            "2" -> do
+            {-"2" -> do
                 let idxMatch = (indexMatch menu) - 1
                     updatedMenu <- if idxMatch == 0
                                    then return (updateMenu (boxBefore menu) menu)
                                    else updateMatchesMenu menu idxMatch
-                return updatedMenu
-            _ -> return menu-}
+                return updatedMenu-}
+            _ -> return menu
 
         -- Tela de finalização do jogo, mostrando os dados finais da partida,
         -- retornando ao menu inicial com qualquer input do usuário
@@ -307,12 +307,15 @@ _continueGame menu = do
   putStr "nome_da_partida> "
   hFlush stdout
   matchName <- getLine
-  maybeMatch <- getMatchByName matchName
-  case maybeMatch of
-    Just match -> return $ (_updateCurrentMatch menu match)
-    Nothing    -> do
-               putStrLn "partida não encontrada"
-               _continueGame menu
+  if matchName == "3" || matchName == "2" || matchName == "" then do
+    return menu
+  else do
+    maybeMatch <- getMatchByName matchName
+    case maybeMatch of
+      Just match -> return $ (_updateCurrentMatch menu match)
+      Nothing    -> do
+                 putStrLn "partida não encontrada"
+                 _continueGame menu
 
 {-  Função interna que retorna o menu com as contas logadas atualizadas
  Recebe: menu que terá contas logadas atualizadas
