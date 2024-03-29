@@ -18,6 +18,8 @@ import Controllers.LettersController
 import Data.Char
 
 
+
+-- Inicia a persistência dos jsons na pasta data 
 startPersistence :: IO()
 startPersistence = do
     let dataPath = "data/"
@@ -37,6 +39,10 @@ startPersistence = do
         then writeFile accountsPath "[]"
         else putStrLn "accounts.json file already exists"
 
+
+-- Lê um arquivo json e decodifica para um array de objeto
+-- Recebe: path para o arquivo que será lido
+-- Retorna: array de objetos que podem ser decodificados do json
 readJsonFile :: (ToJSON t, FromJSON t) => FilePath -> IO [t]
 readJsonFile path = do
     contents <- B.readFile path
@@ -44,47 +50,110 @@ readJsonFile path = do
         Left err -> error $ "Error decoding JSON: " ++ err
         Right decodedContents -> return decodedContents
 
+
+-- Escreve um arquivo json
+-- Recebe: array de objetos que podem ser codificados para json
+-- Recebe: path para onde o arquivo json será escrito
 writeJsonFile :: (ToJSON t, FromJSON t) => [t] -> FilePath -> IO()
 writeJsonFile obj path = B.writeFile path (encode obj)
 
+
+-- Deleta algo de um arquivo json
+-- Recebe: objeto que pode ser codificado para json
+-- Recebe: path para o arquivo que terá o objeto deletado
 deleteFromJson :: (ToJSON t, FromJSON t, Eq t) => t -> FilePath -> IO()
 deleteFromJson obj path = do
     contents <- readJsonFile path
     let updatedContents = removeOneElement contents obj
     writeJsonFile updatedContents path
 
+
+-- Adiciona conteúdo em um arquivo json
+-- Recebe: objeto que pode ser codificado para json
+-- Recebe: path para o arquivo que terá seu conteúdo adicionado
 incJsonFile :: (ToJSON t, FromJSON t) => t -> FilePath -> IO()
 incJsonFile obj path = do
     contents <- readJsonFile path
     let updatedContents = (obj:contents)
     writeJsonFile updatedContents path
 
-getJsonStr :: (ToJSON t, FromJSON t) => t -> String
-getJsonStr obj = BS.unpack encodedObj
-    where encodedObj = encode obj
 
+-- Retorna um objeto que será procurado por um field específicio
+-- Recebe: array de objetos que possuem um field específico
+-- Recebe: função que terá o papel de pegar o field do objeto
+-- Recebe: valor esperado que o objeto tenha para ser retornado
+-- Retorna: objeto que está sendo produrado pelo field ou nada caso não seja encontrado
 getObjByField :: (ToJSON t, FromJSON t, Eq b) => [t] -> (t -> b) -> b -> Maybe t
 getObjByField [] _ _= Nothing
 getObjByField (obj:objt) targetField targetValue
     | targetField obj == targetValue = Just obj
     | otherwise = getObjByField objt targetField targetValue
 
+
+-- Ordena um array de objetos por um field específico
+-- Recebe: array de objetos que será ordenado
+-- Recebe: função que terá o papel de pegar o field do objeto
+-- Retorna: array de objetos ordenados
 sortObjsByField :: (Ord b) => [t]-> (t -> b) -> [t]
 sortObjsByField [] _  = []
 sortObjsByField objs targetField = sortBy (comparing targetField) objs 
 
+
+-- Faz um pop de elementos aleatórios de um array de objetos
+-- Recebe: array de objetos que terá seus elementos removidos
+-- Recebe: quantidade de elementos que serão removidos do array
+-- Retorna: tupla contendo informações dos elementos que foram removidos e dos que ficaram
+-- no array final
 popRandomElements :: (Eq t) => [t] -> Int -> IO([t], [t])
 popRandomElements avaiableElements qtdElements = _popRandomElements [] avaiableElements qtdElements
 
+
+-- Remove um elemento específico de um array de objetos
+-- Recebe: array de objetos que terá o elemento removido
+-- Recebe: elemento que será removido do array
+-- Retorna: array de elementos pós remoção do elemento desejado
 removeOneElement :: (Eq t) => [t] -> t -> [t]
 removeOneElement [] _ = []
 removeOneElement (element:tail) removed 
     | element == removed = tail 
     | otherwise = (element:removeOneElement tail removed)
 
-formatTime :: Float -> String
-formatTime time = show (round (time / 60)) ++ ":" ++ show (round (mod' time 60))
 
+-- Retorna a lista de palavras registradas no arquivo txt
+-- Retorna: array de palavras disponíveis
+getWordList :: IO [String]
+getWordList = do
+    base <- readFile "palavras/br-sem-acentos.txt"
+    return (lines base)
+
+
+-- Codifica um char para uma letra
+-- Recebe: caractere que será codificado para uma letra
+-- Retorna: letra representando o caractere e seu valor, ou nada caso o caractere
+-- não possa ser mapeado para uma letra
+getLetterObject :: Char -> Maybe Letter
+getLetterObject c
+    | value == 0 = Nothing
+    | otherwise = Just $ Letter {letter=toUpper c, letterScore=value}
+    where value = letterValue (toUpper c)
+
+
+removeChars :: [Char] -> [Char] -> [Char]
+removeChars toRemove list = foldr (\x acc -> _removeChar x acc) list toRemove
+
+
+isStringInt :: String -> Bool
+isStringInt str = case reads str :: [(Int, String)] of
+    [(num, "")] -> True
+    _           -> False
+
+
+-- Função interna que faz pop de elementos aleatórios de um certo array de objetos
+-- Recebe: elementos que foram removidos de outras iterações na recursão
+-- Recebe: elementos que ficaram depois da remoção nas outras iterações da recursão
+-- Recebe: quantidade de elementos restantes que devem ser removidos do array
+-- Retorna: tupla contendo informações dos elementos que foram removidos e dos que ficaram
+-- no array final
 _popRandomElements :: (Eq t) => [t] -> [t] -> Int -> IO([t], [t])
 _popRandomElements removedElements [] _ = return (removedElements, [])
 _popRandomElements removedElements finalElements 0 = return (removedElements, finalElements)
@@ -96,39 +165,14 @@ _popRandomElements removedElements elements qtdElements = do
     _popRandomElements (removedElements ++ [randElement]) updatedElements (qtdElements - 1)
 
 
-getWordList :: IO [String]
-getWordList = do
-    base <- readFile "palavras/br-sem-acentos.txt"
-    --putStrLn $ show (lines base)
-    return (lines base)
-
-manual :: IO ()
-manual = do
-            putStrLn "TODO"
-
-
 __colorText :: String -> Color -> IO ()
 __colorText text color = do
     setSGR [SetColor Foreground Vivid color]  -- Set the foreground color
     putStr text
     setSGR [Reset]
 
-getLetterObject :: Char -> Maybe Letter
-getLetterObject c
-    | value == 0 = Nothing
-    | otherwise = Just $ Letter {letter=toUpper c, letterScore=value}
-    where value = letterValue (toUpper c)
-
 
 _removeChar :: Char -> [Char] -> [Char]
 _removeChar x (y:ys) 
     | x == y = ys
     | otherwise = y : _removeChar x ys
-
-removeChars :: [Char] -> [Char] -> [Char]
-removeChars toRemove list = foldr (\x acc -> _removeChar x acc) list toRemove
-
-isStringInt :: String -> Bool
-isStringInt str = case reads str :: [(Int, String)] of
-    [(num, "")] -> True
-    _           -> False

@@ -34,13 +34,6 @@ saveAccJson :: Account -> IO()
 saveAccJson acc = UT.incJsonFile acc accsPath
 
 
--- Deleta uma conta do json
--- Recebe: conta que será deletada no json
-deleteAccFromJson :: Account -> IO()
-deleteAccFromJson acc = do
-    UT.deleteFromJson acc accsPath
-
-
 -- Cria uma conta e a retorna, adicionando-a no json
 -- Recebe: nome da conta que será criada
 -- Retorna: conta criada com score 0
