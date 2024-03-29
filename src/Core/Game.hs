@@ -100,8 +100,10 @@ fluxHandler match wordlist input
 -- Loop principal do jogo: recebe input do jogador, valida o input e informa resultados sobre a tentativa
 gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
-    -- Verifica condição de parada: 4 saltos de turno/trocas de letra seguidos
-    if mSkips match == 4 then do
+    -- Verifica uma das condições de parada:
+    -- 4 saltos de turno/trocas de letra seguidos
+    -- A partida ficar sem letra para dar aos jogadores
+    if mSkips match == 4 || length (mLetters match) == 0 then do
         finishedMatch <- finishMatch match
         return finishedMatch
     else do
