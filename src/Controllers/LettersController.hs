@@ -16,6 +16,8 @@ data Letter = Letter {
 instance ToJSON Letter
 instance FromJSON Letter
 
+
+
 -- Retorna as letras iniciais de uma partida
 -- Retorna: todas as letras 120 letras iniciais
 startLetters :: [Letter] 
