@@ -277,8 +277,7 @@ numPagesMatches numMatches = (roundNumMatches numMatches) `div` 5
  e retorna um array de string contendo os 5 nomes de partidas a serem exibidos -}
 _geraMatchLines :: [String] -> Int -> [String]
 _geraMatchLines namesMatches indexMatch =
-    let lengthList = length namesMatches
-        names = take 5 $ drop (5 * indexMatch) namesMatches
+    let names = take 5 $ drop (5 * indexMatch) namesMatches
         maxLength = maximum (map length names)
         paddedNames = map (\name -> name ++ replicate (maxLength - length name) ' ') names
         boxMiddle = map (\name -> printf "    │       %-10s              │" name) paddedNames
