@@ -77,7 +77,7 @@ _menuFlux menu input = do
                 matchMenu <- _continueGame menu
                 _loadMatch matchMenu
             "2" -> do
-                let updatedMenu = updateMatchesMenu menu 1
+                let updatedMenu = updateMatchesMenu menu 0
                 updatedMenu
             "3" -> return (Just (updateMenu (boxBefore menu) menu))
             _   -> return (Just (updateMenu (action menu) menu))
@@ -103,7 +103,7 @@ _menuFlux menu input = do
         Matches -> case input of
             "1" -> do
                 let idxMatch = (indexMatch menu) + 1
-                let updatedMenu = updateMatchesMenu menu idxMatch
+                    updatedMenu = updateMatchesMenu menu idxMatch
                 updatedMenu
             "2" -> do
                 let idxMatch = (indexMatch menu) - 1

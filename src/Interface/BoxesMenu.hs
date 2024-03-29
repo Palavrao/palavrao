@@ -203,13 +203,13 @@ updateMenu action menu = case action of
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
         "    │                               │   "]
-        {-++ (geraMatchLines getMatches 0 5) ++-}++
+       {-++ _geraMatchLines matches indexMatch-} ++
        ["    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ], boxBefore = ContinueGame, action = Matches, indexMatch = 1}
+    ], boxBefore = ContinueGame, action = Matches, indexMatch = 0}
         FinishMatch -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
@@ -238,7 +238,7 @@ _geraMatchLines matches indexMatch =
         names = take 5 $ drop (5 * indexMatch) listNames
         maxLength = maximum (map length names)
         paddedNames = map (\name -> name ++ replicate (maxLength - length name) ' ') names
-        boxMiddle = map (\name -> "│ " ++ name ++ " │") paddedNames
+        boxMiddle = map (\name -> printf "    │       %-10s              │" name) paddedNames
         emptyLines = replicate (5 - length names) "    │                               │"
     in boxMiddle ++ emptyLines
 
