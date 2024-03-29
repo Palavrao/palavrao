@@ -8,6 +8,11 @@ import GHC.Generics
 import Data.Aeson
 import Utils.Utils as UT
 
+
+
+-- Uma conta é uma entidade que é armazenada e utilizada para ranking, e associar a players, ela deve ter associado a ela:
+-- Um nome
+-- Um score representando a pontuação de todas as partidas jogadas pela conta
 data Account = Account {
     accName :: String,
     accScore :: Int
@@ -15,6 +20,7 @@ data Account = Account {
 
 instance ToJSON Account
 instance FromJSON Account
+
 
 -- Constante do path para as accounts.json
 -- Retorna: path do accounts.json
