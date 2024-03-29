@@ -157,7 +157,7 @@ _menuFlux menu input = do
         Rank -> return (updateMenu (boxBefore menu) menu)
 
         -- documentar
-        Matches -> case input of
+        {-Matches -> case input of
             "1" -> do
                 let idxMatch = (indexMatch menu) + 1
                     updatedMenu = updateMatchesMenu menu idxMatch
@@ -167,8 +167,8 @@ _menuFlux menu input = do
                     updatedMenu <- if idxMatch == 0
                                    then return (updateMenu (boxBefore menu) menu)
                                    else updateMatchesMenu menu idxMatch
-                    return updatedMenu
-            _ -> return $ Just menu
+                return updatedMenu
+            _ -> return menu-}
 
         -- Tela de finalização do jogo, mostrando os dados finais da partida,
         -- retornando ao menu inicial com qualquer input do usuário
