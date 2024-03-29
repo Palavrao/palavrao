@@ -19,7 +19,11 @@ import Controllers.PlayerController
 import Data.Char
 import Controllers.LettersController
 
-
+{- Trata o input do usuário obtido durante o jogo
+ Recebe: uma match
+ Recebe: o arrau de todas as palavras do português
+ Recebe: a string de input do usuário
+ Retorna: a match atualizada de acordo com as ações realoizadas e uma string que informa o status da operação realizada-}
 fluxHandler :: Match -> [String] -> String -> IO (Match, String)
 -- CASOS ESPECIAIS : :C PAUSAR PARTIDA
 fluxHandler match wl ":c" = fluxHandler match wl ":C"
@@ -155,7 +159,12 @@ _printRules = do
     
     putStrLn "  O jogo termina quando não há mais peças no saco ou ambos os jogadores realizam 4 trocas de peças seguidas. Em caso de empate, o jogador com a menor quantidade de letras sobrando vence.\n"
 
--- Loop principal do jogo: recebe input do jogador, valida o input e informa resultados sobre a tentativa
+{- Loop principal do jogo, correspondendo a um turno: recebe input do jogador, valida o input e informa resultados sobre a tentativa
+ Recebe: uma match em um estado inicial
+ Recebe: o array de todas as palavras da língua portuguesa
+ Recebe: uma variável de controle de tempo
+ Recebe: a string informando o estado da últimna execução do método (último turno) 
+ Retorna: uma match atualizada de acordo com as ações realizadas no método-}
 gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
     -- Verifica uma das condições de parada:

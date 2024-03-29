@@ -22,8 +22,8 @@ import Controllers.PlayerController (Player(pScore))
 
 
 
--- Função recursiva que fica atualizando o menu de acordo com o que recebe de entrada
--- Recebe: menu que ficará sendo atualiado a cada loop
+{-  Função recursiva que fica atualizando o menu de acordo com o que recebe de entrada
+ Recebe: menu que ficará sendo atualiado a cada loop -}
 menuLoop :: Menu -> IO ()
 menuLoop menu = do
     _drawMenu menu
@@ -32,18 +32,18 @@ menuLoop menu = do
     menuLoop updatedMenu
 
 
--- Função interna que desenha o menu na tela
--- Recebe: menu que será desenhado na tela
+{-  Função interna que desenha o menu na tela
+ Recebe: menu que será desenhado na tela -}
 _drawMenu :: Menu -> IO ()
 _drawMenu menu = do
     clearScreen
     mapM_ putStrLn (box menu)
 
 
--- Função interna que gerencia o fluxo de comandos e telas do menu
--- Recebe: menu que será atualizado
--- Recebe: input do usuário
--- Retorna: menu atualizado de acordo com o input do usuário
+{-  Função interna que gerencia o fluxo de comandos e telas do menu
+ Recebe: menu que será atualizado
+ Recebe: input do usuário
+ Retorna: menu atualizado de acordo com o input do usuário -}
 _menuFlux :: Menu -> String -> IO Menu
 _menuFlux menu input = do
     case action menu of
@@ -177,10 +177,10 @@ _menuFlux menu input = do
         -- Caso base o qual so retorna
         _ -> return (updateMenu (action menu) menu)
 
--- Redirecionamento para o jogo, passando o stattime e a lista de palavras
--- disponíveis pro jogo, atualizando o menu com os dados da partida e
--- retornando para a tela de finalização do jogo caso o jogo tenha acabado
--- ou para tela inicial caso o jogo tenha sido pausado
+{-  Redirecionamento para o jogo, passando o stattime e a lista de palavras
+ disponíveis pro jogo, atualizando o menu com os dados da partida e
+ retornando para a tela de finalização do jogo caso o jogo tenha acabado
+ ou para tela inicial caso o jogo tenha sido pausado -}
 _loadMatch :: Menu -> IO (Menu)
 _loadMatch menu = do
     wordList <- UT.getWordList
@@ -189,13 +189,13 @@ _loadMatch menu = do
     updatedMenu <- _menuPauseOrEnd menu updatedMatch
     return updatedMenu
 
--- Função interna que retornará um menu atualizado com informações do termino da partida, caso
--- a partida tenha terminado, ou com o menu inicial caso o jogo tenha sido pausado
--- Recebe: menu que será atualizado de acordo se o jogo terminou ou pausou
--- Recebe: partida atualizada com informações de quando o jogo terminou ou pausou
--- Retorna: menu atualizado com a tela de start menu sem informações de players logados
--- caso a partida tenha sido pausada, ou com a tela de finish match mostrando as informações
--- finais do jogo, caso a partida tenha sido terminada
+{-  Função interna que retornará um menu atualizado com informações do termino da partida, caso
+ a partida tenha terminado, ou com o menu inicial caso o jogo tenha sido pausado
+ Recebe: menu que será atualizado de acordo se o jogo terminou ou pausou
+ Recebe: partida atualizada com informações de quando o jogo terminou ou pausou
+ Retorna: menu atualizado com a tela de start menu sem informações de players logados
+ caso a partida tenha sido pausada, ou com a tela de finish match mostrando as informações
+ finais do jogo, caso a partida tenha sido terminada -}
 _menuPauseOrEnd :: Menu -> Match -> IO Menu
 _menuPauseOrEnd menu updatedMatch = do
     match <- getMatchByName (mName updatedMatch)
@@ -207,16 +207,16 @@ _menuPauseOrEnd menu updatedMatch = do
             return (updateMenu FinishMatch updatedMenu)
 
 
--- Função interna que verifica se a quantidade de players logados no menu está em 2, cheia ou não
--- Recebe: menu que terá a quantidade de players analisada
--- Retorna: boolean que será false caso a quantidade de players logados seja 1 e 2 caso contrário
+{-  Função interna que verifica se a quantidade de players logados no menu está em 2, cheia ou não
+ Recebe: menu que terá a quantidade de players analisada
+ Retorna: boolean que será false caso a quantidade de players logados seja 1 e 2 caso contrário -}
 _accsFull :: Menu -> Bool
 _accsFull menu = accName (p2 menu) /= ""
 
 
--- Função interna que criará uma partida se a partida não já tiver sido criada com esse nome
--- Recebe: menu que terá a partida criada e armazenada
--- Retorna: menu com a partida criada e com a tela de before game
+{-  Função interna que criará uma partida se a partida não já tiver sido criada com esse nome
+ Recebe: menu que terá a partida criada e armazenada
+ Retorna: menu com a partida criada e com a tela de before game -}
 _createMatch :: Menu -> IO Menu
 _createMatch menu = do
     putStr "nome_da_partida> "
@@ -235,11 +235,11 @@ _createMatch menu = do
             return $ updateMenu BeforeGame updatedMatch
 
 
--- Função interna que faz o login de uma conta no menu e o retorna, verificando a existência da conta passada
--- e se a quantidade de contas máxima foi atingida
--- Recebe: menu que terá a conta logada
--- Retorna: menu com a conta logada e com a tela de start menu caso tiver atingido 2 players ou para a tela
--- de newgame caso tenha atingido apenas 1 player logado
+{-  Função interna que faz o login de uma conta no menu e o retorna, verificando a existência da conta passada
+ e se a quantidade de contas máxima foi atingida
+ Recebe: menu que terá a conta logada
+ Retorna: menu com a conta logada e com a tela de start menu caso tiver atingido 2 players ou para a tela
+ de newgame caso tenha atingido apenas 1 player logado -}
 _login :: Menu -> IO Menu
 _login menu = do
     putStr "nome_de_usuario> "
@@ -268,10 +268,10 @@ _login menu = do
                             return $ updateMenu NewGame updatedAccs
 
 
--- Função interna que cria uma conta no menu e o retorna, verificando se o nome passado ja existe em alguma conta
--- Recebe: menu que terá a conta criada e logada
--- Retorna: menu com a conta criada e logada, com a tela de start menu caso tiver atingido 2 players ou para a tela
--- de newgame caso tenha atingido apenas 1 player logado
+{-  Função interna que cria uma conta no menu e o retorna, verificando se o nome passado ja existe em alguma conta
+ Recebe: menu que terá a conta criada e logada
+ Retorna: menu com a conta criada e logada, com a tela de start menu caso tiver atingido 2 players ou para a tela
+ de newgame caso tenha atingido apenas 1 player logado -}
 _createAcc :: Menu -> IO Menu
 _createAcc menu = do
     putStr "nome_de_usuario> "
@@ -293,15 +293,15 @@ _createAcc menu = do
                 return $ updateMenu NewGame updatedAccs
 
 
--- Função interna que atualiza a partida que o menu está armazenando
--- Recebe: menu que terá a partida armazenada
--- Recebe: match que será armazenada no menu
--- Retorna: menu com sua match substituída pela nova passada como argumento
+{-  Função interna que atualiza a partida que o menu está armazenando
+ Recebe: menu que terá a partida armazenada
+ Recebe: match que será armazenada no menu
+ Retorna: menu com sua match substituída pela nova passada como argumento -}
 _updateCurrentMatch :: Menu -> Match -> Menu
 _updateCurrentMatch menu match = menu {currentMatch = match}
 
--- Recebe: menu atual do jogo
--- Retorna: menu contendo a partida a ser continuada
+{-  Recebe: menu atual do jogo
+ Retorna: menu contendo a partida a ser continuada -}
 _continueGame :: Menu -> IO Menu
 _continueGame menu = do
   putStr "nome_da_partida> "
@@ -317,10 +317,10 @@ _continueGame menu = do
                  putStrLn "partida não encontrada"
                  _continueGame menu
 
--- Função interna que retorna o menu com as contas logadas atualizadas
--- Recebe: menu que terá contas logadas atualizadas
--- Recebe: conta que será logada no menu
--- Retorna: menu com a conta do player adicionada como jogador
+{-  Função interna que retorna o menu com as contas logadas atualizadas
+ Recebe: menu que terá contas logadas atualizadas
+ Recebe: conta que será logada no menu
+ Retorna: menu com a conta do player adicionada como jogador -}
 _updateAccs :: Menu -> Account -> Menu
 _updateAccs menu acc
   | p1 menu == acc = menu
@@ -328,9 +328,9 @@ _updateAccs menu acc
   | otherwise = menu {p2 = acc}
 
 
--- Função interna que retorna o menu atualizado com a tela de rank das contas
--- Recebe: menu que terá o rank atualizado
--- Retorna: menu com o rank atualizado
+{-  Função interna que retorna o menu atualizado com a tela de rank das contas
+ Recebe: menu que terá o rank atualizado
+ Retorna: menu com o rank atualizado -}
 _getRank :: Menu -> IO Menu
 _getRank menu = do
     accs <- getAccRank
@@ -338,9 +338,9 @@ _getRank menu = do
     return $ updateMenu Rank updatedRank
 
 
--- Função interna que atualiza o rank de contas do menu
--- Recebe: menu que terá o rank atualizado
--- Recebe: array das 5 contas com melhores scores do json
--- Retorna: menu com o rank substituído pelo array
+{-  Função interna que atualiza o rank de contas do menu
+ Recebe: menu que terá o rank atualizado
+ Recebe: array das 5 contas com melhores scores do json
+ Retorna: menu com o rank substituído pelo array -}
 _updateRank :: Menu -> [Account] -> Menu
 _updateRank menu accs = menu {accsRank = accs}
