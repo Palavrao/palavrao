@@ -29,9 +29,7 @@ menuLoop menu = do
     _drawMenu menu
     userInput <- getLine
     updatedMenu <- _menuFlux menu userInput
-    case updatedMenu of
-        Just updatedMenu -> menuLoop updatedMenu
-        Nothing -> return ()
+    menuLoop updatedMenu
 
 
 -- Função interna que desenha o menu na tela
@@ -43,78 +41,79 @@ _drawMenu menu = do
 
 
 -- Função interna que gerencia o fluxo de comandos e telas do menu
---
---
-_menuFlux :: Menu -> String -> IO (Maybe Menu)
+-- Recebe: menu que será atualizado
+-- Recebe: input do usuário
+-- Retorna: menu atualizado de acordo com o input do usuário
+_menuFlux :: Menu -> String -> IO Menu
 _menuFlux menu input = do
     case action menu of
         StartMenu -> case input of
             "1" -> do
                 if _accsFull menu then do
-                    return (Just (updateMenu RegisterMatch menu))
+                    return (updateMenu RegisterMatch menu)
                 else do
-                    return (Just (updateMenu NewGame menu))
-            "2" -> return (Just (updateMenu ContinueGame menu))
+                    return (updateMenu NewGame menu)
+            "2" -> return (updateMenu ContinueGame menu)
             "3" ->
                 if _accsFull menu then do
-                    return (Just (updateMenu (action menu) menu))
+                    return (updateMenu (action menu) menu)
                 else do
-                    return (Just (updateMenu Register menu))
-            "4" -> return (Just (updateMenu Rules menu))
+                    return (updateMenu Register menu)
+            "4" -> return (updateMenu Rules menu)
             "5" -> do
                 updatedMenu <- _getRank menu
-                return (Just updatedMenu)
-            "6" -> exitSuccess >> return Nothing
-            _   -> return (Just (updateMenu (action menu) menu))
+                return updatedMenu
+            "6" -> exitSuccess >> return menu
+            _   -> return (updateMenu (action menu) menu)
         NewGame -> case input of
-            "1" -> return (Just (updateMenu Register menu))
-            "2" -> return (Just (updateMenu Login menu))
-            "3" -> return (Just (updateMenu (boxBefore menu) menu))
-            _   -> return (Just (updateMenu (action menu) menu))
+            "1" -> return (updateMenu Register menu)
+            "2" -> return (updateMenu Login menu)
+            "3" -> return (updateMenu (boxBefore menu) menu)
+            _   -> return (updateMenu (action menu) menu)
         Login -> case input of
             "1" -> do
                 updatedMenu <- _login menu
-                return (Just updatedMenu)
-            "2" -> return (Just (updateMenu (boxBefore menu) menu))
-            _   -> return (Just (updateMenu (action menu) menu))
+                return updatedMenu
+            "2" -> return (updateMenu (boxBefore menu) menu)
+            _   -> return (updateMenu (action menu) menu)
         Register -> case input of
             "1" -> do
                 updatedMenu <- _createAcc menu
-                return (Just updatedMenu)
-            "2" -> return (Just (updateMenu (boxBefore menu) menu))
-            _   -> return (Just (updateMenu (action menu) menu))
+                return updatedMenu
+            "2" -> return (updateMenu (boxBefore menu) menu)
+            _   -> return (updateMenu (action menu) menu)
         ContinueGame -> case input of
-            "1" -> return (Just (updateMenu BeforeGame menu))
-            "2" -> return (Just (updateMenu Matches menu))
-            "3" -> return (Just (updateMenu (boxBefore menu) menu))
-            _   -> return (Just (updateMenu (action menu) menu))
-        Rules -> return (Just (updateMenu (boxBefore menu) menu))
+            "1" -> return (updateMenu BeforeGame menu)
+            "2" -> return (updateMenu Matches menu)
+            "3" -> return (updateMenu (boxBefore menu) menu)
+            _   -> return (updateMenu (action menu) menu)
+        Rules -> return (updateMenu (boxBefore menu) menu)
         BeforeGame -> case input of
             "1" -> do
                 wordList <- UT.getWordList
                 startTime <- getCurrentTime
                 updatedMatch <- gameLoop (currentMatch menu) wordList startTime ""
                 updatedMenu <- _menuPauseOrEnd menu updatedMatch
-                return (Just updatedMenu)
+                return updatedMenu
             "2" -> do
                 let updatedMenu = menu {p1 = p2 menu}
                 let updatedMenu' = _updateAccs updatedMenu Account{accName = ""}
-                return (Just (updateMenu (boxBefore menu) updatedMenu'))
+                return (updateMenu (boxBefore menu) updatedMenu')
             "3" -> do
                 let updatedMenu = _updateAccs menu Account{accName = ""}
-                return (Just (updateMenu (boxBefore menu) updatedMenu))
-            _   -> return (Just (updateMenu (action menu) menu))
+                return (updateMenu (boxBefore menu) updatedMenu)
+            _   -> return (updateMenu (action menu) menu)
         RegisterMatch -> case input of
             "1" -> do
                 updatedMenu <- _createMatch menu
-                return (Just updatedMenu)
-            "2" -> return (Just (updateMenu (boxBefore menu) menu))
-            "3" -> return (Just (updateMenu (boxBefore menu) menu))
-            _   -> return (Just (updateMenu (action menu) menu))
-        Rank -> return (Just (updateMenu (boxBefore menu) menu))
-        Matches -> return (Just (updateMenu (boxBefore menu) menu))
-        FinishMatch -> return (Just (updateMenu (boxBefore menu) beginGame))
-        _ -> return (Just (updateMenu (action menu) menu))
+                return updatedMenu
+            "2" -> return (updateMenu (boxBefore menu) menu)
+            "3" -> return (updateMenu (boxBefore menu) menu)
+            _   -> return (updateMenu (action menu) menu)
+        Rank -> return (updateMenu (boxBefore menu) menu)
+        Matches -> return (updateMenu (boxBefore menu) menu)
+        FinishMatch -> return (updateMenu (boxBefore menu) beginGame)
+        _ -> return (updateMenu (action menu) menu)
 
 
 -- Função interna que retornará um menu atualizado com informações do termino da partida, caso
