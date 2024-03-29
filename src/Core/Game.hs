@@ -23,7 +23,7 @@ import Controllers.LettersController
 fluxHandler :: Match -> [String] -> String -> IO (Match, String)
 -- CASOS ESPECIAIS : :C PAUSAR PARTIDA
 fluxHandler match wl ":c" = fluxHandler match wl ":C"
-fluxHandler match _ ":C" = return (match, (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ " pausou o jogo!")
+fluxHandler match _ ":C" = return (match, "\n" ++ (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ " pausou o jogo!\n")
 
 -- CASOS ESPECIAIS: :! PULAR TURNO
 fluxHandler match _ ":!" = do
@@ -111,7 +111,6 @@ gameLoop match wordList lastUpdate lastMessage = do
     -- Mostra a tela de jogo 
     printBoard match
     UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match))))) Blue
-    putStrLn ("\n::LETRAS:: " ++ [letter l  | l <- pLetters (getPlayerOnTurn match)])
     putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
     hFlush stdout
     
@@ -125,7 +124,7 @@ gameLoop match wordList lastUpdate lastMessage = do
 
         -- Jogador pausou a partida e saiu para o menu
         if input == ":C" || input == ":c" then do 
-            UT.__colorText "\n\n >> Pausando e saindo do jogo...\n" Green
+            UT.__colorText "\n >> Pausando e saindo do jogo...\n" Green
             UT.__colorText " > Aperte enter...\n\n" Blue
             c <- getLine
             return match
