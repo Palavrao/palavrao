@@ -61,7 +61,7 @@ _buildBoard match i = do
     if i > 15 then
         putStr (unlines
                 [printf  "\n     %s" playerLetters,
-                 printf  "     %s                      Letras Restantes: %d\n" scoreLetters remainingLetters])
+                 printf  "     %s                       Letras Restantes: %d\n" scoreLetters remainingLetters])
     else do
         putStr "     "
         mapM_ __pintaBoard (lines!!i)
@@ -73,7 +73,7 @@ _buildBoard match i = do
         playerOnTurn = getPlayerOnTurn match
         playerLetters = concatMap (\l -> [letter l, ' ']) (pLetters playerOnTurn)
         scoreLetters =  unwords (map (show . letterScore) (pLetters playerOnTurn))
-        remainingLetters = length $ concatMap (\l -> [letter l]) (pLetters playerOnTurn)
+        remainingLetters = length (mLetters match)
         
 
 --Encapsula a construção do board
