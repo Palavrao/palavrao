@@ -171,6 +171,9 @@ __colorText text color = do
     putStr text
     setSGR [Reset]
 
+manual :: IO ()
+manual = do
+            putStrLn "TODO"
 
 _removeChar :: Char -> [Char] -> [Char]
 _removeChar x (y:ys) 
