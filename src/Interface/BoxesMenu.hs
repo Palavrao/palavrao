@@ -136,7 +136,7 @@ updateMenu action menu = case action of
         "    └───────────────────────────────┘   "
     ], 
     -- Tela de regras do jogo
-     boxBefore = StartMenu, action = Login}
+     boxBefore = NewGame, action = Login}
         Rules -> menu { box = [
         "    ┌───────────────────────────────┐   ",
         printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
