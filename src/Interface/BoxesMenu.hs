@@ -259,7 +259,7 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │        Player ganhador        │   ",
         "    │                               │   ",
- printf "    │   %-16s   %+3s   │   " (take 10 $ accName (pAcc (getBestPlayer (currentMatch menu)))) ((take 3 $ show (pScore (getBestPlayer (currentMatch menu))))  ++ " pts"),
+ printf "    │   %-16s   %+7s  │   " (take 10 $ accName (pAcc (getBestPlayer (currentMatch menu)))) ((take 3 $ show (pScore (getBestPlayer (currentMatch menu))))  ++ " pts"),
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
