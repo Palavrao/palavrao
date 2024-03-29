@@ -160,18 +160,22 @@ _menuFlux menu input = do
         -- com qualquer input do usuário
         Rank -> return (updateMenu (boxBefore menu) menu)
 
-        -- documentar
+        -- Tela de listagem das partidas criadas, mostrando 5 delas por tela
         Matches -> case input of
+            -- avança pra próxima tela de listagem
             "1" -> do
                 let idxMatch = (indexMatch menu) + 1
                     updatedMenu = updateMatchesMenu menu idxMatch
                 updatedMenu
+            -- volta pra tela de listagem anterior ou pra tela de continuar jogo
+            -- caso esteja na primeira tela de listagem das partidas
             "2" -> do
                 let idxMatch = (indexMatch menu) - 1
                 updatedMenu <- if idxMatch == 0
                                then return (updateMenu (boxBefore menu) menu)
                                else (updateMatchesMenu menu idxMatch)
                 return updatedMenu
+            -- permanece na mesma pagina com alguma entrada fora do padrão
             _ -> return menu
 
         -- Tela de finalização do jogo, mostrando os dados finais da partida,
