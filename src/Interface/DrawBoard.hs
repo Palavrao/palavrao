@@ -60,8 +60,8 @@ _buildBoard :: Match -> Int -> IO ()
 _buildBoard match i = do
     if i > 15 then
         putStr (unlines
-                [printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n",
-                 printf  playerLetters])
+                [printf  "\n     %s" playerLetters,
+                 printf "     0 0 0 0 0 0 0                  Letras Restantes: 00\n"])
     else do
         putStr "     "
         mapM_ __pintaBoard (lines!!i)
