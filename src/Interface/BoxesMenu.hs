@@ -59,7 +59,7 @@ updateMenu action menu = case action of
     -- Tela de menu inicial
         StartMenu -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
@@ -79,7 +79,7 @@ updateMenu action menu = case action of
      boxBefore = StartMenu, action = StartMenu}
         NewGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
@@ -99,7 +99,7 @@ updateMenu action menu = case action of
      boxBefore = StartMenu, action = NewGame}
         ContinueGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
@@ -119,7 +119,7 @@ updateMenu action menu = case action of
      boxBefore = StartMenu, action = ContinueGame}
         Login -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
@@ -139,7 +139,7 @@ updateMenu action menu = case action of
      boxBefore = StartMenu, action = Login}
         Rules -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
@@ -159,7 +159,7 @@ updateMenu action menu = case action of
      boxBefore = StartMenu, action = Rules}
         BeforeGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
@@ -180,7 +180,7 @@ updateMenu action menu = case action of
      boxBefore = StartMenu, action = BeforeGame}
         Register -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
@@ -200,7 +200,7 @@ updateMenu action menu = case action of
      boxBefore = StartMenu, action = Register}
         RegisterMatch -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
@@ -220,7 +220,7 @@ updateMenu action menu = case action of
      boxBefore = StartMenu, action = RegisterMatch}
         Rank -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
@@ -252,15 +252,15 @@ updateMenu action menu = case action of
      boxBefore = ContinueGame, action = Matches}
         FinishMatch -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │        Player ganhador        │   ",
         "    │                               │   ",
-        printf "    │        %-17s      │   " (take 17 $ accName (pAcc (getBestPlayer (currentMatch menu)))),
-        printf "    │            %-3s pts            │   " (take 3 $ show (pScore (getBestPlayer (currentMatch menu)))),
+ printf "    │   %-16s   %+3s   │   " (take 10 $ accName (pAcc (getBestPlayer (currentMatch menu)))) ((take 3 $ show (pScore (getBestPlayer (currentMatch menu))))  ++ " pts"),
+        "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
