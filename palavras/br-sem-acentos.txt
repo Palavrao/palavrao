@@ -178790,6 +178790,7 @@ pautou
 pauzinho
 pauzinhos
 pavao
+pave
 pavilhao
 pavilhoes
 pavimenta

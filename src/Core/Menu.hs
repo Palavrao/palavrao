@@ -112,9 +112,14 @@ _menuFlux menu input = do
             -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
 
+        -- documentar
         ContinueGame -> case input of
-            "1" -> return (updateMenu BeforeGame menu)
-            "2" -> return (updateMenu Matches menu)
+            "1" -> do
+                matchMenu <- _continueGame menu
+                _loadMatch matchMenu
+            "2" -> do
+                let updatedMenu = updateMatchesMenu menu 0
+                updatedMenu
             "3" -> return (updateMenu (boxBefore menu) menu)
             _   -> return (updateMenu (action menu) menu)
 
@@ -123,17 +128,7 @@ _menuFlux menu input = do
 
         -- Tela antes do jogo
         BeforeGame -> case input of
-            -- Redirecionamento para o jogo, passando o stattime e a lista de palavras
-            -- disponíveis pro jogo, atualizando o menu com os dados da partida e 
-            -- retornando para a tela de finalização do jogo caso o jogo tenha acabado
-            -- ou para tela inicial caso o jogo tenha sido pausado
-            "1" -> do
-                wordList <- UT.getWordList
-                startTime <- getCurrentTime
-                updatedMatch <- gameLoop (currentMatch menu) wordList startTime ""
-                updatedMenu <- _menuPauseOrEnd menu updatedMatch
-                return updatedMenu
-            -- Redirecionamento para tela anterior removendo o login de player 1
+            "1" -> _loadMatch menu
             "2" -> do
                 let updatedMenu = menu {p1 = p2 menu}
                 let updatedMenu' = _updateAccs updatedMenu Account{accName = ""}
@@ -147,7 +142,7 @@ _menuFlux menu input = do
 
         -- Tela de criação partida
         RegisterMatch -> case input of
-            -- Lógica de criação de partida, redirecionando o menu para tela de 
+            -- Lógica de criação de partida, redirecionando o menu para tela de
             -- antes do jogo caso a partida criada seja válida
             "1" -> do
                 updatedMenu <- _createMatch menu
@@ -161,15 +156,38 @@ _menuFlux menu input = do
         -- com qualquer input do usuário
         Rank -> return (updateMenu (boxBefore menu) menu)
 
-        Matches -> return (updateMenu (boxBefore menu) menu)
+        -- documentar
+        {-Matches -> case input of
+            "1" -> do
+                let idxMatch = (indexMatch menu) + 1
+                    updatedMenu = updateMatchesMenu menu idxMatch
+                updatedMenu
+            "2" -> do
+                let idxMatch = (indexMatch menu) - 1
+                    updatedMenu <- if idxMatch == 0
+                                   then return (updateMenu (boxBefore menu) menu)
+                                   else updateMatchesMenu menu idxMatch
+                return updatedMenu
+            _ -> return menu-}
 
         -- Tela de finalização do jogo, mostrando os dados finais da partida,
         -- retornando ao menu inicial com qualquer input do usuário
         FinishMatch -> return (updateMenu (boxBefore menu) beginGame)
-        
+
         -- Caso base o qual so retorna
         _ -> return (updateMenu (action menu) menu)
 
+-- Redirecionamento para o jogo, passando o stattime e a lista de palavras
+-- disponíveis pro jogo, atualizando o menu com os dados da partida e
+-- retornando para a tela de finalização do jogo caso o jogo tenha acabado
+-- ou para tela inicial caso o jogo tenha sido pausado
+_loadMatch :: Menu -> IO (Menu)
+_loadMatch menu = do
+    wordList <- UT.getWordList
+    startTime <- getCurrentTime
+    updatedMatch <- gameLoop (currentMatch menu) wordList startTime ""
+    updatedMenu <- _menuPauseOrEnd menu updatedMatch
+    return updatedMenu
 
 -- Função interna que retornará um menu atualizado com informações do termino da partida, caso
 -- a partida tenha terminado, ou com o menu inicial caso o jogo tenha sido pausado
@@ -217,7 +235,7 @@ _createMatch menu = do
             return $ updateMenu BeforeGame updatedMatch
 
 
--- Função interna que faz o login de uma conta no menu e o retorna, verificando a existência da conta passada 
+-- Função interna que faz o login de uma conta no menu e o retorna, verificando a existência da conta passada
 -- e se a quantidade de contas máxima foi atingida
 -- Recebe: menu que terá a conta logada
 -- Retorna: menu com a conta logada e com a tela de start menu caso tiver atingido 2 players ou para a tela
@@ -282,6 +300,19 @@ _createAcc menu = do
 _updateCurrentMatch :: Menu -> Match -> Menu
 _updateCurrentMatch menu match = menu {currentMatch = match}
 
+-- Recebe: menu atual do jogo
+-- Retorna: menu contendo a partida a ser continuada
+_continueGame :: Menu -> IO Menu
+_continueGame menu = do
+  putStr "nome_da_partida> "
+  hFlush stdout
+  matchName <- getLine
+  maybeMatch <- getMatchByName matchName
+  case maybeMatch of
+    Just match -> return $ (_updateCurrentMatch menu match)
+    Nothing    -> do
+               putStrLn "partida não encontrada"
+               _continueGame menu
 
 -- Função interna que retorna o menu com as contas logadas atualizadas
 -- Recebe: menu que terá contas logadas atualizadas
