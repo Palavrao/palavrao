@@ -165,7 +165,7 @@ getPointsLetter (hBoard:tBoard) (hWord:tWord)
 -- Retorna: 50 se entre as tiles há ao menos 7 símbolos especiais, indicando que o jogador usou 7 letras próprias
 bingo :: [Char] -> Int
 bingo tiles
-        | playedLetters > 6 = 50
+        | playedLetters > 6 = 20
         |otherwise = 0
         where playedLetters = length [x | x <- tiles, x `notElem` ['A'..'Z']]
 

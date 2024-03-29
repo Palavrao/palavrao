@@ -187,7 +187,7 @@ getBestPlayer :: Match -> Player
 getBestPlayer match
     | p1Score > p2Score = p1
     | p1Score < p2Score = p2
-    | otherwise = Player{pAcc = Account{accName = "Nenhum! Empate :D"}}
+    | otherwise = Player{pAcc = Account{accName = "Empate :D"}, pScore = p1Score}
     where 
         p1 = mP1 match
         p2 = mP2 match
