@@ -72,7 +72,7 @@ fluxHandler match wordlist input
     -- coordenadas válidas mas letras inválidas (player não tem as letras)
     |(res && ((length letrasInvalidas) /= 0)) = do
         UT.__colorText ("\nVocê não tem as letras: " ++ (show letrasInvalidas) ++ " \nTente novamente: \n") Red
-        putStrLn "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
+        putStr "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
         hFlush stdout
         i <- getLine
         (m, msg)  <- (fluxHandler match wordlist i)
@@ -80,7 +80,7 @@ fluxHandler match wordlist input
     --coordenadas válidas mas forma palavras que não existem
     |(res && ((length palavrasInvalidas) /= 0)) = do
         UT.__colorText ("\nPalavras inválidas: " ++ (show palavrasInvalidas) ++ " \nTente novamente: \n") Red
-        putStrLn "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
+        putStr "Digite sua palavra no formato X00 V/H PALAVRA:\n > "
         hFlush stdout
         i <- getLine
         (m, msg) <- (fluxHandler match wordlist i)
