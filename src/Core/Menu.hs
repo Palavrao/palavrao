@@ -171,7 +171,7 @@ _menuFlux menu input = do
             -- caso esteja na primeira tela de listagem das partidas
             "2" -> do
                 let idxMatch = (indexMatch menu) - 1
-                updatedMenu <- if idxMatch == 0
+                updatedMenu <- if idxMatch == -1
                                then return (updateMenu (boxBefore menu) menu)
                                else (updateMatchesMenu menu idxMatch)
                 return updatedMenu
