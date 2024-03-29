@@ -47,72 +47,127 @@ _drawMenu menu = do
 _menuFlux :: Menu -> String -> IO Menu
 _menuFlux menu input = do
     case action menu of
+        -- Tela inicial do menu
         StartMenu -> case input of
+            -- Redirecionamento para tela de criar partida caso as 2 contas estejam logadas
+            -- ou para a tela de criar conta caso contrário
             "1" -> do
                 if _accsFull menu then do
                     return (updateMenu RegisterMatch menu)
                 else do
                     return (updateMenu NewGame menu)
+            -- Redirecionamento para tela de continuar jogos
             "2" -> return (updateMenu ContinueGame menu)
+            -- Redirecionamento para tela de criar conta caso 2 contas não estejam logadas
+            -- ou nada caso já esteja no limite de login
             "3" ->
                 if _accsFull menu then do
                     return (updateMenu (action menu) menu)
                 else do
                     return (updateMenu Register menu)
+            -- Redirecionamento para tela de regras
             "4" -> return (updateMenu Rules menu)
+            -- Redirecionamento para tela de rank de contas e suas pontuações, atualizando
+            -- o rank armazenado pelo menu
             "5" -> do
                 updatedMenu <- _getRank menu
                 return updatedMenu
+            -- Saída do jogo
             "6" -> exitSuccess >> return menu
+            -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
+
+        -- Tela de novo jogo
         NewGame -> case input of
+            -- Redirecionamento para tela de criar conta
             "1" -> return (updateMenu Register menu)
+            -- Redirecionamento para tela de login
             "2" -> return (updateMenu Login menu)
+            -- Redirecionamento para tela anterior
             "3" -> return (updateMenu (boxBefore menu) menu)
+            -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
+
+        -- Tela de login
         Login -> case input of
+            -- Lógica de login, retornando para tela de menu inicial caso 2 jogadores sejam
+            -- logados, ou para tela de novo jogo caso contrário
             "1" -> do
                 updatedMenu <- _login menu
                 return updatedMenu
+            -- Redirecionamento para tela anterior
             "2" -> return (updateMenu (boxBefore menu) menu)
+            -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
+
+        -- Tela de registro de conta
         Register -> case input of
+            -- Lógica de registro de conta, retornando para tela de menu inicial caso 2 jogadores sejam
+            -- logados, ou para tela de novo jogo caso contrário
             "1" -> do
                 updatedMenu <- _createAcc menu
                 return updatedMenu
+            -- Redirecionamento para tela anterior
             "2" -> return (updateMenu (boxBefore menu) menu)
+            -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
+
         ContinueGame -> case input of
             "1" -> return (updateMenu BeforeGame menu)
             "2" -> return (updateMenu Matches menu)
             "3" -> return (updateMenu (boxBefore menu) menu)
             _   -> return (updateMenu (action menu) menu)
+
+        -- Tela de regras, que retorna para a tela anterior com qualquer input
         Rules -> return (updateMenu (boxBefore menu) menu)
+
+        -- Tela antes do jogo
         BeforeGame -> case input of
+            -- Redirecionamento para o jogo, passando o stattime e a lista de palavras
+            -- disponíveis pro jogo, atualizando o menu com os dados da partida e 
+            -- retornando para a tela de finalização do jogo caso o jogo tenha acabado
+            -- ou para tela inicial caso o jogo tenha sido pausado
             "1" -> do
                 wordList <- UT.getWordList
                 startTime <- getCurrentTime
                 updatedMatch <- gameLoop (currentMatch menu) wordList startTime ""
                 updatedMenu <- _menuPauseOrEnd menu updatedMatch
                 return updatedMenu
+            -- Redirecionamento para tela anterior removendo o login de player 1
             "2" -> do
                 let updatedMenu = menu {p1 = p2 menu}
                 let updatedMenu' = _updateAccs updatedMenu Account{accName = ""}
                 return (updateMenu (boxBefore menu) updatedMenu')
+            -- Redirecionamento para tela anterior removendo o login de player 2
             "3" -> do
                 let updatedMenu = _updateAccs menu Account{accName = ""}
                 return (updateMenu (boxBefore menu) updatedMenu)
+            -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
+
+        -- Tela de criação partida
         RegisterMatch -> case input of
+            -- Lógica de criação de partida, redirecionando o menu para tela de 
+            -- antes do jogo caso a partida criada seja válida
             "1" -> do
                 updatedMenu <- _createMatch menu
                 return updatedMenu
+            -- Redirecionamento para tela anterior
             "2" -> return (updateMenu (boxBefore menu) menu)
-            "3" -> return (updateMenu (boxBefore menu) menu)
+            -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
+
+        -- Tela de rank das contas e suas pontuações, retornando ao menu inicial
+        -- com qualquer input do usuário
         Rank -> return (updateMenu (boxBefore menu) menu)
+
         Matches -> return (updateMenu (boxBefore menu) menu)
+
+        -- Tela de finalização do jogo, mostrando os dados finais da partida,
+        -- retornando ao menu inicial com qualquer input do usuário
         FinishMatch -> return (updateMenu (boxBefore menu) beginGame)
+        
+        -- Caso base o qual so retorna
         _ -> return (updateMenu (action menu) menu)
 
 
