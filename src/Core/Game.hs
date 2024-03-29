@@ -35,8 +35,7 @@ fluxHandler match _ ":!" = do
 
 -- CASOS ESPECIAIS: :! VER MANUAL
 fluxHandler match wordlist ":?" = do
-                        -- UT.manual
-                        _printRules
+                        UT._printRulesShortened
                         c <- getLine
                         return (match, "Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ "\n")
 -- CASOS ESPECIAIS: :* trocar letra : sem letra

@@ -129,25 +129,6 @@ updateMenu action menu = case action of
         "    │            login              │   ",
         "    └───────────────────────────────┘   "
     ], boxBefore = StartMenu, action = Login}
-    -- Tela de regras do jogo
-        Rules -> menu { box = [
-        "    ┌───────────────────────────────┐   ",
-        printf "    │    %-10s   %+10s    │   " (take 10 $ accName (p1 menu)) (take 10 $ accName (p2 menu)),
-        "    │                               │   ",
-        "    │           PALAVRÃO            │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │            regras             │   ",
-        "    └───────────────────────────────┘   "
-    ], boxBefore = StartMenu, action = Rules}
     -- Tela antes do jogo contendo as informações da partida
         BeforeGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
