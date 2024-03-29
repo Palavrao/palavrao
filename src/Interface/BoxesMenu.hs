@@ -47,7 +47,7 @@ beginGame = Menu {
         "                 │           > Enter           │                ",
         "                 │                             │                ",
         "                 └─────────────────────────────┘                "
-    ], boxBefore = InvalidAction, action = StartMenu, p1 = Account{accName = ""}, p2 = Account{accName = ""}, currentMatch = Match{mName = ""}}
+    ], boxBefore = InvalidAction, action = StartMenu, p1 = defaultAccount, p2 = defaultAccount, currentMatch = Match{mName = ""}}
 
 
 -- Atualiza o menu de acordo com a action recebida
@@ -225,7 +225,7 @@ updateMenu action menu = case action of
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
         "    │                               │   "]
-        ++ _geraRankLines menu ++
+        ++ _getRankLines menu ++
        ["    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -274,5 +274,8 @@ updateMenu action menu = case action of
 -- e preenchendo os espaços em branco caso tenham menos de 5 contas registradas
 -- Recebe: menu com accRank, que será utilizada para a formatação das strings
 -- Retorna: array de strings formatada com as informações do rank de contas
-_geraRankLines :: Menu -> [String]
-_geraRankLines menu = ["    │     " ++ show i ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc)) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
+_getRankLines :: Menu -> [String]
+_getRankLines menu = accs ++ blankLines
+    where
+        accs = ["    │     " ++ show i ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc)) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
+        blankLines = replicate (5 - (length (accsRank menu))) "    │                               │"
