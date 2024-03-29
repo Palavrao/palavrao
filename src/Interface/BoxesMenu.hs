@@ -264,19 +264,26 @@ updateMenu action menu = case action of
 _geraRankLines :: Menu -> [String]
 _geraRankLines menu = ["    │     " ++ show i ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc)) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
 
+{- Recebe o numero de partidas criadas e calcula quantas páginas são
+necessárias para listar (listando cinco partidas por tela)-}
+numPagesMatches :: Int -> Int
+numPagesMatches numMatches = (roundNumMatches numMatches) `div` 5
+  where
+    roundNumMatches num
+        | num `mod` 5 == 0 = num
+        | otherwise = num + (5 - num `mod` 5)
+
 {- Recebe a lista de partidas criadas e o index da página de listagem,
  e retorna um array de string contendo os 5 nomes de partidas a serem exibidos -}
-_geraMatchLines :: [Match] -> Int -> [String]
-_geraMatchLines matches indexMatch =
-    let listNames = map mName matches
-        lengthList = length listNames
-        names = take 5 $ drop (5 * indexMatch) listNames
+_geraMatchLines :: [String] -> Int -> [String]
+_geraMatchLines namesMatches indexMatch =
+    let lengthList = length namesMatches
+        names = take 5 $ drop (5 * indexMatch) namesMatches
         maxLength = maximum (map length names)
         paddedNames = map (\name -> name ++ replicate (maxLength - length name) ' ') names
         boxMiddle = map (\name -> printf "    │       %-10s              │" name) paddedNames
-        emptyLines = replicate (5 - (length names - 1)) "    │                               │"
-        finalLine = [printf "    │     total de partidas: %-2s     │" (show lengthList)]
-    in boxMiddle ++ emptyLines ++ finalLine
+        emptyLines = replicate (5 - length names) "    │                               │"
+    in boxMiddle ++ emptyLines
 
 {- Recebe o menu atual, o index da página de listagem, e pega a lista de
  partidas criadas pra chamar a função _updateMatchesMenu, que faz a
@@ -284,26 +291,30 @@ _geraMatchLines matches indexMatch =
 updateMatchesMenu :: Menu -> Int -> IO(Menu)
 updateMatchesMenu menu indexMatch = do
   matches <- getMatches
-  return (_updateMatchesMenu menu matches indexMatch)
+  let namesMatches = map mName matches
+      lengthList = length namesMatches
+      numPages = numPagesMatches lengthList
+  if indexMatch >= numPages then
+     return menu
+     else return (_updateMatchesMenu menu namesMatches indexMatch lengthList numPages)
 
 {- Recebe o menu atual, a lista de todas as partidas criadas, o index
 da página de listagem, e atualiza a box do menu listando as cinco partidas
 a serem exibidas para o usuário -}
-_updateMatchesMenu :: Menu -> [Match] -> Int -> Menu
-_updateMatchesMenu menu matches indexMatch =
+_updateMatchesMenu :: Menu -> [String] -> Int -> Int -> Int -> Menu
+_updateMatchesMenu menu namesMatches indexMatch lengthList numPages =
     menu {
         box = [
             "    ┌───────────────────────────────┐   ",
             "    │  1. avançar        2. voltar  │   ",
             "    │                               │   ",
             "    │           PALAVRÃO            │   ",
-            "    │                               │   ",
             "    │                               │   "
-        ] ++ _geraMatchLines matches indexMatch ++ [
+        ] ++ _geraMatchLines namesMatches indexMatch ++ [
             "    │                               │   ",
+      printf"    │      total de partidas: %-2s    │   " (show lengthList),
             "    │                               │   ",
-            "    │                               │   ",
-            "    │                               │   ",
+      printf"    │                        %-2s/ %-2s │   " (show (indexMatch + 1)) (show numPages),
             "    └───────────────────────────────┘   "
         ],
         boxBefore = ContinueGame,
