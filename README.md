@@ -60,6 +60,6 @@ No jogo original, a incidência de cada letra do saquinho é determinada com bas
 
 * [Samuel Lucas](https://github.com/SamuelLucasVM)
 * [Helena Sátyro](https://github.com/helenasatyro)
-* [Rayanne Macêdo](https://github.com/raiaiaia)
+* [Rayanne Macedo](https://github.com/raiaiaia)
 * [Paulo Ricardo](https://github.com/paulorpn)
 * [Eliane Tamara](https://github.com/elianetamara)
