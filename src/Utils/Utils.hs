@@ -194,3 +194,12 @@ _removeChar :: Char -> [Char] -> [Char]
 _removeChar x (y:ys) 
     | x == y = ys
     | otherwise = y : _removeChar x ys
+
+
+centerString :: String -> Int -> Char -> String
+centerString str width f
+    | length str >= width = str
+    | otherwise = let spaces = width - length str
+                      leftSpaces = spaces `div` 2
+                      rightSpaces = spaces - leftSpaces
+                  in replicate leftSpaces f ++ str ++ replicate rightSpaces ' '

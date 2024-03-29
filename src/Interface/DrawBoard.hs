@@ -80,5 +80,6 @@ _buildBoard match i = do
 printBoard :: Match -> IO ()
 printBoard match = do
     clearScreen
+    UT.__colorText ("    > Partida: " ++ (UT.centerString (map toUpper (mName match)) 50 ' ' ) ++ "\n\n") Yellow
     _buildBoard match 0
 
