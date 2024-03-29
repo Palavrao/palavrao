@@ -182,6 +182,9 @@ __colorText text color = do
     putStr text
     setSGR [Reset]
 
+manual :: IO ()
+manual = do
+            putStrLn "TODO"
 
 -- Remove um caracter de uma lista de caracteres
 -- Recebe: o caracter a ser removido
