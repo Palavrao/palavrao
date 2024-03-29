@@ -269,12 +269,14 @@ _geraRankLines menu = ["    │     " ++ show i ++ printf ". %-5s  -  %-4s      
 _geraMatchLines :: [Match] -> Int -> [String]
 _geraMatchLines matches indexMatch =
     let listNames = map mName matches
+        lengthList = length listNames
         names = take 5 $ drop (5 * indexMatch) listNames
         maxLength = maximum (map length names)
         paddedNames = map (\name -> name ++ replicate (maxLength - length name) ' ') names
         boxMiddle = map (\name -> printf "    │       %-10s              │" name) paddedNames
-        emptyLines = replicate (5 - length names) "    │                               │"
-    in boxMiddle ++ emptyLines
+        emptyLines = replicate (5 - (length names - 1)) "    │                               │"
+        finalLine = [printf "    │     total de partidas: %-2s     │" (show lengthList)]
+    in boxMiddle ++ emptyLines ++ finalLine
 
 {- Recebe o menu atual, o index da página de listagem, e pega a lista de
  partidas criadas pra chamar a função _updateMatchesMenu, que faz a
