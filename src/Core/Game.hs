@@ -100,25 +100,27 @@ fluxHandler match wordlist input
 -- Loop principal do jogo: recebe input do jogador, valida o input e informa resultados sobre a tentativa
 gameLoop :: Match -> [String] -> UTCTime -> String -> IO (Match)
 gameLoop match wordList lastUpdate lastMessage = do
-    -- Mostra a tela de transição e aguarda continuação
-    clearScreen
-    UT.__colorText lastMessage Green
-    hFlush stdout
-    UT.__colorText "> Enter para seguir para a visão do próximo jogador!\n\n" Blue
-    hFlush stdout
-    c <- getLine
-
-    -- Mostra a tela de jogo 
-    printBoard match
-    UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match))))) Blue
-    putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
-    hFlush stdout
-    
-    -- Verifica condição de parada: 4 saltos de turno/trocas de letra seguidos
-    if mSkips match == 4 then do
+    -- Verifica uma das condições de parada:
+    -- 4 saltos de turno/trocas de letra seguidos
+    -- A partida ficar sem letra para dar aos jogadores
+    if mSkips match == 4 || length (mLetters match) == 0 then do
         finishedMatch <- finishMatch match
         return finishedMatch
     else do
+        -- Mostra a tela de transição e aguarda continuação
+        clearScreen
+        UT.__colorText lastMessage Green
+        hFlush stdout
+        UT.__colorText "> Enter para seguir para a visão do próximo jogador!\n\n" Blue
+        hFlush stdout
+        c <- getLine
+
+        -- Mostra a tela de jogo 
+        printBoard match
+        UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match))))) Blue
+        putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
+        hFlush stdout
+        
         -- Recebe o input do jogador e valida
         input <- getLine
 
