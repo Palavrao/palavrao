@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveGeneric #-}
-{-# HLINT ignore "Redundant bracket" #-}
 
 module Controllers.BoardController where
 
