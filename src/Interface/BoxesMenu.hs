@@ -11,7 +11,7 @@ import Controllers.MatchesController
 
 
 -- Ação que representa cada tela do jogo
-data Action = NewGame | ContinueGame | Rules | Login | Register | RegisterMatch | StartMenu | Rank | InvalidAction | BeforeGame | FinishMatch | Matches deriving (Show, Eq)
+data Action = NewGame | ContinueGame | Login | Register | RegisterMatch | StartMenu | Rank | InvalidAction | BeforeGame | FinishMatch | Matches deriving (Show, Eq)
 
 
 -- Menu é uma entidade que tem propósito de expor os dados aos usuários, ele deve ter associado a ele:
@@ -134,25 +134,6 @@ updateMenu action menu = case action of
         "    │            login              │   ",
         "    └───────────────────────────────┘   "
     ], boxBefore = NewGame, action = Login}
-    -- Tela de regras do jogo
-        Rules -> menu { box = [
-        "    ┌───────────────────────────────┐   ",
-        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
-        "    │                               │   ",
-        "    │           PALAVRÃO            │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │                               │   ",
-        "    │            regras             │   ",
-        "    └───────────────────────────────┘   "
-    ], boxBefore = StartMenu, action = Rules}
     -- Tela antes do jogo contendo as informações da partida
         BeforeGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
