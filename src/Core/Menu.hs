@@ -28,13 +28,8 @@ menuLoop :: Menu -> IO ()
 menuLoop menu = do
     _drawMenu menu
     userInput <- getLine
-    if userInput == "4" then do
-        UT._printRules
-        _ <- getLine
-        menuLoop menu
-    else do
-        updatedMenu <- _menuFlux menu userInput
-        menuLoop updatedMenu
+    updatedMenu <- _menuFlux menu userInput
+    menuLoop updatedMenu
 
 
 {-  Função interna que desenha o menu na tela
@@ -63,8 +58,11 @@ _menuFlux menu input = do
                     return (updateMenu NewGame menu)
             -- Redirecionamento para tela de continuar jogos
             "2" -> return (updateMenu ContinueGame menu)
-            -- Redirecionamento para tela de regras
-            "3" -> return (updateMenu Rules menu)
+            -- Printa as regras
+            "3" -> do
+                UT._printRules
+                _ <- getLine
+                return (updateMenu (action menu) menu)
             -- Redirecionamento para tela de rank de contas e suas pontuações, atualizando
             -- o rank armazenado pelo menu
             "4" -> do
@@ -124,9 +122,6 @@ _menuFlux menu input = do
             "3" -> return (updateMenu (boxBefore menu) menu)
             -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
-
-        -- Tela de regras, que retorna para a tela anterior com qualquer input
-        Rules -> return (updateMenu (boxBefore menu) menu)
 
         -- Tela antes do jogo
         BeforeGame -> case input of
