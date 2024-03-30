@@ -207,21 +207,20 @@ updateMenu action menu = case action of
         "    │             rank              │   ",
         "    └───────────────────────────────┘   "
     ], boxBefore = StartMenu, action = Rank}
-    -- Tela de rank que possui a listagem de partidas criadas
+    -- Tela de listagem das partidas criadas
         Matches -> menu { box = [
         "    ┌───────────────────────────────┐   ",
-        "    │                               │   ",
+        "    │  1. avançar        2. voltar  │   ",
         "    │                               │   ",
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
-        "    │                               │   "]
-        {-++ (geraMatchLines menu)-} ++
-       ["    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    └───────────────────────────────┘   "
-    ], boxBefore = ContinueGame, action = Matches}
+    ], boxBefore = ContinueGame, action = Matches, indexMatch = 0}
     -- Tela de finalização de jogo, contendo as informações finais da partida
         FinishMatch -> menu { box = [
         "    ┌───────────────────────────────┐   ",

@@ -238,7 +238,6 @@ _printRules = do
     __colorText "    ■ " Red
     putStrLn "-> Triplica a pontuação de toda a palavra cuja letra está sobre a célula.\n"
 
-    putStr "   - "
     __colorText "Bingo! " Magenta
     putStrLn "Se um jogador usar 7 letras para formar uma nova palavra, a pontuação dela é incrementada em 20 pontos.\n\n"
     
@@ -264,7 +263,6 @@ _printRulesShortened = do
     __colorText "    ■ " Red
     putStrLn "-> Triplica a pontuação de toda a palavra cuja letra está sobre a célula.\n"
     
-    putStr "   - "
     __colorText "Bingo! " Magenta
     putStrLn "Se um jogador usar 7 letras para formar uma nova palavra, a pontuação dela é incrementada em 20 pontos.\n\n"
 
@@ -273,6 +271,8 @@ _printRulesShortened = do
     putStrLn "  O jogo termina quando não há mais peças no saco ou os jogadores realizam, em conjunto, 4 trocas de peças ou saltos de vez seguidos. Em caso de empate, o jogador com a menor soma na pontuação das letras em sua mão vence.\n\n"
 
     __colorText "Enter para voltar\n\n" Blue
+    c <- getLine
+    return ()
 
 
 -- Remove um caracter de uma lista de caracteres

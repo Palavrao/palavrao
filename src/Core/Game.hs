@@ -36,11 +36,10 @@ fluxHandler match _ ":!" = do
 -- CASOS ESPECIAIS: :! VER MANUAL
 fluxHandler match wordlist ":?" = do
                         UT._printRulesShortened
-                        c <- getLine
-                        return (match, "Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ "\n")
+                        return (match, "")
 -- CASOS ESPECIAIS: :* trocar letra : sem letra
 fluxHandler match w (':':'*':[]) = do
-                    return (match, "Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ "\n")
+                        return (match, "")
 -- CASOS ESPECIAIS: :* trocar letra : letras válidas e inválidas
 fluxHandler match w (':':'*':t) = 
                     -- obtém o objeto letter a partir de um char
@@ -95,62 +94,7 @@ fluxHandler match wordlist input
         (res, palavrasInvalidas, points, letrasInvalidas, letrasUsadas) = (initialValidation match wordlist input)
         boardAtualizado = (updateBoard (placeWord (readWordInput input match) (mBoard match)))
 
-_printRules :: IO ()
-_printRules = do
-    UT.__colorText "\nPalavrão! " Red
-    putStrLn "é um jogo estratégico double player de formação de palavras em um tabuleiro matricial, baseado no popular \"Scrabble\".\n"
-    
-    UT.__colorText "Objetivo do jogo:\n\n" Green
-    
-    putStrLn "  O objetivo do jogo é acumular a maior quantidade de pontos possível a partir da formação de novas palavras horizontal ou verticalmente, e adjacentes às palavras já dispostas no tabuleiro.\n"
-    
-    UT.__colorText "Funcionamento do jogo:\n\n" Green
-    
-    putStrLn 
-        "   - Cada jogador recebe 7 letras, que podem ser trocadas por letras aleatórias do saco de letras, fazendo-o perder a vez.\n\n\
-        \   - O jogador da vez coloca ao menos duas letras no tabuleiro.\n\n\
-        \   - O jogador seguinte adiciona letras adjacentemente às letras dispostas no tabuleiro para formar novas palavras.\n\n\
-        \   - Para formar novas palavras, o jogador deve indicar a coordenada da célula onde deseja adicionar a primeira letra e se a palavra deve ser disposta horizontal ou verticalmente no tabuleiro.\n\n\
-        \   - A reutilização de letras do tabuleiro se dá passando-as na palavra na mesma posição em que se encontram dispostas no tabuleiro.\n\n\
-        \   - Dentre as letras dos jogadores pode haver até duas peças curinga (<), que os permitem utilizar letras que não estão em mãos nem no tabuleiro. Cada letra ausente consome um curinga.\n\n\
-        \   - A pontuação para cada rodada é a soma dos valores das letras em cada palavra formada ou modificada + os pontos adicionais obtidos de células especiais.\n\n\
-        \   - Bingo! Palavras de 7 letras têm sua pontuação incrementada em 20 pontos.\n\n\
-        \   - As rodadas se alternam com um limite de tempo de 5 minutos para cada jogada. Passado esse tempo, o jogador perde a vez.\n"
-    
-    UT.__colorText "Pontuação das letras:\n\n" Green 
-    
-    UT.__colorText "    0   " Blue
-    putStr "|   Curinga\n"
-    UT.__colorText "    1   " Blue
-    putStr "|   A, E, I, O, S, U, M, R, T\n"
-    UT.__colorText "    2   " Blue
-    putStr "|   D, L, C, P\n"
-    UT.__colorText "    3   " Blue
-    putStr "|   N, B, Ç\n"
-    UT.__colorText "    4   " Blue
-    putStr "|   F, G, H, V\n"      
-    UT.__colorText "    5   " Blue
-    putStr "|   J\n"
-    UT.__colorText "    6   " Blue
-    putStr "|   Q\n" 
-    UT.__colorText "    7   " Blue
-    putStrLn "|   X, Z\n"
 
-    UT.__colorText "Pontuação das células especiais:\n\n" Green 
-
-    UT.__colorText "    ■ " Blue
-    putStrLn "-> Dobra a pontuação da letra disposta na célula."
-    UT.__colorText "    ■ " Green
-    putStrLn "-> Triplica a pontuação da letra disposta na célula."
-    UT.__colorText "    ■ " Magenta
-    putStrLn "-> Dobra a pontuação de toda a palavra cuja letra está disposta na célula."
-    UT.__colorText "    ■ " Red
-    putStrLn "-> Triplica a pontuação de toda a palavra cuja letra está disposta na célula.\n"
-    
-
-    UT.__colorText "Fim de jogo:\n\n" Green
-    
-    putStrLn "  O jogo termina quando não há mais peças no saco ou ambos os jogadores realizam 4 trocas de peças seguidas. Em caso de empate, o jogador com a menor quantidade de letras sobrando vence.\n"
 
 {- Loop principal do jogo, correspondendo a um turno: recebe input do jogador, valida o input e informa resultados sobre a tentativa
  Recebe: uma match em um estado inicial
