@@ -45,7 +45,7 @@ beginGame = Menu {
         "                 │           > Enter           │                ",
         "                 │                             │                ",
         "                 └─────────────────────────────┘                "
-    ], boxBefore = InvalidAction, action = StartMenu, p1 = Account{accName = ""}, p2 = Account{accName = ""}, currentMatch = Match{mName = ""}}
+    ], boxBefore = InvalidAction, action = StartMenu, p1 = defaultAccount, p2 = defaultAccount, currentMatch = Match{mName = ""}}
 
 -- Atualiza o menu de acordo com a action recebida
 -- Recebe: ação do player que será utilizada para redirecionamento da tela
@@ -63,10 +63,10 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │      1.  novo jogo            │   ",
         "    │      2.  continuar jogo       │   ",
-        "    │      3.  criar conta          │   ",
-        "    │      4.  regras               │   ",
-        "    │      5.  rank                 │   ",
-        "    │      6.  sair                 │   ",
+        "    │      3.  regras               │   ",
+        "    │      4.  rank                 │   ",
+        "    │      5.  sair                 │   ",
+        "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -128,7 +128,27 @@ updateMenu action menu = case action of
         "    │                               │   ",
         "    │            login              │   ",
         "    └───────────────────────────────┘   "
-    ], boxBefore = StartMenu, action = Login}
+    ], 
+    -- Tela de regras do jogo
+     boxBefore = NewGame, action = Login}
+        Rules -> menu { box = [
+        "    ┌───────────────────────────────┐   ",
+        printf "    │  %-5s                 %-5s  │   " (take 5 $ accName (p1 menu)) (take 5 $ accName (p2 menu)),
+        "    │                               │   ",
+        "    │           PALAVRÃO            │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │                               │   ",
+        "    │            regras             │   ",
+        "    └───────────────────────────────┘   "
+    ],
     -- Tela antes do jogo contendo as informações da partida
         BeforeGame -> menu { box = [
         "    ┌───────────────────────────────┐   ",
@@ -195,7 +215,7 @@ updateMenu action menu = case action of
         "    │           PALAVRÃO            │   ",
         "    │                               │   ",
         "    │                               │   "]
-        ++ _geraRankLines menu ++
+        ++ _getRankLines menu ++
        ["    │                               │   ",
         "    │                               │   ",
         "    │                               │   ",
@@ -238,13 +258,6 @@ updateMenu action menu = case action of
     ], boxBefore = StartMenu, action = FinishMatch}
 
 
--- Função interna que gera as linhas do rank, preenchendo com as 5 contas com maior pontuação,
--- e preenchendo os espaços em branco caso tenham menos de 5 contas registradas
--- Recebe: menu com accRank, que será utilizada para a formatação das strings
--- Retorna: array de strings formatada com as informações do rank de contas
-_geraRankLines :: Menu -> [String]
-_geraRankLines menu = ["    │     " ++ show i ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc)) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
-
 {- Recebe o numero de partidas criadas e calcula quantas páginas são
 necessárias para listar (listando cinco partidas por tela)-}
 numPagesMatches :: Int -> Int
@@ -254,16 +267,6 @@ numPagesMatches numMatches = (roundNumMatches numMatches) `div` 5
         | num `mod` 5 == 0 = num
         | otherwise = num + (5 - num `mod` 5)
 
-{- Recebe a lista de partidas criadas e o index da página de listagem,
- e retorna um array de string contendo os 5 nomes de partidas a serem exibidos -}
-_geraMatchLines :: [String] -> Int -> [String]
-_geraMatchLines namesMatches indexMatch =
-    let names = take 5 $ drop (5 * indexMatch) namesMatches
-        maxLength = maximum (map length names)
-        paddedNames = map (\name -> name ++ replicate (maxLength - length name) ' ') names
-        boxMiddle = map (\name -> printf "    │       %-10s              │" name) paddedNames
-        emptyLines = replicate (5 - length names) "    │                               │"
-    in boxMiddle ++ emptyLines
 
 {- Recebe o menu atual, o index da página de listagem, e pega a lista de
  partidas criadas pra chamar a função _updateMatchesMenu, que faz a
@@ -278,7 +281,7 @@ updateMatchesMenu menu indexMatch = do
      return menu
      else return (_updateMatchesMenu menu namesMatches indexMatch lengthList numPages)
 
-{- Recebe o menu atual, a lista de todas as partidas criadas, o index
+{- Função interna que recebe o menu atual, a lista de todas as partidas criadas, o index
 da página de listagem, e atualiza a box do menu listando as cinco partidas
 a serem exibidas para o usuário -}
 _updateMatchesMenu :: Menu -> [String] -> Int -> Int -> Int -> Menu
@@ -300,3 +303,26 @@ _updateMatchesMenu menu namesMatches indexMatch lengthList numPages =
         boxBefore = ContinueGame,
         action = Matches, indexMatch = indexMatch
     }
+   
+   
+{- Função interna que recebe a lista de partidas criadas e o index da página de listagem,
+ e retorna um array de string contendo os 5 nomes de partidas a serem exibidos -}
+_geraMatchLines :: [String] -> Int -> [String]
+_geraMatchLines namesMatches indexMatch =
+    let names = take 5 $ drop (5 * indexMatch) namesMatches
+        maxLength = maximum (map length names)
+        paddedNames = map (\name -> name ++ replicate (maxLength - length name) ' ') names
+        boxMiddle = map (\name -> printf "    │       %-10s              │" name) paddedNames
+        emptyLines = replicate (5 - length names) "    │                               │"
+    in boxMiddle ++ emptyLines
+
+
+-- Função interna que gera as linhas do rank, preenchendo com as 5 contas com maior pontuação,
+-- e preenchendo os espaços em branco caso tenham menos de 5 contas registradas
+-- Recebe: menu com accRank, que será utilizada para a formatação das strings
+-- Retorna: array de strings formatada com as informações do rank de contas   
+_getRankLines :: Menu -> [String]
+_getRankLines menu = accs ++ blankLines
+    where
+        accs = ["    │     " ++ show i ++ printf ". %-5s  -  %-4s         │   " (take 5 $ accName acc) (take 4 $ show (accScore acc)) | (acc, i) <- zip (take 5 $ reverse (accsRank menu)) [1..5]]
+        blankLines = replicate (5 - (length (accsRank menu))) "    │                               │"   

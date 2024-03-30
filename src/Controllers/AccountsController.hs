@@ -22,8 +22,13 @@ instance ToJSON Account
 instance FromJSON Account
 
 
-{-  Constante do path para as accounts.json
- Retorna: path do accounts.json -}
+-- Retorna uma conta na sua configuração default
+defaultAccount :: Account
+defaultAccount = Account{accName = "", accScore = 0}
+
+
+-- Constante do path para as accounts.json
+-- Retorna: path do accounts.json
 accsPath :: String
 accsPath = "data/accounts.json"
 
