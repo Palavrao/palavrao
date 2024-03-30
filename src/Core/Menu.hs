@@ -125,15 +125,10 @@ _menuFlux menu input = do
 
         -- Tela antes do jogo
         BeforeGame -> case input of
+            -- Redirecionamento para o jogo
             "1" -> _loadMatch menu
-            "2" -> do
-                let updatedMenu = menu {p1 = p2 menu}
-                let updatedMenu' = _updateAccs updatedMenu Account{accName = ""}
-                return (updateMenu (boxBefore menu) updatedMenu')
-            -- Redirecionamento para tela anterior removendo o login de player 2
-            "3" -> do
-                let updatedMenu = _updateAccs menu Account{accName = ""}
-                return (updateMenu (boxBefore menu) updatedMenu)
+            -- Redirecionamento para tela anterior
+            "2" -> return (updateMenu (boxBefore menu) menu)
             -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
 
@@ -144,8 +139,17 @@ _menuFlux menu input = do
             "1" -> do
                 updatedMenu <- _createMatch menu
                 return updatedMenu
+            -- Redirecionamento para tela anterior removendo o login de player 1
+            "2" -> do
+                let updatedMenu = menu {p1 = p2 menu}
+                let updatedMenu' = _updateAccs updatedMenu Account{accName = ""}
+                return (updateMenu (boxBefore menu) updatedMenu')
+            -- Redirecionamento para tela anterior removendo o login de player 2
+            "3" -> do
+                let updatedMenu = _updateAccs menu Account{accName = ""}
+                return (updateMenu (boxBefore menu) updatedMenu)
             -- Redirecionamento para tela anterior
-            "2" -> return (updateMenu (boxBefore menu) menu)
+            "4" -> return (updateMenu (boxBefore menu) menu)
             -- Caso base o qual somente repete a tela atual
             _   -> return (updateMenu (action menu) menu)
 

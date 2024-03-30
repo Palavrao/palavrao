@@ -19,6 +19,8 @@ import Controllers.PlayerController
 import Data.Char
 import Controllers.LettersController
 
+
+
 {- Trata o input do usuário obtido durante o jogo
  Recebe: uma match
  Recebe: o arrau de todas as palavras do português
