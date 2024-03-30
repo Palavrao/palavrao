@@ -58,6 +58,16 @@ _menuFlux menu input = do
                     return (updateMenu NewGame menu)
             -- Redirecionamento para tela de continuar jogos
             "2" -> return (updateMenu ContinueGame menu)
+
+
+
+
+
+
+
+
+
+            
             -- Printa as regras
             "3" -> do
                 UT._printRules
