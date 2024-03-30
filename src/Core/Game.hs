@@ -51,11 +51,11 @@ fluxHandler match w (':':'*':t) =
                             switched <- switchPlayerLetter match letter
                             return (skipPlayerTurn switched, ((map toUpper (accName (pAcc (getPlayerOnTurn match)))) ++ " trocou uma letra.\n"))
                         else do
-                            UT.__colorText (" > Escolha uma letra válida \n > ") Blue
+                            UT.__colorText (" > Escolha uma letra válida \n") Blue
                             c <- getLine
                             fluxHandler match w (":*" ++ c)
                     Nothing -> do -- o caracter é inválido
-                        UT.__colorText (" > Escolha uma letra válida \n > ") Blue
+                        UT.__colorText (" > Escolha uma letra válida \n") Blue
                         c <- getLine
                         fluxHandler match w (":*" ++ c)
 
