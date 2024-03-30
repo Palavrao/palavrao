@@ -268,7 +268,7 @@ _login menu = do
                         let updatedAccs = _updateAccs menu acc
                         if _accsFull updatedAccs then do
                             putStrLn "quantidade de contas máxima atingida"
-                            return $ updateMenu StartMenu updatedAccs
+                            return $ updateMenu RegisterMatch updatedAccs
                         else do
                             return $ updateMenu NewGame updatedAccs
 
@@ -293,7 +293,7 @@ _createAcc menu = do
             acc <- createAcc newAccName
             let updatedAccs = _updateAccs menu acc
             if _accsFull updatedAccs then do
-                return $ updateMenu StartMenu updatedAccs
+                return $ updateMenu RegisterMatch updatedAccs
             else do
                 return $ updateMenu NewGame updatedAccs
 
