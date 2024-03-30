@@ -93,3 +93,6 @@ scripts/release/binary-downloads/
 
 # ignore game data 
 data/
+
+# ignore intellij configs
+/.idea

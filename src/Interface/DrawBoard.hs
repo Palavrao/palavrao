@@ -61,7 +61,7 @@ _buildBoard match i = do
     if i > 15 then
         putStr (unlines
                 [printf  "\n     %s" playerLetters,
-                 printf  "     %s                        Letras Restantes: %-3s\n" scoreLetters (show (length (mLetters match)))])
+                 printf  "     %s                       Letras Restantes: %d\n" scoreLetters remainingLetters])
     else do
         putStr "     "
         mapM_ __pintaBoard (lines!!i)
@@ -73,11 +73,13 @@ _buildBoard match i = do
         playerOnTurn = getPlayerOnTurn match
         playerLetters = concatMap (\l -> [letter l, ' ']) (pLetters playerOnTurn)
         scoreLetters =  unwords (map (show . letterScore) (pLetters playerOnTurn))
+        remainingLetters = length (mLetters match)
         
 
 --Encapsula a construção do board
 printBoard :: Match -> IO ()
 printBoard match = do
     clearScreen
+    UT.__colorText ( (UT.centerString (" > Partida: " ++ (map toUpper (mName match))) 60 ' ' ) ++ "\n\n") Yellow
     _buildBoard match 0
 
