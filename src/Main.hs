@@ -19,4 +19,5 @@ main :: IO ()
 main = do
     UT.startPersistence
     menuLoop beginGame
+    putStrLn "Tchau"
     
