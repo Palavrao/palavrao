@@ -262,7 +262,7 @@ _getMatchLines namesMatches indexMatch =
     let names = take 5 $ drop (5 * indexMatch) namesMatches
         maxLength = maximum (map length names)
         paddedNames = map (\name -> name ++ replicate (maxLength - length name) ' ') names
-        boxMiddle = map (\name -> printf "    │       %-10s            │" name) paddedNames
+        boxMiddle = map (\name -> printf "    │       %-15s         │" (take 15 name)) paddedNames
         emptyLines = replicate (5 - length names) "    │                               │"
     in boxMiddle ++ emptyLines
 
