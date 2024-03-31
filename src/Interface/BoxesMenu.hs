@@ -257,12 +257,12 @@ updateMatchesMenu menu indexMatch = do
 
 {- Função interna que recebe a lista de partidas criadas e o index da página de listagem,
  e retorna um array de string contendo os 5 nomes de partidas a serem exibidos -}
-_geraMatchLines :: [String] -> Int -> [String]
-_geraMatchLines namesMatches indexMatch =
+_getMatchLines :: [String] -> Int -> [String]
+_getMatchLines namesMatches indexMatch =
     let names = take 5 $ drop (5 * indexMatch) namesMatches
         maxLength = maximum (map length names)
         paddedNames = map (\name -> name ++ replicate (maxLength - length name) ' ') names
-        boxMiddle = map (\name -> printf "    │       %-10s              │" name) paddedNames
+        boxMiddle = map (\name -> printf "    │       %-10s            │" name) paddedNames
         emptyLines = replicate (5 - length names) "    │                               │"
     in boxMiddle ++ emptyLines
 
@@ -278,8 +278,9 @@ _updateMatchesMenu menu namesMatches indexMatch lengthList numPages =
             "    │  1. voltar        2. avançar  │   ",
             "    │                               │   ",
             "    │           PALAVRÃO            │   ",
+            "    │                               │   ",
             "    │                               │   "
-        ] ++ _geraMatchLines namesMatches indexMatch ++ [
+        ] ++ _getMatchLines namesMatches indexMatch ++ [
             "    │                               │   ",
       printf"    │      total de partidas: %-2s    │   " (show lengthList),
             "    │                               │   ",
