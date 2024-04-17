@@ -55,6 +55,14 @@ No jogo original, a incidência de cada letra do saquinho é determinada com bas
 * Peças brancas também podem ativar células especiais.
 * Se um jogador joga 7 peças de uma vez ele recebe 50 pontos adicionais além do ponto da palavra.
 * Em caso de empate, o jogador com menos letras sobrando vence.
+  
+## Como baixar e executar Palavrão
+
+* Instalar o gerenciador de pacotes Cabal na sua máquina. Para mais informações de instalação acessar o seguinte link: https://www.haskell.org/cabal/
+* Fazer a clonagem deste respositório
+* Instalar todas as dependências necessárias ao projeto utilizando os comandos: cabal update e cabal install
+* Por fim, rodar o projeto utilizando o comando cabal run all
+* Caso tenha algum problema ao tentar instalar alguma dependência, acessar o arquivo palavrao.cabal para analisar a lista completa de dependencias do projeto e assim poder fazer sua instalação manualmente
 
 ### Contribuidores
 
