@@ -1,4 +1,4 @@
-:- include('../Constants/constants.pl').
+:- include('../Constants/paths.pl').
 
 make_data_folder :- 
     data_path(Path),
