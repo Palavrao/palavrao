@@ -1,10 +1,11 @@
 :- include('Utils/utils.pl').
+:- include('Controllers/accs_controller.pl').
 :- include('data/accounts.pl').
 :- include('data/matches.pl').
 
 main :- 
     accs_path(AccsPath),
-    inc_fact_file(AccsPath, account("samuel", 20)),
+    create_acc('samuel'),
 
-    account("samuel", Pontos),
-    write(Pontos).
+    account('samuel', Score),
+    write(Score). 

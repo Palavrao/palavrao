@@ -36,3 +36,8 @@ read_facts_file(Path, Facts) :-
     string_codes(String, Codes),
     split_string(String, "\n", "", Lines),
     maplist(atom_string, Facts, Lines).
+
+
+atom_to_single_quoted_string(Atom, String) :-
+    atom_concat('\'', Atom, TempString),
+    atom_concat(TempString, '\'', String).
