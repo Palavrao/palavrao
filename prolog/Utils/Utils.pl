@@ -20,8 +20,19 @@ start_persistence :-
     make_facts_file(MatchesPath).
 
 
-inc_facts_file(Path, NewFacts) :- 
+inc_fact_file(Path, NewFact) :- 
     open(Path, append, Stream),
-    write(Stream, NewFacts),
+    writeq(Stream, NewFact),
+    write(Stream, '.'),
     nl(Stream),
-    close(Stream).
+    close(Stream),
+    assertz(NewFact).
+
+
+read_facts_file(Path, Facts) :-
+    open(Path, read, Stream),
+    read_stream_to_codes(Stream, Codes),
+    close(Stream),
+    string_codes(String, Codes),
+    split_string(String, "\n", "", Lines),
+    maplist(atom_string, Facts, Lines).

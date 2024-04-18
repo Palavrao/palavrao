@@ -1,7 +1,10 @@
 :- include('Utils/utils.pl').
+:- include('data/accounts.pl').
+:- include('data/matches.pl').
 
 main :- 
-    start_persistence,
     accs_path(AccsPath),
+    inc_fact_file(AccsPath, account("samuel", 20)),
 
-    inc_facts_file(AccsPath, 'account("Samuel", 20)').
+    account("samuel", Pontos),
+    write(Pontos).
