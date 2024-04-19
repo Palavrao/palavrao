@@ -5,7 +5,6 @@
 
 main :- 
     accs_path(AccsPath),
-    create_acc('samuel'),
 
-    account('samuel', Score),
-    write(Score). 
+    inc_acc_score(samuel, 20),
+    halt. 
