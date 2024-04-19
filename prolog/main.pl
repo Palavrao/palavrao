@@ -5,7 +5,10 @@
 
 main :- 
     accs_path(AccsPath),
-    create_acc('samuel'),
 
-    account('samuel', Score),
-    write(Score). 
+    create_acc(samuel),
+
+    inc_acc_score(samuel, 20),
+
+    account(samuel,Score),
+    write(Score).
