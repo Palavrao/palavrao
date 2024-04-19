@@ -9,4 +9,6 @@ main :-
     create_acc(samuel),
 
     inc_acc_score(samuel, 20),
-    halt. 
+
+    account(samuel,Score),
+    write(Score).

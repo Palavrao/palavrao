@@ -29,7 +29,6 @@ clean_fact_file(Path) :-
 
 
 inc_fact_file(Path, NewFact) :- 
-    NewFact == end_of_file;
     open(Path, append, Stream),
     writeq(Stream, NewFact),
     write(Stream, '.'),
@@ -60,9 +59,13 @@ update_fact_file(Path, CurrentFact, NewFact) :-
 
 
 update_fact_file(_, _, _, []).
-update_fact_file(Path, CurrentFact, NewFact, [CurrentFact|T]) :- 
+update_fact_file(Path, CurrentFact, NewFact, [CurrentFact|T]) :-
+    NewFact == end_of_file;
+    retract(CurrentFact), 
     inc_fact_file(Path, NewFact),
     update_fact_file(Path, CurrentFact, NewFact, T). 
 update_fact_file(Path, CurrentFact, NewFact, [H|T]) :- 
+    H == end_of_file;
+    retract(H), 
     inc_fact_file(Path, H),
     update_fact_file(Path, CurrentFact, NewFact, T).
