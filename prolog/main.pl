@@ -6,5 +6,7 @@
 main :- 
     accs_path(AccsPath),
 
+    create_acc(samuel),
+
     inc_acc_score(samuel, 20),
     halt. 

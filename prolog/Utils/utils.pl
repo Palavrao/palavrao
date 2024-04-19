@@ -27,6 +27,7 @@ clean_fact_file(Path) :-
     write(Stream, ''),
     close(Stream).
 
+
 inc_fact_file(Path, NewFact) :- 
     NewFact == end_of_file;
     open(Path, append, Stream),

@@ -9,13 +9,10 @@ get_acc(AccName, Acc) :-
 
 
 create_acc(AccName) :-
-    (
-        account(AccName, _) -> write('Account already created!')
-        ;
-        accs_path(AccsPath),
-        
-        inc_fact_file(AccsPath, account(AccName, 0))
-    ).
+    account(AccName, _);
+    accs_path(AccsPath),
+    
+    inc_fact_file(AccsPath, account(AccName, 0)).
 
 
 inc_acc_score(AccName, IncScore) :- 
