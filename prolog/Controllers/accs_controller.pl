@@ -8,6 +8,10 @@ get_acc(AccName, Acc) :-
     Acc = account(AccName, AccScore).
 
 
+get_acc_score(AccName, AccScore) :-
+    account(AccName, AccScore).
+
+
 create_acc(AccName) :-
     account(AccName, _);
     accs_path(AccsPath),
@@ -19,7 +23,7 @@ inc_acc_score(AccName, IncScore) :-
     accs_path(AccsPath),
     get_acc(AccName, Acc),
 
-    account(AccName, OldScore),
+    get_acc_score(AccName,OldScore),
     NewScore is OldScore+IncScore,
 
     update_fact_file(AccsPath, Acc, account(AccName, NewScore)).
