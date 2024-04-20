@@ -18,7 +18,9 @@ start_persistence :-
     make_data_folder,
     accs_path(AccsPath),
     matches_path(MatchesPath),
+    boards_path(BoardsPath),
     make_facts_file(AccsPath,'account(\'\',0).'),
+    make_facts_file(BoardsPath,'board(\'\',[],[]).'),
     make_facts_file(MatchesPath, 'match(\'\', \'\', false, \'\', \'\', [], [], 0, 0).').
 
 
