@@ -6,22 +6,22 @@ make_data_folder :-
     make_directory(Path)).
 
 
-make_facts_file(Path, InitialContent) :-
-    exists_file(Path) ; 
-    open(Path, write, Stream),
-    write(Stream, InitialContent),
-    nl(Stream),
-    close(Stream).
-
-
 start_persistence :- 
     make_data_folder,
     accs_path(AccsPath),
     matches_path(MatchesPath),
     players_path(PlayersPath),
     make_facts_file(AccsPath,'account(\'\',0).'),
-    make_facts_file(MatchesPath, 'match(\'\', \'\', false, \'\', \'\', [], [], 0, 0).').
+    make_facts_file(MatchesPath, 'match(\'\', \'\', false, \'\', \'\', [], [], 0, 0).'),
     make_facts_file(PlayersPath, 'player(\'\', \'\', [], 0).').
+
+
+make_facts_file(Path, InitialContent) :-
+    exists_file(Path) ; 
+    open(Path, write, Stream),
+    write(Stream, InitialContent),
+    nl(Stream),
+    close(Stream).
 
 
 clean_fact_file(Path) :-
@@ -44,6 +44,7 @@ read_facts_file(Path, Facts) :-
     get_file_facts(Stream, Facts),
     close(Stream).
 
+
 get_file_facts(Stream, []) :-
     at_end_of_stream(Stream),
     !.
@@ -58,8 +59,6 @@ update_fact_file(Path, CurrentFact, NewFact) :-
     read_facts_file(Path, Facts),
     clean_fact_file(Path),
     update_fact_file(Path, CurrentFact, NewFact, Facts).
-
-
 update_fact_file(_, _, _, []).
 update_fact_file(Path, CurrentFact, NewFact, [CurrentFact|T]) :-
     retract(CurrentFact), 
@@ -70,11 +69,16 @@ update_fact_file(Path, CurrentFact, NewFact, [H|T]) :-
     inc_fact_file(Path, H),
     update_fact_file(Path, CurrentFact, NewFact, T).
 
+
+update_fact(CurrentFact, NewFact) :- 
+    retract(CurrentFact),
+    assertz(NewFact).
+
+
 del_fact_file(Path, DelFact) :-
     read_facts_file(Path, Facts),
     clean_fact_file(Path),
     del_fact_file(Path, DelFact, Facts).
-
 del_fact_file(_, _, []).
 del_fact_file(Path, DelFact, [DelFact|T]) :- 
     retract(DelFact), 
@@ -83,3 +87,21 @@ del_fact_file(Path, DelFact, [H|T]) :-
     H == end_of_file;
     inc_fact_file(Path, H),
     del_fact_file(Path, DelFact, T).
+
+
+remove_one_element([H|T], 0, H, T) :- !.
+remove_one_element([H|T], Quantity, RemovedElement, UpdatedElements) :- 
+    NewQuantity is Quantity - 1,
+    remove_one_element(T, NewQuantity, RemovedElement, OtherElements),
+    UpdatedElements = [H|OtherElements].
+
+pop_random_elements([], _, [], []).
+pop_random_elements(Elements, 0, [], Elements) :- !.
+pop_random_elements(Elements, Quantity, [RemovedElement|RemovedElements], UpdatedElements) :- 
+    length(Elements, ElementsLen),
+    Len is ElementsLen - 1,
+    random_between(0, Len, RandIndex),
+    remove_one_element(Elements, RandIndex, RemovedElement, TempUpdatedElements),
+
+    NewQuantity is Quantity - 1,
+    pop_random_elements(TempUpdatedElements, NewQuantity, RemovedElements, UpdatedElements).
