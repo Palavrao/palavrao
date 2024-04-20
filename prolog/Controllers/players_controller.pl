@@ -30,3 +30,24 @@ inc_score(MatchName, PlayerName, IncScore) :-
     NewScore is PlayerScore + IncScore,
 
     update_fact_file(PlayersPath, Player, player(MatchName, PlayerName, PlayerLetters, NewScore)).
+
+
+update_letters(MatchName, PlayerName, NewLetters) :- 
+    players_path(PlayersPath),
+
+    get_player(MatchName, PlayerName, Player),
+    get_player_score(MatchName, PlayerName, PlayerScore),
+
+    update_fact_file(PlayersPath, Player, player(MatchName, PlayerName, NewLetters, NewScore)).
+
+
+add_letters(MatchName, PlayerName, NewLetters) :- 
+    players_path(PlayersPath),
+
+    get_player(MatchName, PlayerName, Player),
+    get_player_letters(MatchName, PlayerName, PlayerLetters),
+    get_player_score(MatchName, PlayerName, PlayerScore),
+
+    append(PlayerLetters, NewLetters, UpdatedLetters),
+
+    update_fact_file(PlayersPath, Player, player(MatchName, PlayerName, NewLetters, UpdatedLetters)).
