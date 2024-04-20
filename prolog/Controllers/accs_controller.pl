@@ -3,9 +3,7 @@
 :- dynamic(account/2).
 
 
-get_acc(AccName, Acc) :- 
-    account(AccName, AccScore),
-    Acc = account(AccName, AccScore).
+get_acc(AccName, account(AccName, AccScore)).
 
 
 get_acc_score(AccName, AccScore) :-
