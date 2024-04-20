@@ -107,7 +107,7 @@ _getCol mat x = map (!!x) mat
  Recebe: um board
  Retorna: as palavras do board, obtidas linha a linha e coluna a coluna -}
 getWords :: Board -> [String]
-getWords board = (_search (!!) board 0) ++ (_search (_getCol) board 0)
+getWords board = _search (!!) board 0 ++ _search (_getCol) board 0
 
 
 {- 
