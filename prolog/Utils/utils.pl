@@ -19,7 +19,7 @@ start_persistence :-
     accs_path(AccsPath),
     matches_path(MatchesPath),
     make_facts_file(AccsPath,'account(\'\',0).'),
-    make_facts_file(MatchesPath, 'match(\'\').').
+    make_facts_file(MatchesPath, 'match(\'\', \'\', false, \'\', \'\', [], [], 0, 0).').
 
 
 clean_fact_file(Path) :-
