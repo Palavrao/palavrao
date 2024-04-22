@@ -188,14 +188,14 @@ getPointsLetter([HBoard|TBoard], [HWord|TWord], Points) :-
     Points is LetterScore + PointsTail.
 
 
-wordBonuses([], [], 1). % Base case: empty lists contribute a bonus of 1
+wordBonuses([], [], 1).
 wordBonuses(['-'|TBoard], [HWord|TWord], Bonus) :-
-    wordBonuses(TBoard, TWord, BonusTail), % Recursively calculate the bonus for the rest of the lists
-    Bonus is 2 * BonusTail. % Double the bonus
+    wordBonuses(TBoard, TWord, BonusTail), 
+    Bonus is 2 * BonusTail. 
 
 wordBonuses(['#'|TBoard], [HWord|TWord], Bonus) :-
-    wordBonuses(TBoard, TWord, BonusTail), % Recursively calculate the bonus for the rest of the lists
-    Bonus is 3 * BonusTail. % Triple the bonus
+    wordBonuses(TBoard, TWord, BonusTail),
+    Bonus is 3 * BonusTail.
 
 wordBonuses([HBoard|TBoard], [HWord|TWord], Bonus) :-
     letter_score(HWord, LetterScore),
@@ -217,9 +217,7 @@ countPlayedLetters(Tiles, PlayedLetters) :-
 isEmptyTile(Char) :-
     member(Char, ['-','~','#','!','*']).
 
-
-
-main:-
+testing:-
     create_board(name),
     getCurTiles(name,C),
     placeWord(10,1,true,word,C,R),
