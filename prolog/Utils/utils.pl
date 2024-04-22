@@ -1,5 +1,3 @@
-:- include('../Constants/paths.pl').
-
 make_data_folder :- 
     data_path(Path),
     (exists_directory(Path) ;
@@ -28,7 +26,6 @@ make_facts_file(Path, InitialContent) :-
 
 clean_fact_file(Path) :-
     open(Path, write, Stream),
-    write(Stream, ''),
     close(Stream).
 
 
@@ -43,7 +40,8 @@ inc_fact_file(Path, NewFact) :-
 
 read_facts_file(Path, Facts) :-
     open(Path, read, Stream),
-    get_file_facts(Stream, Facts),
+    get_file_facts(Stream, TempFacts),
+    append(Facts, [end_of_file], TempFacts),
     close(Stream).
 
 
@@ -52,7 +50,6 @@ get_file_facts(Stream, []) :-
     !.
 get_file_facts(Stream, [Fact|Facts]) :-
     \+ at_end_of_stream(Stream),
-    (Fact == end_of_file);
     read(Stream, Fact),
     get_file_facts(Stream, Facts).
 
@@ -67,14 +64,8 @@ update_fact_file(Path, CurrentFact, NewFact, [CurrentFact|T]) :-
     inc_fact_file(Path, NewFact),
     update_fact_file(Path, CurrentFact, NewFact, T). 
 update_fact_file(Path, CurrentFact, NewFact, [H|T]) :- 
-    H == end_of_file;
     inc_fact_file(Path, H),
     update_fact_file(Path, CurrentFact, NewFact, T).
-
-
-update_fact(CurrentFact, NewFact) :- 
-    retract(CurrentFact),
-    assertz(NewFact).
 
 
 del_fact_file(Path, DelFact) :-

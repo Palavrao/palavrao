@@ -1,12 +1,9 @@
-:- include('../Utils/utils.pl').
-:- include('../Constants/paths.pl').
-:- include('./letters_controller.pl').
-:- include('./accs_controller.pl').
-:- include('./players_controller.pl').
 :- dynamic(match/9).
 
 
-get_match(MatchName, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips)).
+get_match(MatchName, Match) :- 
+    match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
+    Match = match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips).
 
 
 get_match_board_name(MatchName, MatchBoardName) :-
@@ -50,9 +47,6 @@ get_turn_player_name(MatchName, PlayerName) :-
 
 
 create_match(MatchName, P1Name, P2Name) :- 
-    account(P1Name, _),
-    account(P2Name, _),
-
     matches_path(MatchesPath),
 
     create_player(MatchName, P1Name),
@@ -68,8 +62,18 @@ create_match(MatchName, P1Name, P2Name) :-
     toggle_player_turn(MatchName).
 
 del_match(MatchName) :-
+    matches_path(MatchesPath),
+    players_path(PlayersPath),
+
     get_match(MatchName, Match),
-    del_fact_file(Path, Match).
+    get_match_p1_name(MatchName, P1Name),
+    get_match_p2_name(MatchName, P2Name),
+    get_player(MatchName, P1Name, P1),
+    get_player(MatchName, P2Name, P2),
+
+    del_fact_file(PlayersPath, P1),
+    del_fact_file(PlayersPath, P2),
+    del_fact_file(MatchesPath, Match).
 
 
 finish_match(MatchName) :- 
@@ -126,14 +130,23 @@ update_player_letters(MatchName) :-
 
 skip_player_turn(MatchName) :- 
     matches_path(MatchesPath),
-
+    
     get_match(MatchName, Match),
     match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
-
+    
     NewMatchSkips is MatchSkips + 1,
-
+    
     update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, NewMatchSkips)),
     toggle_player_turn(MatchName).
+
+
+reset_match_skips(MatchName) :- 
+    matches_path(MatchesPath),
+    
+    get_match(MatchName, Match),
+    match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, _),
+
+    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, 0)).
 
 
 toggle_player_turn(MatchName) :- 

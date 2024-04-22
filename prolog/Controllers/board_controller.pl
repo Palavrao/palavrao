@@ -1,5 +1,3 @@
-:- include('../Utils/utils.pl').
-:- include('../Constants/paths.pl').
 :- dynamic(board/3).
 
 
@@ -200,21 +198,21 @@ wordBonuses([HBoard|TBoard], [HWord|TWord], Bonus) :-
     wordBonuses(TBoard, TWord, BonusTail),
     Bonus is BonusTail.
 
-main:-
-    create_board(name),
-    getCurTiles(name,C),
-    placeWord(10,1,true,word,C,R),
-    print_board(C),
-    write("\n"),
-    print_board(R),
-    write("\n"),
-    placeWord(0,1,false,word,R,R2),
-    write("\n"),
-    print_board(R2),
-    getTiles(true, R2, 10, 1, 4, Elements),
-    write(Elements),
-    getTiles(false, R2, 0, 2, 4, Elements2),
-    write(Elements2).
+% main:-
+%     create_board(name),
+%     getCurTiles(name,C),
+%     placeWord(10,1,true,word,C,R),
+%     print_board(C),
+%     write("\n"),
+%     print_board(R),
+%     write("\n"),
+%     placeWord(0,1,false,word,R,R2),
+%     write("\n"),
+%     print_board(R2),
+%     getTiles(true, R2, 10, 1, 4, Elements),
+%     write(Elements),
+%     getTiles(false, R2, 0, 2, 4, Elements2),
+%     write(Elements2).
 
 
 

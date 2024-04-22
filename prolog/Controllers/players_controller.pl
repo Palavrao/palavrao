@@ -1,4 +1,3 @@
-:- include('../Utils/utils.pl').
 :- dynamic(player/4).
 
 
@@ -7,7 +6,9 @@ create_player(MatchName , PlayerName) :-
     inc_fact_file(PlayersPath, player(MatchName, PlayerName, [], 0)).
 
 
-get_player(MatchName, PlayerName, player(MatchName, PlayerName, PlayerLetters, PlayerScore)).
+get_player(MatchName, PlayerName, Player) :- 
+    player(MatchName, PlayerName, PlayerLetters, PlayerScore),
+    Player = player(MatchName, PlayerName, PlayerLetters, PlayerScore).
 
 
 get_player_letters(MatchName, PlayerName, PlayerLetters) :- 
