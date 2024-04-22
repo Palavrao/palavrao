@@ -51,6 +51,10 @@ get_turn_player_name(MatchName, PlayerName) :-
 
 create_match(MatchName, P1Name, P2Name) :- 
     match(MatchName,_,_,_,_,_,_,_,_);
+
+    account(P1Name, _),
+    account(P2Name, _),
+
     matches_path(MatchesPath),
 
     create_player(MatchName, P1Name),
@@ -59,8 +63,11 @@ create_match(MatchName, P1Name, P2Name) :-
     atom_concat(MatchName, board, BoardName),
 
     start_letters(StartLetters),
-    inc_fact_file(MatchesPath, match(MatchName, BoardName, false, P1Name, P2Name, StartLetters, [], 300, 0)).
-
+    inc_fact_file(MatchesPath, match(MatchName, BoardName, false, P1Name, P2Name, StartLetters, [], 300, 0)),
+    update_player_letters(MatchName),
+    toggle_player_turn(MatchName),
+    update_player_letters(MatchName),
+    toggle_player_turn(MatchName).
 
 del_match(MatchName) :-
     get_match(MatchName, Match),
@@ -116,7 +123,7 @@ update_player_letters(MatchName) :-
     pop_random_elements(MatchLetters, LettersQuantity, RemovedLetters, UpdatedLetters),
 
     update_match_letters(MatchName, UpdatedLetters),
-    update_letters(MatchName, PlayerName, RemovedLetters).
+    add_letters(MatchName, PlayerName, RemovedLetters).
 
 
 skip_player_turn(MatchName) :- 
@@ -132,10 +139,12 @@ skip_player_turn(MatchName) :-
 
 
 toggle_player_turn(MatchName) :- 
+    match(MatchName,_,_,_,_,_,_,_,_),
+
     matches_path(MatchesPath),
 
     get_match(MatchName, Match),
-    match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
+    match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, _, MatchSkips),
 
     (MatchTurn -> 
         NewMatchTurn = false;
