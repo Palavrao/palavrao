@@ -45,13 +45,11 @@ get_turn_player_name(MatchName, PlayerName) :-
     get_match_turn(MatchName, MatchTurn),
 
     (MatchTurn -> 
-        get_match_p1_name(MatchName, PlayerName);
-        get_match_p2_name(MatchName, PlayerName)).
+        get_match_p2_name(MatchName, PlayerName);
+        get_match_p1_name(MatchName, PlayerName)).
 
 
 create_match(MatchName, P1Name, P2Name) :- 
-    match(MatchName,_,_,_,_,_,_,_,_);
-
     account(P1Name, _),
     account(P2Name, _),
 
@@ -139,8 +137,6 @@ skip_player_turn(MatchName) :-
 
 
 toggle_player_turn(MatchName) :- 
-    match(MatchName,_,_,_,_,_,_,_,_),
-
     matches_path(MatchesPath),
 
     get_match(MatchName, Match),
@@ -164,32 +160,20 @@ inc_match_used_words(MatchName, UsedWords) :-
     update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, NewMatchWords, MatchTimer, MatchSkips)).
 
 
-% switch_player_letter(MatchName, Letter) :- 
-%     matches_path(MatchesPath),
+switch_player_letter(MatchName, Letter) :- 
+    matches_path(MatchesPath),
 
-%     pop_random_elements(MatchLetters, 1, RemovedLetter, UpdatedLetters),
+    get_match_letters(MatchName, MatchLetters),
+    pop_random_elements(MatchLetters, 1, NewLetter, UpdatedLetters),
 
-%     get_turn_player_name(MatchName, PlayerName),
+    get_turn_player_name(MatchName, PlayerName),
 
-%     get_player_letters(MatchName, PlayerName, PlayerLetters),
-%     remove_one_element(PlayerLetters, _, RemovedLetter, ),
+    get_player_letters(MatchName, PlayerName, PlayerLetters),
+    remove_one_element(PlayerLetters, _, Letter, UpdatedPlayerLetters),
 
-%     update_match_letters(MatchName, UpdatedLetters),
-%     update_letters(MatchName, PlayerName, RemovedLetters).
+    append(UpdatedPlayerLetters, NewLetter, FinalPlayerLetters),
+    append(UpdatedLetters, [Letter], FinalMatchLetters),
+    
+    update_match_letters(MatchName, FinalMatchLetters),
+    update_letters(MatchName, PlayerName, FinalPlayerLetters).
 
-
-% switchPlayerLetter :: Match -> Letter -> IO Match
-% switchPlayerLetter match letter = do
-%     (newLetter, updatedLetters) <- UT.popRandomElements (mLetters match) 1
-
-%     let playerLetters = UT.removeOneElement (pLetters player) letter
-%     let updatedPlayer = updateLetters player playerLetters 
-
-%     let updatedMatch = _updateMatchLetters match (letter:updatedLetters)
-%     let updatedPlayer' = addLetters updatedPlayer newLetter
-
-%     return $ _updateMatchPlayer updatedMatch updatedPlayer'
-%     where
-%         player
-%             | mTurn match = mP2 match
-%             | otherwise = mP1 match
