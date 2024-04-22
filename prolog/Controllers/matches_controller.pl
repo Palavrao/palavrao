@@ -80,13 +80,7 @@ update_match_timer(MatchName, NewTimer) :-
     matches_path(MatchesPath),
 
     get_match(MatchName, Match),
-    get_match_board_name(MatchName, BoardName),
-    get_match_turn(MatchName, MatchTurn),
-    get_match_p1_name(MatchName, P1Name),
-    get_match_p2_name(MatchName, P2Name),
-    get_match_letters(MatchName, MatchLetters),
-    get_match_words(MatchName, MatchWords),
-    get_match_skips(MatchName, MatchSkips),
+    match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, _, MatchSkips),
 
     update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, NewTimer, MatchSkips)).
 
@@ -95,13 +89,7 @@ update_match_letters(MatchName, NewLetters) :-
     matches_path(MatchesPath),
 
     get_match(MatchName, Match),
-    get_match_board_name(MatchName, BoardName),
-    get_match_turn(MatchName, MatchTurn),
-    get_match_p1_name(MatchName, P1Name),
-    get_match_p2_name(MatchName, P2Name),
-    get_match_words(MatchName, MatchWords),
-    get_match_timer(MatchName, MatchTimer),
-    get_match_skips(MatchName, MatchSkips),
+    match(MatchName, BoardName, MatchTurn, P1Name, P2Name, _, MatchWords, MatchTimer, MatchSkips),
 
     update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, NewLetters, MatchWords, MatchTimer, MatchSkips)).
 
@@ -135,14 +123,7 @@ skip_player_turn(MatchName) :-
     matches_path(MatchesPath),
 
     get_match(MatchName, Match),
-    get_match_board_name(MatchName, BoardName),
-    get_match_turn(MatchName, MatchTurn),
-    get_match_p1_name(MatchName, P1Name),
-    get_match_p2_name(MatchName, P2Name),
-    get_match_letters(MatchName, MatchLetters),
-    get_match_words(MatchName, MatchWords),
-    get_match_timer(MatchName, MatchTimer),
-    get_match_skips(MatchName, MatchSkips),
+    match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
 
     NewMatchSkips is MatchSkips + 1,
 
@@ -154,13 +135,7 @@ toggle_player_turn(MatchName) :-
     matches_path(MatchesPath),
 
     get_match(MatchName, Match),
-    get_match_board_name(MatchName, BoardName),
-    get_match_turn(MatchName, MatchTurn),
-    get_match_p1_name(MatchName, P1Name),
-    get_match_p2_name(MatchName, P2Name),
-    get_match_letters(MatchName, MatchLetters),
-    get_match_words(MatchName, MatchWords),
-    get_match_skips(MatchName, MatchSkips),
+    match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
 
     (MatchTurn -> 
         NewMatchTurn = false;
@@ -173,14 +148,7 @@ inc_match_used_words(MatchName, UsedWords) :-
     matches_path(MatchesPath),
 
     get_match(MatchName, Match),
-    get_match_board_name(MatchName, BoardName),
-    get_match_turn(MatchName, MatchTurn),
-    get_match_p1_name(MatchName, P1Name),
-    get_match_p2_name(MatchName, P2Name),
-    get_match_letters(MatchName, MatchLetters),
-    get_match_words(MatchName, MatchWords),
-    get_match_timer(MatchName, MatchTimer),
-    get_match_skips(MatchName, MatchSkips),
+    match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
     
     append(MatchWords, UsedWords, NewMatchWords),
 
