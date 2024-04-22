@@ -6,12 +6,6 @@
 :- include('data/matches.pl').
 :- include('data/boards.pl').
 
-
-
-
-     
-
-
 main :-
     create_acc(samuel),
     create_acc(gabriel),
