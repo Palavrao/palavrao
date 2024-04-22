@@ -97,7 +97,8 @@ remove_one_element([H|T], Quantity, RemovedElement, UpdatedElements) :-
     remove_one_element(T, NewQuantity, RemovedElement, OtherElements),
     UpdatedElements = [H|OtherElements].
 
-pop_random_elements([], _, [], []).
+
+pop_random_elements([], _, [], []) :- !.
 pop_random_elements(Elements, 0, [], Elements) :- !.
 pop_random_elements(Elements, Quantity, [RemovedElement|RemovedElements], UpdatedElements) :- 
     length(Elements, ElementsLen),
