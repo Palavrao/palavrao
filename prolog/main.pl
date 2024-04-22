@@ -1,35 +1,18 @@
 :- include('Utils/utils.pl').
+:- include('Constants/paths.pl').
 :- include('Controllers/accs_controller.pl').
 :- include('Controllers/matches_controller.pl').
 :- include('Controllers/board_controller.pl').
+:- include('Controllers/letters_controller.pl').
+:- include('Controllers/players_controller.pl').
 :- include('data/accounts.pl').
 :- include('data/matches.pl').
 :- include('data/boards.pl').
-
-
-
-
-     
-
+:- include('data/players.pl').
 
 main :-
     create_acc(samuel),
     create_acc(gabriel),
-
     create_match(samuel_x_gabriel, samuel, gabriel),
-    
-    inc_match_used_words(samuel_x_gabriel, [palavra, foda]),
-    toggle_player_turn(samuel_x_gabriel),
-    skip_player_turn(samuel_x_gabriel),
-    update_match_timer(samuel_x_gabriel, 200),
-    update_player_letters(samuel_x_gabriel). 
-
-
-    inc_acc_score(samuel, 20),
-
-    account(samuel,Score),
-
-    create_board(bname),
-    board(bname,C,_),
-
-    write(C).
+    inc_player_score(samuel_x_gabriel, 10).
+    % finish_match(samuel_x_gabriel).

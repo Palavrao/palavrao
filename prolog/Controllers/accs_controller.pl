@@ -1,5 +1,3 @@
-:- include('../Utils/utils.pl').
-:- include('../Constants/paths.pl').
 :- dynamic(account/2).
 
 
@@ -11,7 +9,6 @@ get_acc_score(AccName, AccScore) :-
 
 
 create_acc(AccName) :-
-    account(AccName, _);
     accs_path(AccsPath),
     
     inc_fact_file(AccsPath, account(AccName, 0)).
