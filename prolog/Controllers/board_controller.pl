@@ -1,5 +1,7 @@
 :- include('../Utils/utils.pl').
 :- include('../Constants/paths.pl').
+:- include('./letters_controller.pl').
+
 :- dynamic(board/3).
 
 
@@ -171,19 +173,19 @@ getPointsWord(Tiles, Word, Score):-
 
 getPointsLetter([], [], 0).
 getPointsLetter(['*'|TBoard], [HWord|TWord], Points) :-
-    letterValue(HWord, LetterValue),
+    letter_score(HWord, LetterScore),
     getPointsLetter(TBoard, TWord, PointsTail),
-    Points is 2 * LetterValue + PointsTail.
+    Points is 2 * LetterScore + PointsTail.
 
 getPointsLetter(['!'|TBoard], [HWord|TWord], Points) :-
-    letterValue(HWord, LetterValue),
+    letter_score(HWord, LetterScore),
     getPointsLetter(TBoard, TWord, PointsTail),
-    Points is 3 * LetterValue + PointsTail.
+    Points is 3 * LetterScore + PointsTail.
 
 getPointsLetter([HBoard|TBoard], [HWord|TWord], Points) :-
-    letterValue(HWord, LetterValue),
+    letter_score(HWord, LetterScore),
     getPointsLetter(TBoard, TWord, PointsTail),
-    Points is LetterValue + PointsTail.
+    Points is LetterScore + PointsTail.
 
 
 wordBonuses([], [], 1). % Base case: empty lists contribute a bonus of 1
@@ -196,9 +198,26 @@ wordBonuses(['#'|TBoard], [HWord|TWord], Bonus) :-
     Bonus is 3 * BonusTail. % Triple the bonus
 
 wordBonuses([HBoard|TBoard], [HWord|TWord], Bonus) :-
-    letterValue(HWord, LetterValue),
+    letter_score(HWord, LetterScore),
     wordBonuses(TBoard, TWord, BonusTail),
     Bonus is BonusTail.
+
+
+bingo(Tiles, Score) :-
+    countPlayedLetters(Tiles, PlayedLetters),
+    (PlayedLetters > 6 -> Score = 20 ; Score = 0).
+
+
+countPlayedLetters(Tiles, PlayedLetters) :-
+    include(isEmptyTile, Tiles, PlayedTiles),
+    write(PlayedTiles),
+    length(PlayedTiles, PlayedLetters).
+
+
+isEmptyTile(Char) :-
+    member(Char, ['-','~','#','!','*']).
+
+
 
 main:-
     create_board(name),
@@ -214,7 +233,9 @@ main:-
     getTiles(true, R2, 10, 1, 4, Elements),
     write(Elements),
     getTiles(false, R2, 0, 2, 4, Elements2),
-    write(Elements2).
+    write(Elements2),
+    getPointsWord([~,~,~,*,~,~,~], ['S','S','S','S','S','S','S'], WP),
+    write(WP).
 
 
 
