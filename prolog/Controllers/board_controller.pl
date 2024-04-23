@@ -114,13 +114,13 @@ replaceTokensMatrix([Row|Rest], [NewRow|NewRest]) :-
 
 placeWord(X, Y, IsHorizontal, Word0, InitialBoardName, ResultBoard) :-
     Board = board(InitialBoardName, CurTiles, WorkTiles),
-    boards_path(BoardsPath)
+    boards_path(BoardsPath),
     atom_chars(Word0, Word),
     (   IsHorizontal
     ->  placeLetters(true, X, Y, Word, WorkTiles, ResultBoard)
     ;   placeLetters(false, X, Y, Word, WorkTiles, ResultBoard)
     ),
-    NewBoard is board(InitialBoardName, ResultBoard, ResultBoard),
+    NewBoard = board(InitialBoardName, ResultBoard, ResultBoard),
     update_fact_file(BoardsPath, Board, NewBoard).
 
 placeLetters(_, _, _, [], Board, Board).
