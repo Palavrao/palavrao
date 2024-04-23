@@ -77,18 +77,6 @@ setElement(Matrix, X,Y, Element, NewMatrix):-
     nth0(X, ResultLine, Element, RemainderLine),
     nth0(Y,NewMatrix,ResultLine, RemainderRows).
 
-print_board([]).
-print_board([Row|Rest]) :-
-    write('     '),
-    print_row(Row),
-    nl,
-    print_board(Rest).
-
-print_row([]).
-print_row([X|Xs]) :-
-    write(X),
-    write(' '),
-    print_row(Xs).
 
 
 length_1(X) :-
@@ -124,12 +112,16 @@ replaceTokensMatrix([Row|Rest], [NewRow|NewRest]) :-
     replaceTokens(Row, NewRow),
     replaceTokensMatrix(Rest, NewRest).
 
-placeWord(X, Y, IsHorizontal, Word0, InitialBoard, ResultBoard) :-
+placeWord(X, Y, IsHorizontal, Word0, InitialBoardName, ResultBoard) :-
+    Board = board(InitialBoardName, CurTiles, WorkTiles),
+    boards_path(BoardsPath)
     atom_chars(Word0, Word),
     (   IsHorizontal
-    ->  placeLetters(true, X, Y, Word, InitialBoard, ResultBoard)
-    ;   placeLetters(false, X, Y, Word, InitialBoard, ResultBoard)
-    ).
+    ->  placeLetters(true, X, Y, Word, WorkTiles, ResultBoard)
+    ;   placeLetters(false, X, Y, Word, WorkTiles, ResultBoard)
+    ),
+    NewBoard is board(InitialBoardName, ResultBoard, ResultBoard),
+    update_fact_file(BoardsPath, Board, NewBoard).
 
 placeLetters(_, _, _, [], Board, Board).
 placeLetters(true, X, Y, [H|T], Board, ResultBoard) :-
