@@ -1,3 +1,7 @@
+:- include('../Utils/utils.pl').
+:- include('../Constants/paths.pl').
+:- include('./letters_controller.pl').
+
 :- dynamic(board/3).
 
 
@@ -73,18 +77,6 @@ setElement(Matrix, X,Y, Element, NewMatrix):-
     nth0(X, ResultLine, Element, RemainderLine),
     nth0(Y,NewMatrix,ResultLine, RemainderRows).
 
-print_board([]).
-print_board([Row|Rest]) :-
-    write('     '),
-    print_row(Row),
-    nl,
-    print_board(Rest).
-
-print_row([]).
-print_row([X|Xs]) :-
-    write(X),
-    write(' '),
-    print_row(Xs).
 
 
 length_1(X) :-
@@ -120,12 +112,16 @@ replaceTokensMatrix([Row|Rest], [NewRow|NewRest]) :-
     replaceTokens(Row, NewRow),
     replaceTokensMatrix(Rest, NewRest).
 
-placeWord(X, Y, IsHorizontal, Word0, InitialBoard, ResultBoard) :-
+placeWord(X, Y, IsHorizontal, Word0, InitialBoardName, ResultBoard) :-
+    Board = board(InitialBoardName, CurTiles, WorkTiles),
+    boards_path(BoardsPath),
     atom_chars(Word0, Word),
     (   IsHorizontal
-    ->  placeLetters(true, X, Y, Word, InitialBoard, ResultBoard)
-    ;   placeLetters(false, X, Y, Word, InitialBoard, ResultBoard)
-    ).
+    ->  placeLetters(true, X, Y, Word, WorkTiles, ResultBoard)
+    ;   placeLetters(false, X, Y, Word, WorkTiles, ResultBoard)
+    ),
+    NewBoard = board(InitialBoardName, ResultBoard, ResultBoard),
+    update_fact_file(BoardsPath, Board, NewBoard).
 
 placeLetters(_, _, _, [], Board, Board).
 placeLetters(true, X, Y, [H|T], Board, ResultBoard) :-
@@ -169,50 +165,67 @@ getPointsWord(Tiles, Word, Score):-
 
 getPointsLetter([], [], 0).
 getPointsLetter(['*'|TBoard], [HWord|TWord], Points) :-
-    letterValue(HWord, LetterValue),
+    letter_score(HWord, LetterScore),
     getPointsLetter(TBoard, TWord, PointsTail),
-    Points is 2 * LetterValue + PointsTail.
+    Points is 2 * LetterScore + PointsTail.
 
 getPointsLetter(['!'|TBoard], [HWord|TWord], Points) :-
-    letterValue(HWord, LetterValue),
+    letter_score(HWord, LetterScore),
     getPointsLetter(TBoard, TWord, PointsTail),
-    Points is 3 * LetterValue + PointsTail.
+    Points is 3 * LetterScore + PointsTail.
 
 getPointsLetter([HBoard|TBoard], [HWord|TWord], Points) :-
-    letterValue(HWord, LetterValue),
+    letter_score(HWord, LetterScore),
     getPointsLetter(TBoard, TWord, PointsTail),
-    Points is LetterValue + PointsTail.
+    Points is LetterScore + PointsTail.
 
 
-wordBonuses([], [], 1). % Base case: empty lists contribute a bonus of 1
+wordBonuses([], [], 1).
 wordBonuses(['-'|TBoard], [HWord|TWord], Bonus) :-
-    wordBonuses(TBoard, TWord, BonusTail), % Recursively calculate the bonus for the rest of the lists
-    Bonus is 2 * BonusTail. % Double the bonus
+    wordBonuses(TBoard, TWord, BonusTail), 
+    Bonus is 2 * BonusTail. 
 
 wordBonuses(['#'|TBoard], [HWord|TWord], Bonus) :-
-    wordBonuses(TBoard, TWord, BonusTail), % Recursively calculate the bonus for the rest of the lists
-    Bonus is 3 * BonusTail. % Triple the bonus
+    wordBonuses(TBoard, TWord, BonusTail),
+    Bonus is 3 * BonusTail.
 
 wordBonuses([HBoard|TBoard], [HWord|TWord], Bonus) :-
-    letterValue(HWord, LetterValue),
+    letter_score(HWord, LetterScore),
     wordBonuses(TBoard, TWord, BonusTail),
     Bonus is BonusTail.
 
-% main:-
-%     create_board(name),
-%     getCurTiles(name,C),
-%     placeWord(10,1,true,word,C,R),
-%     print_board(C),
-%     write("\n"),
-%     print_board(R),
-%     write("\n"),
-%     placeWord(0,1,false,word,R,R2),
-%     write("\n"),
-%     print_board(R2),
-%     getTiles(true, R2, 10, 1, 4, Elements),
-%     write(Elements),
-%     getTiles(false, R2, 0, 2, 4, Elements2),
-%     write(Elements2).
+
+bingo(Tiles, Score) :-
+    countPlayedLetters(Tiles, PlayedLetters),
+    (PlayedLetters > 6 -> Score = 20 ; Score = 0).
+
+
+countPlayedLetters(Tiles, PlayedLetters) :-
+    include(isEmptyTile, Tiles, PlayedTiles),
+    write(PlayedTiles),
+    length(PlayedTiles, PlayedLetters).
+
+
+isEmptyTile(Char) :-
+    member(Char, ['-','~','#','!','*']).
+
+testing:-
+    create_board(name),
+    getCurTiles(name,C),
+    placeWord(10,1,true,word,C,R),
+    print_board(C),
+    write("\n"),
+    print_board(R),
+    write("\n"),
+    placeWord(0,1,false,word,R,R2),
+    write("\n"),
+    print_board(R2),
+    getTiles(true, R2, 10, 1, 4, Elements),
+    write(Elements),
+    getTiles(false, R2, 0, 2, 4, Elements2),
+    write(Elements2),
+    getPointsWord([~,~,~,*,~,~,~], ['S','S','S','S','S','S','S'], WP),
+    write(WP).
 
 
 
