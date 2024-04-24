@@ -60,7 +60,7 @@ word_tiles_validator(CurTiles, WordLetters, X, Y, true) :-
     length(WordLetters, WordLen),
     % getCurTiles(BoardName, CurTiles), 
     To is X + WordLen,
-    take_sublist_row(CurTiles, X, To, Y, SublistTiles),
+    get_sublist_row(CurTiles, X, To, Y, SublistTiles),
     letter_overlap_validator(WordLetters, SublistTiles), not(maplist(is_alpha, SublistTiles)), !.
 word_tiles_validator(CurTiles, WordLetters, X, Y, false) :-
     length(WordLetters, WordLen),
@@ -76,18 +76,18 @@ letter_overlap_validator([_|T], [X|Y]) :-
     not(is_alpha(X)),
     letter_overlap_validator(T, Y), !.
 
-take_sublist_row(_, To, To, _, []) :- !.
-take_sublist_row(Matrix, From, To, Y, Sublist) :-
+get_sublist_row(_, To, To, _, []) :- !.
+get_sublist_row(Matrix, From, To, Y, Sublist) :-
     nth0(Y, Matrix, Row),
     nth0(From, Row, Char),
     NewFrom is From + 1,
-    take_sublist_row(Matrix, NewFrom, To, Y, TempSublist),
+    get_sublist_row(Matrix, NewFrom, To, Y, TempSublist),
     append([Char], TempSublist, Sublist).
 
-take_sublist_col(_, To, To, _, []) :- !.
-take_sublist_col(Matrix, From, To, X, Sublist) :-
+get_sublist_col(_, To, To, _, []) :- !.
+get_sublist_col(Matrix, From, To, X, Sublist) :-
     nth0(From, Matrix, Row),
     nth0(X, Row, Char),
     NewFrom is From + 1,
-    take_sublist_col(Matrix, NewFrom, To, X, TempSublist),
+    get_sublist_col(Matrix, NewFrom, To, X, TempSublist),
     append([Char], TempSublist, Sublist).
