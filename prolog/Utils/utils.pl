@@ -10,76 +10,38 @@ start_persistence :-
     matches_path(MatchesPath),
     players_path(PlayersPath),
     boards_path(BoardsPath),
-    make_facts_file(AccsPath,'account(\'\',0).'),
-    make_facts_file(BoardsPath,'board(\'\',[],[]).'),
-    make_facts_file(MatchesPath, 'match(\'\', \'\', false, \'\', \'\', [], [], 0, 0).'),
-    make_facts_file(PlayersPath, 'player(\'\', \'\', [], 0).').
+    make_facts_file(AccsPath),
+    make_facts_file(BoardsPath),
+    make_facts_file(MatchesPath),
+    make_facts_file(PlayersPath).
 
 
-make_facts_file(Path, InitialContent) :-
+make_facts_file(Path) :-
     exists_file(Path) ; 
     open(Path, write, Stream),
-    write(Stream, InitialContent),
-    nl(Stream),
     close(Stream).
 
 
-clean_fact_file(Path) :-
-    open(Path, write, Stream),
-    close(Stream).
+save_fact_file(Path, Pred) :-
+    tell(Path),
+    listing(Pred),
+    told.
 
 
-inc_fact_file(Path, NewFact) :- 
-    open(Path, append, Stream),
-    writeq(Stream, NewFact),
-    write(Stream, '.'),
-    nl(Stream),
-    close(Stream),
-    assertz(NewFact).
+inc_fact_file(Path, NewFact, Pred) :- 
+    assertz(NewFact),
+    save_fact_file(Path, Pred).
 
 
-read_facts_file(Path, Facts) :-
-    open(Path, read, Stream),
-    get_file_facts(Stream, TempFacts),
-    append(Facts, [end_of_file], TempFacts),
-    close(Stream).
+update_fact_file(Path, CurrentFact, NewFact, Pred) :-
+    retract(CurrentFact),
+    assertz(NewFact),
+    save_fact_file(Path, Pred).
 
 
-get_file_facts(Stream, []) :-
-    at_end_of_stream(Stream),
-    !.
-get_file_facts(Stream, [Fact|Facts]) :-
-    \+ at_end_of_stream(Stream),
-    read(Stream, Fact),
-    get_file_facts(Stream, Facts).
-
-
-update_fact_file(Path, CurrentFact, NewFact) :-
-    read_facts_file(Path, Facts),
-    clean_fact_file(Path),
-    update_fact_file(Path, CurrentFact, NewFact, Facts).
-update_fact_file(_, _, _, []).
-update_fact_file(Path, CurrentFact, NewFact, [CurrentFact|T]) :-
-    retract(CurrentFact), 
-    inc_fact_file(Path, NewFact),
-    update_fact_file(Path, CurrentFact, NewFact, T). 
-update_fact_file(Path, CurrentFact, NewFact, [H|T]) :- 
-    inc_fact_file(Path, H),
-    update_fact_file(Path, CurrentFact, NewFact, T).
-
-
-del_fact_file(Path, DelFact) :-
-    read_facts_file(Path, Facts),
-    clean_fact_file(Path),
-    del_fact_file(Path, DelFact, Facts).
-del_fact_file(_, _, []).
-del_fact_file(Path, DelFact, [DelFact|T]) :- 
-    retract(DelFact), 
-    del_fact_file(Path, DelFact, T).
-del_fact_file(Path, DelFact, [H|T]) :- 
-    H == end_of_file;
-    inc_fact_file(Path, H),
-    del_fact_file(Path, DelFact, T).
+del_fact_file(Path, DelFact, Pred) :-
+    retract(DelFact),
+    save_fact_file(Path, Pred).
 
 
 remove_one_element([H|T], 0, H, T) :- !.

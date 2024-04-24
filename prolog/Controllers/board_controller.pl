@@ -37,7 +37,7 @@ create_board(BoardName) :-
     
     boards_path(BoardsPath),
     
-    inc_fact_file(BoardsPath, board(BoardName, CurTiles, WorkTiles)).
+    inc_fact_file(BoardsPath, board(BoardName, CurTiles, WorkTiles), board).
 
 getCurTiles(BoardName, CurTiles):-
     board(BoardName, CurTiles, _).

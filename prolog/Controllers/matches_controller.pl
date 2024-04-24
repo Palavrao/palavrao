@@ -55,7 +55,7 @@ create_match(MatchName, P1Name, P2Name) :-
     atom_concat(MatchName, board, BoardName),
 
     start_letters(StartLetters),
-    inc_fact_file(MatchesPath, match(MatchName, BoardName, false, P1Name, P2Name, StartLetters, [], 300, 0)),
+    inc_fact_file(MatchesPath, match(MatchName, BoardName, false, P1Name, P2Name, StartLetters, [], 300, 0), match),
     update_player_letters(MatchName),
     toggle_player_turn(MatchName),
     update_player_letters(MatchName),
@@ -71,9 +71,9 @@ del_match(MatchName) :-
     get_player(MatchName, P1Name, P1),
     get_player(MatchName, P2Name, P2),
 
-    del_fact_file(PlayersPath, P1),
-    del_fact_file(PlayersPath, P2),
-    del_fact_file(MatchesPath, Match).
+    del_fact_file(PlayersPath, P1, player),
+    del_fact_file(PlayersPath, P2, player),
+    del_fact_file(MatchesPath, Match, match).
 
 
 finish_match(MatchName) :- 
@@ -91,7 +91,7 @@ update_match_timer(MatchName, NewTimer) :-
     get_match(MatchName, Match),
     match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, _, MatchSkips),
 
-    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, NewTimer, MatchSkips)).
+    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, NewTimer, MatchSkips), match).
 
 
 update_match_letters(MatchName, NewLetters) :-
@@ -100,12 +100,11 @@ update_match_letters(MatchName, NewLetters) :-
     get_match(MatchName, Match),
     match(MatchName, BoardName, MatchTurn, P1Name, P2Name, _, MatchWords, MatchTimer, MatchSkips),
 
-    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, NewLetters, MatchWords, MatchTimer, MatchSkips)).
+    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, NewLetters, MatchWords, MatchTimer, MatchSkips), match).
 
 
 get_matches(Matches) :- 
-    matches_path(MatchesPath),
-    read_facts_file(MatchesPath, Matches).
+    listing(Matches).
 
 
 inc_player_score(MatchName, PlayerScore) :- 
@@ -136,7 +135,7 @@ skip_player_turn(MatchName) :-
     
     NewMatchSkips is MatchSkips + 1,
     
-    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, NewMatchSkips)),
+    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, NewMatchSkips), match),
     toggle_player_turn(MatchName).
 
 
@@ -146,7 +145,7 @@ reset_match_skips(MatchName) :-
     get_match(MatchName, Match),
     match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, _),
 
-    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, 0)).
+    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, 0), match).
 
 
 toggle_player_turn(MatchName) :- 
@@ -159,7 +158,7 @@ toggle_player_turn(MatchName) :-
         NewMatchTurn = false;
         NewMatchTurn = true),
 
-    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, NewMatchTurn, P1Name, P2Name, MatchLetters, MatchWords, 300, MatchSkips)).
+    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, NewMatchTurn, P1Name, P2Name, MatchLetters, MatchWords, 300, MatchSkips), match).
 
 
 inc_match_used_words(MatchName, UsedWords) :- 
@@ -170,7 +169,7 @@ inc_match_used_words(MatchName, UsedWords) :-
     
     append(MatchWords, UsedWords, NewMatchWords),
 
-    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, NewMatchWords, MatchTimer, MatchSkips)).
+    update_fact_file(MatchesPath, Match, match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, NewMatchWords, MatchTimer, MatchSkips), match).
 
 
 switch_player_letter(MatchName, Letter) :- 

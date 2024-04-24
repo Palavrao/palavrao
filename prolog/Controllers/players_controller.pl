@@ -3,7 +3,7 @@
 
 create_player(MatchName , PlayerName) :- 
     players_path(PlayersPath),
-    inc_fact_file(PlayersPath, player(MatchName, PlayerName, [], 0)).
+    inc_fact_file(PlayersPath, player(MatchName, PlayerName, [], 0), player).
 
 
 get_player(MatchName, PlayerName, Player) :- 
@@ -27,7 +27,7 @@ inc_score(MatchName, PlayerName, IncScore) :-
 
     NewScore is PlayerScore + IncScore,
 
-    update_fact_file(PlayersPath, Player, player(MatchName, PlayerName, PlayerLetters, NewScore)).
+    update_fact_file(PlayersPath, Player, player(MatchName, PlayerName, PlayerLetters, NewScore), player).
 
 
 update_letters(MatchName, PlayerName, NewLetters) :- 
@@ -36,7 +36,7 @@ update_letters(MatchName, PlayerName, NewLetters) :-
     get_player(MatchName, PlayerName, Player),
     player(MatchName, PlayerName, _, PlayerScore),
 
-    update_fact_file(PlayersPath, Player, player(MatchName, PlayerName, NewLetters, PlayerScore)).
+    update_fact_file(PlayersPath, Player, player(MatchName, PlayerName, NewLetters, PlayerScore), player).
 
 
 add_letters(MatchName, PlayerName, NewLetters) :- 
@@ -47,4 +47,4 @@ add_letters(MatchName, PlayerName, NewLetters) :-
 
     append(PlayerLetters, NewLetters, UpdatedLetters),
 
-    update_fact_file(PlayersPath, Player, player(MatchName, PlayerName, UpdatedLetters, PlayerScore)).
+    update_fact_file(PlayersPath, Player, player(MatchName, PlayerName, UpdatedLetters, PlayerScore), player).
