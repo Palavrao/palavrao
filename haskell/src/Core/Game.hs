@@ -7,7 +7,7 @@ module Core.Game where
 
 import Controllers.MatchesController
 import Data.Time.Clock (getCurrentTime, NominalDiffTime, UTCTime, diffUTCTime)
-import Interface.draw_board
+import Interface.DrawBoard
 import Utils.Validator
 import Control.Concurrent (threadDelay)
 import System.Console.ANSI
