@@ -1,6 +1,6 @@
 create_player(MatchName , PlayerName) :- 
     players_path(PlayersPath),
-    inc_fact_file(PlayersPath, player(MatchName, PlayerName, [], 0), player).
+    inc_fact_file(PlayersPath, player(MatchName, PlayerName, [], 0), player), !.
 
 
 get_player(MatchName, PlayerName, Player) :- 

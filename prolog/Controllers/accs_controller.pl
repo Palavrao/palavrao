@@ -10,7 +10,7 @@ get_acc_score(AccName, AccScore) :-
 create_acc(AccName) :-
     accs_path(AccsPath),
     
-    inc_fact_file(AccsPath, account(AccName, 0), account).
+    inc_fact_file(AccsPath, account(AccName, 0), account), !.
 
 
 inc_acc_score(AccName, IncScore) :- 
