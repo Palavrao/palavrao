@@ -48,8 +48,9 @@ create_match(MatchName, P1Name, P2Name) :-
 
     create_player(MatchName, P1Name),
     create_player(MatchName, P2Name),
-
+    
     atom_concat(MatchName, board, BoardName),
+    create_board(BoardName),
 
     start_letters(StartLetters),
     inc_fact_file(MatchesPath, match(MatchName, BoardName, false, P1Name, P2Name, StartLetters, [], 300, 0), match),
