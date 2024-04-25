@@ -1,3 +1,8 @@
+match_exists(MatchName) :-
+    current_predicate(match/9),
+    match(MatchName, _, _, _, _, _, _, _, _), !.
+
+
 get_match(MatchName, Match) :- 
     match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
     Match = match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips).
