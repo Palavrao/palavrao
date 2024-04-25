@@ -1,4 +1,5 @@
 :- include('Core/menu.pl').
+:- consult('Utils/validator.pl').
 % :- include('Utils/utils.pl').
 % :- include('Constants/paths.pl').
 % :- include('Controllers/accs_controller.pl').
