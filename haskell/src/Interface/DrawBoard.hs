@@ -1,4 +1,4 @@
-module Interface.DrawBoard where
+module Interface.draw_board where
 
 import Text.Printf
 import System.Console.ANSI

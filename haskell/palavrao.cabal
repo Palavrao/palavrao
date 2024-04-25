@@ -27,7 +27,7 @@ executable palavrao
       Core.Game,
       Core.Menu,
       Interface.BoxesMenu,
-      Interface.DrawBoard,
+      Interface.draw_board,
       Utils.Utils,
       Utils.Validator
   build-depends: 
