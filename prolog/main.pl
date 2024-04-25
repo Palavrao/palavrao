@@ -1,4 +1,4 @@
-:- include('Interfaces/BoxesMenu.pl').
+:- include('Interfaces/boxes_menu.pl').
 % :- include('Utils/utils.pl').
 % :- include('Constants/paths.pl').
 % :- include('Controllers/accs_controller.pl').
