@@ -182,7 +182,7 @@ wordBonuses(['#'|TBoard], [_|TWord], Bonus) :-
     wordBonuses(TBoard, TWord, BonusTail),
     Bonus is 3 * BonusTail.
 
-wordBonuses([_|TBoard], [_|TWord], Bonus) :-
+wordBonuses([_|TBoard], [_|TWord], Bonus):-
     wordBonuses(TBoard, TWord, BonusTail),
     Bonus is BonusTail.
 
