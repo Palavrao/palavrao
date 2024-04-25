@@ -70,3 +70,9 @@ remove_elements([H|T], ToRemove, Updated) :-
         remove_elements(T, NewToRemove, Updated);
     remove_elements(T, ToRemove, OtherElements),
     Updated = [H|OtherElements]).
+
+
+getWordList(WordList) :-
+    read_file_to_string('palavras/br-sem-acentos.txt', Base, []),
+    atomic_list_concat(LineList, '\n', Base),
+    maplist(atom_string, WordList, LineList).
