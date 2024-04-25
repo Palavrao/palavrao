@@ -61,3 +61,12 @@ pop_random_elements(Elements, Quantity, [RemovedElement|RemovedElements], Update
 
     NewQuantity is Quantity - 1,
     pop_random_elements(TempUpdatedElements, NewQuantity, RemovedElements, UpdatedElements).
+
+
+remove_elements([], _, []).
+remove_elements([H|T], ToRemove, Updated) :-
+    (member(H, ToRemove) -> 
+        remove_one_element(ToRemove, _, _, NewToRemove),
+        remove_elements(T, NewToRemove, Updated);
+    remove_elements(T, ToRemove, OtherElements),
+    Updated = [H|OtherElements]).

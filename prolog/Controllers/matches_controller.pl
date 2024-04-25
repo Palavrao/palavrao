@@ -56,7 +56,7 @@ create_match(MatchName, P1Name, P2Name) :-
     update_player_letters(MatchName),
     toggle_player_turn(MatchName),
     update_player_letters(MatchName),
-    toggle_player_turn(MatchName).
+    toggle_player_turn(MatchName), !.
 
 del_match(MatchName) :-
     matches_path(MatchesPath),
@@ -188,3 +188,20 @@ switch_player_letter(MatchName, Letter) :-
     update_match_letters(MatchName, FinalMatchLetters),
     update_letters(MatchName, PlayerName, FinalPlayerLetters).
 
+
+remove_player_letters(MatchName, ToRemove) :-
+    get_turn_player_name(MatchName, PlayerName),
+
+    get_player_letters(MatchName, PlayerName, PlayerLetters),
+
+    remove_elements(PlayerLetters, ToRemove, Updated),
+
+    update_letters(MatchName, PlayerName, Updated), !.
+
+% removePlayerLetters :: Match -> [Char] -> Match
+% removePlayerLetters match toRemove = _updateMatchPlayer match (updateLetters player newLetters)
+%     where 
+%         newLetters = getLetterArray (UT.removeChars toRemove [letter l | l <- (pLetters player)])
+%         player
+%             | mTurn match = mP2 match
+%             | otherwise = mP1 match
