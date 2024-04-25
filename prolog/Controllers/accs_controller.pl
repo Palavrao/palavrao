@@ -1,3 +1,8 @@
+acc_exists(AccName) :-
+    current_predicate(account/2),
+    account(AccName, _), !.
+
+
 get_acc(AccName, Account) :- 
     account(AccName, AccScore),
     Account = account(AccName, AccScore).

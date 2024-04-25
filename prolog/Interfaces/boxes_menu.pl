@@ -1,3 +1,5 @@
+:- consult('Utils/utils.pl').
+
 game_action(new_game).
 game_action(continue_game).
 game_action(login).
@@ -93,8 +95,6 @@ show_menu(Action) :-
     clear_screen, 
     update_menu(Action, [], UpdatedMenu),
     writeln_menu(UpdatedMenu).
-
-clear_screen :- (current_prolog_flag(windows, true) -> shell('cls'); shell('clear')).
 
 get_input(Key) :-
     get_single_char(Code),

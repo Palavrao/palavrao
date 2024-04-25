@@ -1,3 +1,8 @@
+board_exists(BoardName) :-
+    current_predicate(board/3),
+    board(BoardName, _, _), !.
+
+
 create_board(BoardName) :-
     CurTiles = [['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#'],
                 ['~', '-', '~', '~', '~', '!', '~', '~', '~', '!', '~', '~', '~', '-', '~'],

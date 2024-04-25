@@ -1,4 +1,6 @@
-make_data_folder :- 
+clear_screen :- (current_prolog_flag(windows, true) -> shell('cls'); shell('clear')).
+
+make_data_folder :-
     data_path(Path),
     (exists_directory(Path) ;
     make_directory(Path)).
