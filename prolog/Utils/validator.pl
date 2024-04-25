@@ -91,3 +91,27 @@ get_sublist_col(Matrix, From, To, X, Sublist) :-
     NewFrom is From + 1,
     get_sublist_col(Matrix, NewFrom, To, X, TempSublist),
     append([Char], TempSublist, Sublist).
+
+valid_name(Name) :-
+    \+ Name = "",
+    \+ contains_space(Name),
+    \+ contains_special_chars_helper(Name).
+
+contains_space(Name) :-
+    sub_string(Name, _, _, _, ' ').
+
+contains_special_chars(Name) :-
+    writeln("Checking for special characters"),
+    atom_chars(Name, Chars),
+    contains_special_chars_helper(Chars).
+
+contains_special_chars_helper([]).
+contains_special_chars_helper([Char|Rest]) :-
+    special_char(Char),
+    !.
+contains_special_chars_helper([_|Rest]) :-
+    contains_special_chars_helper(Rest).
+
+special_char(Char) :-
+    member(Char, ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', ';', ':', "'", '"', '<', '>', ',', '.', '/', '?', '\\', '|',
+                  'á', 'à', 'ã', 'â', 'é', 'è', 'ẽ', 'ê', 'í', 'ì', 'ĩ', 'î', 'ó', 'ò', 'õ', 'ô', 'ú', 'ù', 'ũ', 'û', 'ç']).
