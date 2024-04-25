@@ -1,5 +1,3 @@
-include:-
-
 print_board([]).
 print_board([Row|Rest]) :-
     write('     '),

@@ -1,6 +1,3 @@
-:- dynamic(player/4).
-
-
 create_player(MatchName , PlayerName) :- 
     players_path(PlayersPath),
     inc_fact_file(PlayersPath, player(MatchName, PlayerName, [], 0), player).

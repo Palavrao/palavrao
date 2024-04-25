@@ -1,6 +1,3 @@
-:- dynamic(match/9).
-
-
 get_match(MatchName, Match) :- 
     match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
     Match = match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips).
@@ -104,7 +101,9 @@ update_match_letters(MatchName, NewLetters) :-
 
 
 get_matches(Matches) :- 
-    listing(Matches).
+    findall(match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
+            match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
+            Matches).
 
 
 inc_player_score(MatchName, PlayerScore) :- 

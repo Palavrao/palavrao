@@ -1,10 +1,3 @@
-:- include('../Utils/utils.pl').
-:- include('../Constants/paths.pl').
-:- include('./letters_controller.pl').
-
-:- dynamic(board/3).
-
-
 create_board(BoardName) :-
     board(BoardName, _,_);
     CurTiles = [['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#'],
