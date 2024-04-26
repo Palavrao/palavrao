@@ -12,6 +12,7 @@
  :- include('data/boards.pl').
  :- include('data/players.pl').
  :-include('Core/game.pl').
+ :- include('Interfaces/draw_board.pl').
 
 main :-
     % create_acc(samuel),
