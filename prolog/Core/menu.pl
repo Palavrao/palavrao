@@ -23,7 +23,7 @@ get_input(Key) :-
     get_single_char(Code),
     char_code(Key, Code).
 
-% Define o fluxo de start_menu
+% fluxo de menu inicial
 process_input('0') :-
     current_screen(redimension_screen),
     retract(current_screen(_)),
@@ -56,7 +56,7 @@ process_input('4') :-
     current_screen(start_menu),
     writeln('Saindo...'), halt.
 
-% Define o fluxo de new_game
+% fluxo de novo jogo
 process_input('1') :-
     current_screen(new_game),
     clear_screen,
@@ -74,7 +74,7 @@ process_input('2') :-
     assertz(current_screen(start_menu)),
     show_menu(start_menu).
 
-% Define o fluxo de continue_game
+% fluxo de continuar jogo
 process_input('1') :-
     current_screen(continue_game),
     retract(current_screen(_)),
@@ -87,7 +87,7 @@ process_input('2') :-
     assertz(current_screen(start_menu)),
     show_menu(start_menu).
 
-% Define fluxo de login
+% fluxo de login
 process_input('1') :-
     current_screen(login),
     clear_screen,
@@ -105,10 +105,10 @@ process_input('2') :-
     show_menu(start_menu).
 
 process_input(_) :-
-    writeln('Opção inválida!').
+    writeln('opção inválida!').
 
 write_player_name(PlayerNumber, PlayerName) :-
-format("digite o nome do player ~w> ", [PlayerNumber]),
+    format("digite o nome do player ~w> ", [PlayerNumber]),
     read_line_to_codes(user_input, Codes),
     string_codes(PlayerName, Codes),
     %verificar se ja existe, caso sim, loga
