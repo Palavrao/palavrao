@@ -44,9 +44,13 @@ process_input('2') :-
 
 process_input('3') :-
     current_screen(start_menu),
+    clear_screen,
+    regras,
+    read_line_to_codes(user_input, Codes),
+    string_codes(Out, Codes),
     retract(current_screen(_)),
-    assertz(current_screen(rules)),
-    show_menu(rules).
+    assertz(current_screen(start_menu)),
+    show_menu(start_menu).
 
 process_input('4') :-
     current_screen(start_menu),
