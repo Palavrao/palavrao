@@ -1,6 +1,8 @@
 :- consult('Interfaces/boxes_menu.pl').
 :- consult('Utils/validator.pl').
 :- consult('Utils/utils.pl').
+:- consult('Controllers/matches_controller.pl').
+:- consult('Controllers/accs_controller.pl').
 
 :- dynamic(current_screen/1).
 :- dynamic(screen/2).
@@ -33,8 +35,8 @@ process_input('0') :-
 process_input('1') :-
     current_screen(start_menu),
     retract(current_screen(_)),
-    assertz(current_screen(login)),
-    show_menu(login).
+    assertz(current_screen(new_game)),
+    show_menu(new_game).
 
 process_input('2') :-
     current_screen(start_menu),
@@ -54,7 +56,7 @@ process_input('3') :-
 
 process_input('4') :-
     current_screen(start_menu),
-    writeln('Saindo...'), halt.
+    writeln('saindo...'), halt.
 
 % fluxo de novo jogo
 process_input('1') :-
@@ -63,10 +65,11 @@ process_input('1') :-
     writeln("digite o nome da partida>"),
     read(Match),
     writeln("valeu"),
-    writeln(Match).
+    retract(current_screen(_)),
+    assertz(current_screen(login)),
+    show_menu(login).
     %verificar se partida ja existe, caso exista
     %pedir nova entrada, caso nao vai pro novo jogo
-    %,process_new_account_input(Match).
 
 process_input('2') :-
     current_screen(new_game),
