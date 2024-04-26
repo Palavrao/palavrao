@@ -80,9 +80,12 @@ process_input('2') :-
 % fluxo de continuar jogo
 process_input('1') :-
     current_screen(continue_game),
-    retract(current_screen(_)),
-    assertz(current_screen(create_account)),
-    show_menu(create_account).
+    clear_screen,
+    write_existing_match(MatchName),
+    (MatchName \= "0" ->
+        % ir pro jogo
+        writeln("valeu");
+        back_to_start_menu).
 
 process_input('2') :-
     current_screen(continue_game),
@@ -94,12 +97,14 @@ process_input('2') :-
 process_input('1') :-
     current_screen(login),
     clear_screen,
-    write_player_name(1, Player1),
-    write_player_name(2, Player2),
-    retract(current_screen(_)),
-    assertz(current_screen(new_game)),
-    show_menu(new_game),
-    writeln("os nomes foram registrados com sucesso.").
+    write_player(1, Player1),
+    (Player1 \= "0" ->
+        write_player(2, Player2),
+        (Player2 \= "0" ->
+            % ir pro jogo
+            writeln("Os nomes foram registrados com sucesso.");
+            back_to_start_menu);
+        back_to_start_menu).
 
 process_input('2') :-
     current_screen(login),
