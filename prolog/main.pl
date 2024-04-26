@@ -1,15 +1,17 @@
 :- include('Interfaces/boxes_menu.pl').
-% :- include('Utils/utils.pl').
-% :- include('Constants/paths.pl').
-% :- include('Controllers/accs_controller.pl').
-% :- include('Controllers/matches_controller.pl').
-% :- include('Controllers/board_controller.pl').
-% :- include('Controllers/letters_controller.pl').
-% :- include('Controllers/players_controller.pl').
-% :- include('data/accounts.pl').
-% :- include('data/matches.pl').
-% :- include('data/boards.pl').
-% :- include('data/players.pl').
+:- use_module(library(dialect/sicstus/system)).
+ :- include('Utils/utils.pl').
+:- include('Constants/paths.pl').
+ :- include('Controllers/accs_controller.pl').
+:- include('Controllers/matches_controller.pl').
+ :- include('Controllers/board_controller.pl').
+ :- include('Controllers/letters_controller.pl').
+ :- include('Controllers/players_controller.pl').
+ :- include('data/accounts.pl').
+ :- include('data/matches.pl').
+ :- include('data/boards.pl').
+ :- include('data/players.pl').
+ :-include('Core/game.pl').
 
 main :-
     % create_acc(samuel),

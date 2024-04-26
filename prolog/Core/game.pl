@@ -1,61 +1,54 @@
+:- include('../Utils/utils.pl').
+:- include('../Controllers/board_controller.pl').
+:- include('../Controllers/matches_controller.pl').
+:- include('../Controllers/accs_controller.pl').
+:- include('../Controllers/letters_controller.pl').
+:- include('../Controllers/players_controller.pl').
 
 
 
-gameLoop(MatchName, WordList, LastMessage, LastState):-
-    Match = match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
 
-    ((MatchSkips =:= 4 ; length(MatchLetters, 0)) -> 
-    finish_match(MatchName),!,.;
+gameLoop(MatchName, WordList, LastMessage):-
+    Match = match(MatchName, _, _, _, _, MatchLetters, _, MatchTimer, MatchSkips),
+    get_turn_player_name(MatchName, PlayerOnTurn),
 
-    clear_screen,
-    writeln(LastMessage),
-    writeln("> Enter para ver o tabuleiro do jogador da vez!\n\n"),
-    
-    )
-    
-        -- Mostra a tela de transição e aguarda continuação
-        clearScreen
-        UT.__colorText lastMessage Green
-        hFlush stdout
-        UT.__colorText "> Enter para ver o tabuleiro do jogador da vez!\n\n" Blue
-        hFlush stdout
-        c <- getLine
-
-        -- Mostra a tela de jogo 
-        printBoard match
-        UT.__colorText ("Turno de: " ++ (map toUpper (accName (pAcc (getPlayerOnTurn match))))) Blue
-        putStr "\nDigite sua palavra no formato X00 V/H PALAVRA:\n > "
-        hFlush stdout
-        
-        -- Recebe o input do jogador e valida
-        input <- getLine
-
-        -- Jogador pausou a partida e saiu para o menu
-        if input == ":C" || input == ":c" then do 
-            UT.__colorText "\n >> Pausando e saindo do jogo...\n" Green
-            UT.__colorText " > Aperte enter...\n\n" Blue
-            c <- getLine
-            return match
-        -- Jogador jogou uma palavra ou outra ação especial
-        else do 
-            currentTime <- getCurrentTime
-            let elapsed = realToFrac (currentTime `diffUTCTime` lastUpdate) :: NominalDiffTime
-            let updatedTimer = mTimer match - realToFrac elapsed
-
-            -- Se tiver acabado o tempo não registra a palavra jogada
-            if updatedTimer <= 0 then do
-                let updatedMatch = toggleMatchTurn match
-                updateMatchJson updatedMatch
-                gameLoop updatedMatch wordList currentTime "\nTempo de rodada excedido!\n"
+    ((MatchSkips == 4 ; length(MatchLetters, 0)) -> finish_match(MatchName); 
+            (
+            % Mostra a tela de transição e aguarda continuação
+            clear_screen,
+            writeln(LastMessage),
+            writeln('> Enter para ver o tabuleiro do jogador da vez!\n\n'),
+            no_period_input(_),
             
-            -- Se estiver dentro do tempo recebe a palavra ou comando e os processa
-            else do
-                (m, msg) <- fluxHandler match wordList input
-                if getPlayerOnTurn match /= getPlayerOnTurn m then do
-                    updateMatchJson m
-                    gameLoop m wordList currentTime msg
-                else do 
-                    let updatedMatch = updateMatchTimer m updatedTimer
-                    threadDelay 100000
-                    updateMatchJson updatedMatch
-                    gameLoop updatedMatch wordList currentTime msg
+            % Mostra a tela de jogo 
+            buildBoard(MatchName),
+            string_upper(PlayerOnTurn, PlayerOnTurnUpper),
+            writef('Turno de: %w\n',[PlayerOnTurnUpper]),
+            writef('\nDigite sua palavra no formato X00 V/H PALAVRA:\n > '),
+
+            % Recebe o input do jogador e valida
+            no_period_input(UserPlayString),
+
+            % Jogador pausou a partida e saiu para o menu
+            ((UserPlayString == ':C'; UserPlayString == ':c') -> 
+                (
+                    writef('\n >> Pausando e saindo do jogo...\n'),
+                    writef(' > Aperte enter...\n\n'),
+                    no_period_input(_)
+                ); 
+            
+            % Jogador jogou uma palavra ou outra ação especial
+                (   
+                    now(CurTime),
+                    ((
+                        too_long(MatchTimer, CurTime),
+                        toggle_player_turn(MatchName),
+                        gameLoop(MatchName, WordList, '\nTempo de rodada excedido!\n')
+                    ) ; 
+                        write('hasTime'))
+                )
+            )
+        )
+    ).
+
+        
