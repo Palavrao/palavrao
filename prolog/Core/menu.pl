@@ -28,9 +28,7 @@ get_input(Key) :-
 % fluxo de menu inicial
 process_input('0') :-
     current_screen(redimension_screen),
-    retract(current_screen(_)),
-    assertz(current_screen(start_menu)),
-    show_menu(start_menu).
+    back_to_start_menu.
 
 process_input('1') :-
     current_screen(start_menu),
@@ -50,9 +48,7 @@ process_input('3') :-
     regras,
     read_line_to_codes(user_input, Codes),
     string_codes(Out, Codes),
-    retract(current_screen(_)),
-    assertz(current_screen(start_menu)),
-    show_menu(start_menu).
+    back_to_start_menu.
 
 process_input('4') :-
     current_screen(start_menu),
@@ -73,9 +69,7 @@ process_input('1') :-
 
 process_input('2') :-
     current_screen(new_game),
-    retract(current_screen(_)),
-    assertz(current_screen(start_menu)),
-    show_menu(start_menu).
+    back_to_start_menu.
 
 % fluxo de continuar jogo
 process_input('1') :-
@@ -89,9 +83,7 @@ process_input('1') :-
 
 process_input('2') :-
     current_screen(continue_game),
-    retract(current_screen(_)),
-    assertz(current_screen(start_menu)),
-    show_menu(start_menu).
+    back_to_start_menu.
 
 % fluxo de login
 process_input('1') :-
@@ -108,9 +100,7 @@ process_input('1') :-
 
 process_input('2') :-
     current_screen(login),
-    retract(current_screen(_)),
-    assertz(current_screen(start_menu)),
-    show_menu(start_menu).
+    back_to_start_menu.
 
 process_input(_) :-
     writeln('opção inválida!').
