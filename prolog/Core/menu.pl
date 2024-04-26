@@ -110,14 +110,35 @@ process_input('2') :-
 process_input(_) :-
     writeln('opção inválida!').
 
-write_player_name(PlayerNumber, PlayerName) :-
-    format("digite o nome do player ~w> ", [PlayerNumber]),
+write_existing_match(MatchName) :-
+    writeln('digite o nome da partida (ou digite 0 para voltar)>'),
     read_line_to_codes(user_input, Codes),
-    string_codes(PlayerName, Codes),
-    %verificar se ja existe, caso sim, loga
-    %caso nao, cria nova conta
-    %salvar nome do jogador
-    (valid_name(PlayerName) ->
-        writeln("nome registrado com sucesso");
-        (writeln("nome inválido, insira um nome válido"),
-         write_player_name(PlayerNumber, PlayerName))).
+    string_codes(MatchName, Codes),
+
+    (MatchName = "0" ->
+        writeln('saindo...'), fail;
+        (valid_name(MatchName), match_exists(MatchName) ->
+            %ir pra partida
+            writeln("partida existe.");
+            writeln("partida não existe, tente novamente, ou digite 0 para voltar"),
+            write_existing_match(MatchName))).
+
+write_player(PlayerNumber, PlayerName) :-
+    format("digite o nome do player ~w (ou digite 0 para voltar)>", [PlayerNumber]),
+    read_line_to_codes(user_input, Codes),
+    string_codes(PlayerInput, Codes),
+
+    (PlayerInput = "0" ->
+        writeln('saindo...'), fail;
+        (valid_name(PlayerInput) ->
+            (acc_exists(PlayerInput) ->
+                writeln("jogador logado com sucesso.");
+                (create_acc(PlayerInput),
+                 writeln("conta criada com sucesso.")));
+            writeln("nome inválido, insira um nome válido."),
+            write_player(PlayerNumber, PlayerName))).
+
+back_to_start_menu :-
+    retract(current_screen(_)),
+    assertz(current_screen(start_menu)),
+    show_menu(start_menu).
