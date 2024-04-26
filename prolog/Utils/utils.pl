@@ -1,3 +1,5 @@
+:-include('../Constants/paths.pl').
+
 clear_screen :- (current_prolog_flag(windows, true) -> shell('cls'); shell('clear')).
 
 make_data_folder :-
@@ -75,7 +77,8 @@ remove_elements([H|T], ToRemove, Updated) :-
 
 
 getWordList(WordList) :-
-    read_file_to_string('palavras/br-sem-acentos.txt', Base, []),
+    words_path(WP),
+    read_file_to_string(WP, Base, []),
     atomic_list_concat(LineList, '\n', Base),
     maplist(atom_string, WordList, LineList).
 
@@ -83,6 +86,10 @@ getWordList(WordList) :-
 no_period_input(Input):- 
     read_line_to_codes(user_input, K),
     string_to_atom(K, Input).
+
+too_long(Start,End) :-
+    K is End - Start,
+    K // 300 == 0.
 
 % Regras do jogo
 regras :-
