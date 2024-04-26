@@ -1,4 +1,6 @@
 :- consult('Interfaces/boxes_menu.pl').
+:- consult('Utils/validator.pl').
+:- consult('Utils/utils.pl').
 
 :- dynamic(current_screen/1).
 :- dynamic(screen/2).
@@ -16,8 +18,6 @@ show_menu(Action) :-
     clear_screen,
     update_menu(Action, [], UpdatedMenu),
     writeln_menu(UpdatedMenu).
-
-clear_screen :- (current_prolog_flag(windows, true) -> shell('cls'); shell('clear')).
 
 get_input(Key) :-
     get_single_char(Code),
