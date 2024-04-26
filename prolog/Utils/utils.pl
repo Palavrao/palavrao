@@ -78,3 +78,8 @@ getWordList(WordList) :-
     read_file_to_string('palavras/br-sem-acentos.txt', Base, []),
     atomic_list_concat(LineList, '\n', Base),
     maplist(atom_string, WordList, LineList).
+
+
+no_period_input(Input):- 
+    read_line_to_codes(user_input, K),
+    string_to_atom(K, Input).

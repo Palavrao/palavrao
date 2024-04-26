@@ -4,9 +4,12 @@
 gameLoop(MatchName, WordList, LastMessage, LastState):-
     Match = match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
 
-    ((MatchSkips =:= 4 ; length(MatchLetters, 0)) -> finish_match(MatchName),!,.;
-    clear_terminal,
-    
+    ((MatchSkips =:= 4 ; length(MatchLetters, 0)) -> 
+    finish_match(MatchName),!,.;
+
+    clear_screen,
+    writeln(LastMessage),
+    writeln("> Enter para ver o tabuleiro do jogador da vez!\n\n"),
     
     )
     
