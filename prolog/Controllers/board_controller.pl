@@ -1,5 +1,9 @@
+board_exists(BoardName) :-
+    current_predicate(board/3),
+    board(BoardName, _, _), !.
+
+
 create_board(BoardName) :-
-    board(BoardName, _,_);
     CurTiles = [['#', '~', '~', '*', '~', '~', '~', '#', '~', '~', '~', '*', '~', '~', '#'],
                 ['~', '-', '~', '~', '~', '!', '~', '~', '~', '!', '~', '~', '~', '-', '~'],
                 ['~', '~', '-', '~', '~', '~', '*', '~', '*', '~', '~', '~', '-', '~', '~'],
@@ -106,7 +110,7 @@ replaceTokensMatrix([Row|Rest], [NewRow|NewRest]) :-
     replaceTokensMatrix(Rest, NewRest).
 
 placeWord(X, Y, IsHorizontal, Word0, InitialBoardName, ResultBoard) :-
-    Board = board(InitialBoardName, CurTiles, WorkTiles),
+    Board = board(InitialBoardName, _, WorkTiles),
     boards_path(BoardsPath),
     atom_chars(Word0, Word),
     (   IsHorizontal
@@ -167,23 +171,22 @@ getPointsLetter(['!'|TBoard], [HWord|TWord], Points) :-
     getPointsLetter(TBoard, TWord, PointsTail),
     Points is 3 * LetterScore + PointsTail.
 
-getPointsLetter([HBoard|TBoard], [HWord|TWord], Points) :-
+getPointsLetter([_|TBoard], [HWord|TWord], Points) :-
     letter_score(HWord, LetterScore),
     getPointsLetter(TBoard, TWord, PointsTail),
     Points is LetterScore + PointsTail.
 
 
 wordBonuses([], [], 1).
-wordBonuses(['-'|TBoard], [HWord|TWord], Bonus) :-
+wordBonuses(['-'|TBoard], [_|TWord], Bonus) :-
     wordBonuses(TBoard, TWord, BonusTail), 
     Bonus is 2 * BonusTail. 
 
-wordBonuses(['#'|TBoard], [HWord|TWord], Bonus) :-
+wordBonuses(['#'|TBoard], [_|TWord], Bonus) :-
     wordBonuses(TBoard, TWord, BonusTail),
     Bonus is 3 * BonusTail.
 
-wordBonuses([HBoard|TBoard], [HWord|TWord], Bonus) :-
-    letter_score(HWord, LetterScore),
+wordBonuses([_|TBoard], [_|TWord], Bonus):-
     wordBonuses(TBoard, TWord, BonusTail),
     Bonus is BonusTail.
 

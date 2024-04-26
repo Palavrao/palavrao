@@ -1,3 +1,8 @@
+player_exists(MatchName, PlayerName) :-
+    current_predicate(player/4),
+    player(MatchName, PlayerName, _, _), !.
+
+
 create_player(MatchName , PlayerName) :- 
     players_path(PlayersPath),
     inc_fact_file(PlayersPath, player(MatchName, PlayerName, [], 0), player), !.

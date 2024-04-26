@@ -1,3 +1,4 @@
+:- consult('Utils/utils.pl').
 :- consult('Utils/validator.pl').
 
 game_action(new_game).

@@ -1,4 +1,6 @@
-make_data_folder :- 
+clear_screen :- (current_prolog_flag(windows, true) -> shell('cls'); shell('clear')).
+
+make_data_folder :-
     data_path(Path),
     (exists_directory(Path) ;
     make_directory(Path)).
@@ -70,3 +72,14 @@ remove_elements([H|T], ToRemove, Updated) :-
         remove_elements(T, NewToRemove, Updated);
     remove_elements(T, ToRemove, OtherElements),
     Updated = [H|OtherElements]).
+
+
+getWordList(WordList) :-
+    read_file_to_string('palavras/br-sem-acentos.txt', Base, []),
+    atomic_list_concat(LineList, '\n', Base),
+    maplist(atom_string, WordList, LineList).
+
+
+no_period_input(Input):- 
+    read_line_to_codes(user_input, K),
+    string_to_atom(K, Input).
