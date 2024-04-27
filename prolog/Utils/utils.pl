@@ -1,4 +1,4 @@
-:-include('../Constants/paths.pl').
+
 
 clear_screen :- (current_prolog_flag(windows, true) -> shell('cls'); shell('clear')).
 

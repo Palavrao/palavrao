@@ -1,27 +1,22 @@
-:- include('../Utils/utils.pl').
-:- include('../Controllers/board_controller.pl').
-:- include('../Controllers/matches_controller.pl').
-:- include('../Controllers/accs_controller.pl').
-:- include('../Controllers/letters_controller.pl').
-:- include('../Controllers/players_controller.pl').
 
-
-
-
-gameLoop(MatchName, WordList, LastMessage):-
-    Match = match(MatchName, _, _, _, _, MatchLetters, _, MatchTimer, MatchSkips),
+gameLoop(MatchName, LastMessage):-
+    writeln(1),
+    match(MatchName, _, _, _, _, MatchLetters, _, MatchTimer, MatchSkips),
+    writeln(2),
     get_turn_player_name(MatchName, PlayerOnTurn),
 
     ((MatchSkips == 4 ; length(MatchLetters, 0)) -> finish_match(MatchName); 
             (
             % Mostra a tela de transição e aguarda continuação
+            writeln(3),
             clear_screen,
             writeln(LastMessage),
             writeln('> Enter para ver o tabuleiro do jogador da vez!\n\n'),
-            no_period_input(_),
-            
+            no_period_input(I),
+            writeln(4),
             % Mostra a tela de jogo 
-            buildBoard(MatchName),
+            print_board(MatchName),
+            writeln(cinco),
             string_upper(PlayerOnTurn, PlayerOnTurnUpper),
             writef('Turno de: %w\n',[PlayerOnTurnUpper]),
             writef('\nDigite sua palavra no formato X00 V/H PALAVRA:\n > '),
@@ -34,7 +29,8 @@ gameLoop(MatchName, WordList, LastMessage):-
                 (
                     writef('\n >> Pausando e saindo do jogo...\n'),
                     writef(' > Aperte enter...\n\n'),
-                    no_period_input(_)
+                    no_period_input(_),
+                    !
                 ); 
             
             % Jogador jogou uma palavra ou outra ação especial
@@ -43,9 +39,9 @@ gameLoop(MatchName, WordList, LastMessage):-
                     ((
                         too_long(MatchTimer, CurTime),
                         toggle_player_turn(MatchName),
-                        gameLoop(MatchName, WordList, '\nTempo de rodada excedido!\n')
+                        gameLoop(MatchName, '\nTempo de rodada excedido!\n'),!
                     ) ; 
-                        write('hasTime'))
+                        write('hasTime')),!
                 )
             )
         )
