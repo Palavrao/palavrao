@@ -89,4 +89,5 @@ no_period_input(Input):-
 
 too_long(Start,End) :-
     K is End - Start,
-    K // 300 == 0.
+    write(K),
+    K > 300.

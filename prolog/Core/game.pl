@@ -20,6 +20,7 @@ gameLoop(MatchName, LastMessage):-
             nl,
             string_upper(PlayerOnTurn, PlayerOnTurnUpper),
             writef('Turno de: %w\n',[PlayerOnTurnUpper]),
+            now(StartTime),
             writef('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
 
             % Recebe o input do jogador e valida
@@ -38,7 +39,7 @@ gameLoop(MatchName, LastMessage):-
                 (   
                     now(CurTime),
                     ((
-                        too_long(MatchTimer, CurTime),
+                        too_long(StartTime, CurTime),
                         toggle_player_turn(MatchName),
                         gameLoop(MatchName, '\nTempo de rodada excedido!\n'),!
                     ) ; 
