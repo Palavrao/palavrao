@@ -49,6 +49,7 @@ get_turn_player_name(MatchName, PlayerName) :-
 
 
 create_match(MatchName, P1Name, P2Name) :- 
+    \+ match_exists(MatchName),
     matches_path(MatchesPath),
 
     create_player(MatchName, P1Name),
