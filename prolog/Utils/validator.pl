@@ -1,4 +1,6 @@
-validation(MatchName, InputLine) :-
+validation(MatchName, InputLine, PortugueseWords) :-
+    get_match_board_name(MatchName, BoardName),
+
     read_input(InputLine, Info),
     nth0(0, Info, X),
     nth0(1, Info, Y),
@@ -17,7 +19,10 @@ validation(MatchName, InputLine) :-
 
     word_fits_in_space(X, Y, WordLetters, IsHorizontal),
     word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal),
-    center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters).
+    center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters),
+    word_existence_validation(WordLetters, PortugueseWords),
+    getCurTiles(BoardName, CurTiles), getWords(CurTiles, BoardWords),
+    all_words_exist(BoardWords, PortugueseWords).
 
 read_input(InputLine, Info) :-
     string_upper(InputLine, InputLineUpper),
@@ -104,3 +109,11 @@ center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters) :-
         Y =:= 7, X =< 7, WordLastInd >= 7
     ; WordLastInd is Y + WordLength - 1,
         X =:= 7, Y =< 7, WordLastInd >= 7)).
+
+word_existence_validation(WordLetters, PortugueseWords) :-
+    atom_string(WordLetters, WordUpper),
+    string_lower(WordUpper, Word),
+    member(Word, PortugueseWords).
+
+all_words_exist(BoardWords, PortugueseWords) :-
+    subset(BoardWords, PortugueseWords).
