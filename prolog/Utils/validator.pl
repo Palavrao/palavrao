@@ -1,4 +1,4 @@
-validator(MatchName, InputLine) :-
+validation(MatchName, InputLine) :-
     read_input(InputLine, Info),
     nth0(0, Info, X),
     nth0(1, Info, Y),
@@ -16,7 +16,8 @@ validator(MatchName, InputLine) :-
     % Lógica de validação da palavra
 
     word_fits_in_space(X, Y, WordLetters, IsHorizontal),
-    word_tiles_validator(BoardName, WordLetters, X, Y, IsHorizontal).
+    word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal),
+    center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters).
 
 read_input(InputLine, Info) :-
     string_upper(InputLine, InputLineUpper),
@@ -35,6 +36,7 @@ read_input(InputLine, Info) :-
     
     X is CharCode - 65, (X >= 0, X =< 14),
     number_codes(Y, NewCoord), (Y >= 0, Y =< 14),
+
     (Direction = "H" ->
         IsHorizontal = true
     ; IsHorizontal = false),
@@ -51,43 +53,54 @@ player_has_letters([H|T], [H|Ts]) :-
 player_has_letters([_|T], WordLetters) :-
     player_has_letters(T, WordLetters).
 
-word_fits_in_space(X, _, WordLetters, true) :-
-    length(WordLetters, Len), (X =< 15 - Len), !.
-word_fits_in_space(_, Y, WordLetters, false) :-
-    length(WordLetters, Len), (Y =< 15 - Len).
+word_fits_in_space(X, Y, WordLetters, IsHorizontal) :-
+    length(WordLetters, WordLength), 
+    
+    (IsHorizontal -> 
+        (X =< 15 - WordLength)
+    ; (Y =< 15 - WordLength)).
 
-word_tiles_validator(BoardName, WordLetters, X, Y, true) :-
-    length(WordLetters, WordLen),
+word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal) :-
     getCurTiles(BoardName, CurTiles), 
-    To is X + WordLen,
-    get_sublist_row(CurTiles, X, To, Y, SublistTiles),
-    letter_overlap_validator(WordLetters, SublistTiles), not(maplist(is_alpha, SublistTiles)), !.
-word_tiles_validator(BoardName, WordLetters, X, Y, false) :-
-    length(WordLetters, WordLen),
-    getCurTiles(BoardName, CurTiles), 
-    To is Y + WordLen,
-    take_sublist_col(CurTiles, Y, To, X, SublistTiles),
-    letter_overlap_validator(WordLetters, SublistTiles), not(maplist(is_alpha, SublistTiles)).
+    length(WordLetters, WordLength),
 
-letter_overlap_validator([], []) :- !.
-letter_overlap_validator([H|T], [H|Y]) :-
-    letter_overlap_validator(T, Y), !.
-letter_overlap_validator([_|T], [X|Y]) :-
+    (IsHorizontal -> 
+        To is X + WordLength,
+        take_up_to(CurTiles, X, To, Y, IsHorizontal, SublistTiles)
+    ; To is Y + WordLength,
+        take_up_to(CurTiles, Y, To, X, IsHorizontal, SublistTiles)),
+
+    letter_overlap_validation(WordLetters, SublistTiles),
+    not(maplist(is_alpha, SublistTiles)).
+
+letter_overlap_validation([], []) :- !.
+letter_overlap_validation([H|T], [H|Y]) :-
+    letter_overlap_validation(T, Y), !.
+letter_overlap_validation([_|T], [X|Y]) :-
     not(is_alpha(X)),
-    letter_overlap_validator(T, Y), !.
+    letter_overlap_validation(T, Y), !.
 
-get_sublist_row(_, To, To, _, []) :- !.
-get_sublist_row(Matrix, From, To, Y, Sublist) :-
-    nth0(Y, Matrix, Row),
-    nth0(From, Row, Char),
+take_up_to(_, To, To, _, _, []) :- !.
+take_up_to(Matrix, From, To, ListIndex, IsHorizontal, Sublist) :-
+    (IsHorizontal ->
+        nth0(ListIndex, Matrix, List),
+        nth0(From, List, Char)
+    ; nth0(From, Matrix, List),
+        nth0(ListIndex, List, Char)),
+
     NewFrom is From + 1,
-    get_sublist_row(Matrix, NewFrom, To, Y, TempSublist),
+    take_up_to(Matrix, NewFrom, To, ListIndex, IsHorizontal, TempSublist),
     append([Char], TempSublist, Sublist).
 
-get_sublist_col(_, To, To, _, []) :- !.
-get_sublist_col(Matrix, From, To, X, Sublist) :-
-    nth0(From, Matrix, Col),
-    nth0(X, Col, Char),
-    NewFrom is From + 1,
-    get_sublist_col(Matrix, NewFrom, To, X, TempSublist),
-    append([Char], TempSublist, Sublist).
+center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters) :-
+    getCurTiles(BoardName, CurTiles),
+    take_up_to(CurTiles, 7, 8, 7, [CenterTile]),
+    length(WordLetters, WordLength),
+
+    ((is_alpha(CenterTile), !) ; 
+    
+    (IsHorizontal -> 
+        WordLastInd is X + WordLength - 1,
+        Y =:= 7, X =< 7, WordLastInd >= 7
+    ; WordLastInd is Y + WordLength - 1,
+        X =:= 7, Y =< 7, WordLastInd >= 7)).
