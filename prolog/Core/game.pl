@@ -13,13 +13,14 @@ gameLoop(MatchName, LastMessage):-
             writeln(LastMessage),
             writeln('> Enter para ver o tabuleiro do jogador da vez!\n\n'),
             no_period_input(I),
-            writeln(4),
+            clear_screen,
+            
             % Mostra a tela de jogo 
             print_board(MatchName),
-            writeln(cinco),
+            nl,
             string_upper(PlayerOnTurn, PlayerOnTurnUpper),
             writef('Turno de: %w\n',[PlayerOnTurnUpper]),
-            writef('\nDigite sua palavra no formato X00 V/H PALAVRA:\n > '),
+            writef('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
 
             % Recebe o input do jogador e valida
             no_period_input(UserPlayString),
