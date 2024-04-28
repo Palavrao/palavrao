@@ -1,5 +1,3 @@
-:- consult('Utils/utils.pl').
-
 game_action(new_game).
 game_action(continue_game).
 game_action(login).

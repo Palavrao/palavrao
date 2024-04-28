@@ -187,8 +187,6 @@ inc_match_used_words(MatchName, UsedWords) :-
 
 
 switch_player_letter(MatchName, Letter) :- 
-    matches_path(MatchesPath),
-
     get_match_letters(MatchName, MatchLetters),
     pop_random_elements(MatchLetters, 1, NewLetter, UpdatedLetters),
 

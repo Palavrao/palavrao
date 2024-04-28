@@ -1,5 +1,4 @@
 
-
 clear_screen :- (current_prolog_flag(windows, true) -> shell('cls'); shell('clear')).
 
 make_data_folder :-
