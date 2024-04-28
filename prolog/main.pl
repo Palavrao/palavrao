@@ -13,6 +13,7 @@
 :- include('data/players.pl').
 :-include('Core/game.pl').
 :- include('Interfaces/draw_board.pl').
+:- use_module(library(ansi_term)).
 
 main :-
     create_acc(samuel),
@@ -26,9 +27,9 @@ main :-
     % create_match(samuel_x_gabriel, samuel, gabriel),
     % inc_player_score(samuel_x_gabriel, 10).
     % finish_match(samuel_x_gabriel).
-    assertz(current_screen(redimension_screen)),
+    /* assertz(current_screen(redimension_screen)),
     show_menu(redimension_screen),
-    main_loop.  
+    main_loop */.  
 
 main_loop :-
     get_input(Input),

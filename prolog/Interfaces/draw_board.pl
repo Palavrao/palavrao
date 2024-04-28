@@ -45,14 +45,17 @@ print_board(MatchName):-
     get_turn_player_name(MatchName, TurnPlayerName),
     player(MatchName, TurnPlayerName, TurnPlayerLetters, _),
     length(RemainingLetters, RL),
-    writef('  PARTIDA: %20r\n\n',[MatchName]),
+    ansi_format([bold, fg(yellow)], '  PARTIDA: ~w\n\n',[MatchName]),
     %writef('%w - %w pts            %w - %w pts\n\n', [P1Name, ScoreP1, P2Name, ScoreP2]),
-    writef('  A B C D E F G H I J K L M N O\n'),
+    ansi_format([bold], '  A B C D E F G H I J K L M N O\n',[]),
     print_matrix(MatchName, CurTiles),
     writef('\n\n'),
     print_list(TurnPlayerLetters),
-    writef('       Letras Restantes: %w',[RL]),
+    ansi_format([], '       Letras Restantes: ~w',[RL]),
     nl,
     letterScoreArray(TurnPlayerLetters, LetterScores),
-    print_list(LetterScores),nl,!.
+    print_list(LetterScores),
+    nl,
+    nl,
+    ansi_format([bold, fg(blue)],'Turno de: ~w\n',[TurnPlayerName]),!.
 

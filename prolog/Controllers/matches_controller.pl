@@ -188,7 +188,8 @@ switch_player_letter(MatchName, Letter) :-
     get_turn_player_name(MatchName, PlayerName),
 
     get_player_letters(MatchName, PlayerName, PlayerLetters),
-    remove_one_element(PlayerLetters, _, Letter, UpdatedPlayerLetters),
+    selectchk(Letter, PlayerLetters, UpdatedPlayerLetters),
+
 
     append(UpdatedPlayerLetters, NewLetter, FinalPlayerLetters),
     append(UpdatedLetters, [Letter], FinalMatchLetters),
