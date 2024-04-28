@@ -1,4 +1,4 @@
-validation(MatchName, InputLine, PortugueseWords) :-
+validation(MatchName, InputLine) :-
     get_match_board_name(MatchName, BoardName),
 
     read_input(InputLine, Info),
@@ -9,7 +9,7 @@ validation(MatchName, InputLine, PortugueseWords) :-
 
     % Lógica que verifica se o jogador tem as letras da palavra
 
-    get_turn_player(MatchName, PlayerName),
+    get_turn_player_name(MatchName, PlayerName),
     get_player_letters(MatchName, PlayerName, PlayerLetters),
     msort(PlayerLetters, LetrasPlayer),
     msort(WordLetters, LetrasWord),
@@ -20,6 +20,7 @@ validation(MatchName, InputLine, PortugueseWords) :-
     word_fits_in_space(X, Y, WordLetters, IsHorizontal),
     word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal),
     center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters),
+    getWordList(PortugueseWords),
     word_existence_validation(WordLetters, PortugueseWords),
     getCurTiles(BoardName, CurTiles), getWords(CurTiles, BoardWords),
     all_words_exist(BoardWords, PortugueseWords).
@@ -99,7 +100,7 @@ take_up_to(Matrix, From, To, ListIndex, IsHorizontal, Sublist) :-
 
 center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters) :-
     getCurTiles(BoardName, CurTiles),
-    take_up_to(CurTiles, 7, 8, 7, [CenterTile]),
+    take_up_to(CurTiles, 7, 8, 7, IsHorizontal, [CenterTile]),
     length(WordLetters, WordLength),
 
     ((is_alpha(CenterTile), !) ; 
@@ -111,9 +112,10 @@ center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters) :-
         X =:= 7, Y =< 7, WordLastInd >= 7)).
 
 word_existence_validation(WordLetters, PortugueseWords) :-
-    atom_string(WordLetters, WordUpper),
-    string_lower(WordUpper, Word),
+    atomic_list_concat(WordLetters, WordUpper),
+    downcase_atom(WordUpper, Word),
     member(Word, PortugueseWords).
 
 all_words_exist(BoardWords, PortugueseWords) :-
-    subset(BoardWords, PortugueseWords).
+    maplist(atom_string, BoardWordsAtom, BoardWords),
+    subset(BoardWordsAtom, PortugueseWords).
