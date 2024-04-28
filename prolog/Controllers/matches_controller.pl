@@ -50,6 +50,9 @@ get_turn_player_name(MatchName, PlayerName) :-
 
 create_match(MatchName, P1Name, P2Name) :- 
     \+ match_exists(MatchName),
+    acc_exists(P1Name),
+    acc_exists(P2Name),
+    
     matches_path(MatchesPath),
 
     create_player(MatchName, P1Name),
@@ -68,8 +71,11 @@ create_match(MatchName, P1Name, P2Name) :-
 del_match(MatchName) :-
     matches_path(MatchesPath),
     players_path(PlayersPath),
+    boards_path(BoardsPath),
 
     get_match(MatchName, Match),
+    get_match_board_name(MatchName, BoardName),
+    get_board(BoardName, Board),
     get_match_p1_name(MatchName, P1Name),
     get_match_p2_name(MatchName, P2Name),
     get_player(MatchName, P1Name, P1),
@@ -77,7 +83,8 @@ del_match(MatchName) :-
 
     del_fact_file(PlayersPath, P1, player),
     del_fact_file(PlayersPath, P2, player),
-    del_fact_file(MatchesPath, Match, match).
+    del_fact_file(MatchesPath, Match, match),
+    del_fact_file(BoardsPath, Board, board).
 
 
 finish_match(MatchName) :- 

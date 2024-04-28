@@ -47,7 +47,7 @@ getCurTiles(BoardName, CurTiles):-
 getWorkTiles(BoardName, WorkTiles):-
     board(BoardName, _, WorkTiles).
 
-getBoard(BoardName, Board):-
+get_board(BoardName, Board):-
     board(BoardName, CurTiles, WorkTiles),
     Board = board(BoardName, CurTiles, WorkTiles).
 
