@@ -76,7 +76,7 @@ remove_elements([H|T], ToRemove, Updated) :-
     Updated = [H|OtherElements]).
 
 
-getWordList(WordList) :-
+get_word_list(WordList) :-
     words_path(WP),
     read_file_to_string(WP, Base, []),
     atomic_list_concat(LineList, '\n', Base),
