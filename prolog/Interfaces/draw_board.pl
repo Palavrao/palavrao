@@ -37,11 +37,11 @@ suffix(_, 14, '   :*X  trocar letra x  ').
 suffix(_, _, '').
 
 
-letterScoreArray(Letters, Scores):- maplist(letter_score, Letters, Scores).
+letter_score_array(Letters, Scores):- maplist(letter_score, Letters, Scores).
 
 print_board(MatchName):-
     match(MatchName, BoardName, MatchTurn, _, _, RemainingLetters, _, _, _),
-    getCurTiles(BoardName, CurTiles),
+    get_cur_tiles(BoardName, CurTiles),
     get_turn_player_name(MatchName, TurnPlayerName),
     player(MatchName, TurnPlayerName, TurnPlayerLetters, _),
     length(RemainingLetters, RL),
@@ -53,7 +53,7 @@ print_board(MatchName):-
     print_list(TurnPlayerLetters),
     ansi_format([], '       Letras Restantes: ~w',[RL]),
     nl,
-    letterScoreArray(TurnPlayerLetters, LetterScores),
+    letter_score_array(TurnPlayerLetters, LetterScores),
     print_list(LetterScores),
     nl,
     nl,

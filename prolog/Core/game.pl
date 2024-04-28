@@ -1,5 +1,5 @@
 
-gameLoop(MatchName, LastMessage):-
+(MatchName, LastMessage):-
     writeln(1),
     match_exists(MatchName),
     writeln(2),
@@ -47,11 +47,11 @@ gameLoop(MatchName, LastMessage):-
                         (
                             too_long(StartTime, CurTime),
                             toggle_player_turn(MatchName),
-                            gameLoop(MatchName, '\nTempo de rodada excedido!\n'),!
+                            (MatchName, '\nTempo de rodada excedido!\n'),!
                         ) ; (
                             flux_handler(MatchName, UserPlayString, Msg),
                             writeln('flux handled'),
-                            gameLoop(MatchName, Msg),!
+                            (MatchName, Msg),!
                         )
                     )
                 )
@@ -69,23 +69,23 @@ gameLoop(MatchName, LastMessage):-
             if updatedTimer <= 0 then do
                 let updatedMatch = toggleMatchTurn match
                 updateMatchJson updatedMatch
-                gameLoop updatedMatch wordList currentTime "\nTempo de rodada excedido!\n"
+                 updatedMatch wordList currentTime "\nTempo de rodada excedido!\n"
             
             -- Se estiver dentro do tempo recebe a palavra ou comando e os processa
             else do
                 (m, msg) <- fluxHandler match wordList input
                 if getPlayerOnTurn match /= getPlayerOnTurn m then do
                     updateMatchJson m
-                    gameLoop m wordList currentTime msg
+                     m wordList currentTime msg
                 else do 
                     let updatedMatch = updateMatchTimer m updatedTimer
                     threadDelay 100000
                     updateMatchJson updatedMatch
-                    gameLoop updatedMatch wordList currentTime msg
+                     updatedMatch wordList currentTime msg
             
  */
 
-printShortRules:- 
+print_short_rules:- 
     ansi_format([bold, fg(green)],' \nPontuações especiais:\n\n', []),
 
     ansi_format([bold, fg(blue)], '    * ', []),
@@ -110,7 +110,7 @@ flux_handler(MatchName, ':!', Msg):-
     format(atom(Msg), '>> ~w pulou o turno!\n', [PlayerOnTurn]).
 
 flux_handler(MatchName, ':?', Msg):-
-    printShortRules,
+    print_short_rules,
     clear_screen,
     print_board(MatchName),
     writef('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
@@ -141,4 +141,5 @@ flux_handler(MatchName, S, Msg):-
 
 
 
-flux_handler(_,_,'placeholder'):-writeln('placeholder'),!.
+flux_handler(MatchName,StringInput,Msg):-
+    writeln('placeholder'),!.

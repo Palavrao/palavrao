@@ -20,9 +20,9 @@ validation(MatchName, InputLine) :-
     word_fits_in_space(X, Y, WordLetters, IsHorizontal),
     word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal),
     center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters),
-    getWordList(PortugueseWords),
+    get_word_list(PortugueseWords),
     word_existence_validation(WordLetters, PortugueseWords),
-    getCurTiles(BoardName, CurTiles), getWords(CurTiles, BoardWords),
+    get_cur_tiles(BoardName, CurTiles), get_words(CurTiles, BoardWords),
     all_words_exist(BoardWords, PortugueseWords).
 
 read_input(InputLine, Info) :-
@@ -67,7 +67,7 @@ word_fits_in_space(X, Y, WordLetters, IsHorizontal) :-
     ; (Y =< 15 - WordLength)).
 
 word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal) :-
-    getCurTiles(BoardName, CurTiles), 
+    get_cur_tiles(BoardName, CurTiles), 
     length(WordLetters, WordLength),
 
     (IsHorizontal -> 
@@ -99,7 +99,7 @@ take_up_to(Matrix, From, To, ListIndex, IsHorizontal, Sublist) :-
     append([Char], TempSublist, Sublist).
 
 center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters) :-
-    getCurTiles(BoardName, CurTiles),
+    get_cur_tiles(BoardName, CurTiles),
     take_up_to(CurTiles, 7, 8, 7, IsHorizontal, [CenterTile]),
     length(WordLetters, WordLength),
 
