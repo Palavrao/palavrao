@@ -85,7 +85,10 @@ getWordList(WordList) :-
 
 no_period_input(Input):- 
     read_line_to_codes(user_input, K),
-    string_to_atom(K, Input).
+    string_to_atom(K, AtomInput),
+    atom_string(AtomInput, StringInput),
+    string_upper(StringInput, UpperInput),
+    string_to_atom(UpperInput, Input).
 
 too_long(Start,End) :-
     K is End - Start,
