@@ -1,5 +1,5 @@
 
-(MatchName, LastMessage):-
+game_loop(MatchName, LastMessage):-
     writeln(1),
     match_exists(MatchName),
     writeln(2),
@@ -51,7 +51,7 @@
                         ) ; (
                             flux_handler(MatchName, UserPlayString, Msg),
                             writeln('flux handled'),
-                            (MatchName, Msg),!
+                            game_loop(MatchName, Msg),!
                         )
                     )
                 )
@@ -141,5 +141,5 @@ flux_handler(MatchName, S, Msg):-
 
 
 
-flux_handler(MatchName,StringInput,Msg):-
+flux_handler(MatchName,StringInput,'placeholder'):-
     writeln('placeholder'),!.
