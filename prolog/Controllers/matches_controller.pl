@@ -81,12 +81,13 @@ del_match(MatchName) :-
 
 
 finish_match(MatchName) :- 
+    match(MatchName, _, _, P1Name, P2Name, _, _, _, _),
     get_player_score(MatchName, P1Name, P1Score),
     get_player_score(MatchName, P2Name, P2Score),
     inc_acc_score(P1Name, P1Score),
-    inc_acc_score(P2Name, P2Score),
 
-    del_match(MatchName).
+    inc_acc_score(P2Name, P2Score),
+    del_match(MatchName),!.
 
 
 update_match_timer(MatchName, NewTimer) :- 
