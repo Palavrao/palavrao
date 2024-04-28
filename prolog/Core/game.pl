@@ -47,7 +47,7 @@ game_loop(MatchName, LastMessage):-
                         (
                             too_long(StartTime, CurTime),
                             toggle_player_turn(MatchName),
-                            (MatchName, '\nTempo de rodada excedido!\n'),!
+                            game_loop(MatchName, '\nTempo de rodada excedido!\n'),!
                         ) ; (
                             flux_handler(MatchName, UserPlayString, Msg),
                             writeln('flux handled'),
@@ -139,7 +139,32 @@ flux_handler(MatchName, S, Msg):-
         format(atom(A), ':*~w', [I]),
         flux_handler(MatchName, A, Msg))).
 
+flux_handler(_,_,'Pânico geral!').
 
+flux_handler(MatchName,StringInput, Msg):-
+    validator(MatchName, StringInput, true, [], Points, [], UsedLetters),
+    remove_player_letters(MatchName, UsedLetters),
+    inc_player_score(MatchName, Points),
+    format(atom(Msg), '\nPalavra válida! Pontos: ~d\n', [Points]),
+    toggle_player_turn(MatchName).
 
-flux_handler(MatchName,StringInput,'placeholder'):-
-    writeln('placeholder'),!.
+flux_handler(MatchName,StringInput, Msg):-
+    validator(MatchName, StringInput, false, _, _, _, _),
+    ansi_format([bold, fg(red)], '\nCoordenada ou Formatação inválidas, tente novamente: \n', []),
+    write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
+    no_period_input(I),
+    flux_handler(MatchName, I, Msg).
+
+flux_handler(MatchName,StringInput, Msg):-
+    validator(MatchName, StringInput, _, [H|T], _, _, _),
+    ansi_format([bold, fg(red)], '\nPalavras inválidas: ~w, tente novamente: \n', [[H|T]]),
+    write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
+    no_period_input(I),
+    flux_handler(MatchName, I, Msg).
+
+flux_handler(MatchName,StringInput, Msg):-
+    validator(MatchName, StringInput, _, _, _, [H|T], _),
+    ansi_format([bold, fg(red)], '\nVocê não tem as letras: ~w, tente novamente: \n', [[H|T]]),
+    write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
+    no_period_input(I),
+    flux_handler(MatchName, I, Msg).

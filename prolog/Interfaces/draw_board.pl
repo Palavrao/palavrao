@@ -40,7 +40,7 @@ suffix(_, _, '').
 letter_score_array(Letters, Scores):- maplist(letter_score, Letters, Scores).
 
 print_board(MatchName):-
-    match(MatchName, BoardName, MatchTurn, _, _, RemainingLetters, _, _, _),
+    match(MatchName, BoardName, _, _, _, RemainingLetters, _, _, _),
     get_cur_tiles(BoardName, CurTiles),
     get_turn_player_name(MatchName, TurnPlayerName),
     player(MatchName, TurnPlayerName, TurnPlayerLetters, _),
