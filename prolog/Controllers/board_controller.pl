@@ -80,7 +80,9 @@ set_element(Matrix, X,Y, Element, NewMatrix):-
 length_1(X) :-
     string_length(X, 1).
 
-get_words(Matrix, Words):- get_wordsHorizontal(Matrix, W1), get_wordsVertical(Matrix,W2), append(W1,W2,Words).
+get_words(Matrix, Words):-
+    replace_tokens_matrix(Matrix, Rep),
+    get_wordsHorizontal(Rep, W1), get_wordsVertical(Rep,W2), append(W1,W2,Words).
 
 get_wordsHorizontal([], []).
 get_wordsHorizontal([Row|Rest], NewList):- 

@@ -1,30 +1,47 @@
-validation(MatchName, InputLine) :-
+report(0, Report) :- Report = [false, [], [], []].
+report(1, ValidLetters, InvalidLetters, InvalidWords, Report) :- Report = [true, ValidLetters, InvalidLetters, InvalidWords].
+
+validation(MatchName, InputLine, Report) :-
     get_match_board_name(MatchName, BoardName),
+    
+    (read_input(InputLine, Info) ->
+        nth0(0, Info, X),
+        nth0(1, Info, Y),
+        nth0(2, Info, WordLetters),
+        nth0(3, Info, IsHorizontal),
 
-    read_input(InputLine, Info),
-    nth0(0, Info, X),
-    nth0(1, Info, Y),
-    nth0(2, Info, WordLetters),
-    nth0(3, Info, IsHorizontal),
+        % Lógica que verifica se o jogador tem as letras da palavra
 
-    % Lógica que verifica se o jogador tem as letras da palavra
+        get_turn_player_name(MatchName, PlayerName),
+        get_player_letters(MatchName, PlayerName, PlayerLetters),
+        length(WordLetters, WordLength),
+        (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_cur_tiles(BoardName, CurTiles),
+        take_up_to(CurTiles, X, Y, N, IsHorizontal, BoardTiles),
+        player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
 
-    get_turn_player_name(MatchName, PlayerName),
-    get_player_letters(MatchName, PlayerName, PlayerLetters),
-    length(WordLetters, WordLength),
-    (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_cur_tiles(BoardName, CurTiles),
-    take_up_to(CurTiles, X, Y, N, IsHorizontal, BoardTiles),
-    player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
+        % Lógica de validação da palavra
 
-    % Lógica de validação da palavra
+        (word_fits_in_space(X, Y, WordLetters, IsHorizontal) ->
 
-    word_fits_in_space(X, Y, WordLetters, IsHorizontal),
-    word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal),
-    center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters),
-    get_word_list(PortugueseWords),
-    word_existence_validation(WordLetters, PortugueseWords),
-    get_words(CurTiles, BoardWords),
-    all_words_exist(BoardWords, PortugueseWords).
+            (word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal) ->
+
+                (center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters) ->
+                    
+                    get_word_list(PortugueseWords),
+                    get_work_tiles(BoardName, WorkTiles),
+                    get_words(WorkTiles, BoardWords),
+
+                    (all_words_exist(BoardWords, PortugueseWords, InvalidWords) ->
+                        report(1, ValidLetters, InvalidLetters, InvalidWords, Report), !
+                    )
+                )
+            )
+        )
+    )
+    
+    ; 
+    
+    report(0, Report).    
 
 read_input(InputLine, Info) :-
     string_upper(InputLine, InputLineUpper),
@@ -128,7 +145,9 @@ word_existence_validation(WordLetters, PortugueseWords) :-
 all_words_exist([], _, []).
 all_words_exist([BW|BWs], PortugueseWords, InvalidWords) :-
     atom_string(AtomBW, BW),
-    (member(AtomBW, PortugueseWords) ->
+    downcase_atom(AtomBW, Word),
+
+    (member(Word, PortugueseWords) ->
         all_words_exist(BWs, PortugueseWords, InvalidWords)
     ;
         all_words_exist(BWs, PortugueseWords, TempInvalidWords),
