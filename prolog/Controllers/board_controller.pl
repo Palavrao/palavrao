@@ -25,10 +25,10 @@ create_board(BoardName) :-
                 ['~', '-', '~', '~', '~', '!', '~', '~', '~', '!', '~', '~', '~', '-', '~'],
                 ['~', '~', '-', '~', '~', '~', '*', '~', '*', '~', '~', '~', '-', '~', '~'],
                 ['*', '~', '~', '-', '~', '~', '~', '*', '~', '~', '~', '-', '~', '~', '*'],
-                ['~', '~', '~', '~', '-', '~', '~', '~', '~', '~', '-', '~', '~', '~', '~'],
-                ['~', '!', '~', '~', '~', '!', '~', '~', '~', '!', '~', '~', '~', '!', '~'],
-                ['~', '~', '*', '~', '~', '~', '*', '~', '*', '~', '~', '~', '*', '~', '~'],
-                ['#', '~', '~', '*', '~', '~', '~', '-', '~', '~', '~', '*', '~', '~', '#'],
+                ['~', '~', '~', '~', '-', '~', '~', '~', '~', '~', 'S', '~', '~', '~', '~'],
+                ['~', '!', '~', '~', 'C', 'A', 'S', 'A', '~', 'S', 'A', '~', '~', '!', '~'],
+                ['~', '~', '*', '~', '~', 'V', '*', '~', '*', 'O', 'L', 'A', '*', '~', '~'],
+                ['#', '~', '~', '*', '~', 'E', 'S', 'C', 'O', 'L', 'A', '*', '~', '~', '#'],
                 ['~', '~', '*', '~', '~', '~', '*', '~', '*', '~', '~', '~', '*', '~', '~'],
                 ['~', '!', '~', '~', '~', '!', '~', '~', '~', '!', '~', '~', '~', '!', '~'],
                 ['~', '~', '~', '~', '-', '~', '~', '~', '~', '~', '-', '~', '~', '~', '~'],
@@ -80,7 +80,9 @@ set_element(Matrix, X,Y, Element, NewMatrix):-
 length_1(X) :-
     string_length(X, 1).
 
-get_words(Matrix, Words):- get_wordsHorizontal(Matrix, W1), get_wordsVertical(Matrix,W2), append(W1,W2,Words).
+get_words(Matrix, Words):-
+    replace_tokens_matrix(Matrix, Rep),
+    get_wordsHorizontal(Rep, W1), get_wordsVertical(Rep,W2), append(W1,W2,Words).
 
 get_wordsHorizontal([], []).
 get_wordsHorizontal([Row|Rest], NewList):- 
@@ -112,14 +114,11 @@ replace_tokens_matrix([Row|Rest], [NewRow|NewRest]) :-
 
 place_word(X, Y, IsHorizontal, Word0, InitialBoardName, ResultBoard) :-
     Board = board(InitialBoardName, _, WorkTiles),
-    boards_path(BoardsPath),
     atom_chars(Word0, Word),
     (   IsHorizontal
     ->  place_letters(true, X, Y, Word, WorkTiles, ResultBoard)
     ;   place_letters(false, X, Y, Word, WorkTiles, ResultBoard)
-    ),
-    NewBoard = board(InitialBoardName, ResultBoard, ResultBoard),
-    update_fact_file(BoardsPath, Board, NewBoard).
+    ).
 
 place_letters(_, _, _, [], Board, Board).
 place_letters(true, X, Y, [H|T], Board, ResultBoard) :-
@@ -131,6 +130,12 @@ place_letters(false, X, Y, [H|T], Board, ResultBoard) :-
     Y1 is Y + 1,
     set_element(Board, X,Y, H, NewBoard),
     place_letters(false, X, Y1, T, NewBoard, ResultBoard).
+
+update_cur_tiles(InitialBoardName, WorkTiles):-
+    boards_path(BoardsPath),
+    get_board(InitialBoardName, B),
+    NewBoard = board(InitialBoardName, WorkTiles, WorkTiles),
+    update_fact_file(BoardsPath, B, NewBoard, board).
 
 
 get_tiles(true, Matrix, X, Y, N, Elements) :-
