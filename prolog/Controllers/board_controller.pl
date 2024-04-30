@@ -113,7 +113,7 @@ replace_tokens_matrix([Row|Rest], [NewRow|NewRest]) :-
     replace_tokens_matrix(Rest, NewRest).
 
 place_word(X, Y, IsHorizontal, Word0, InitialBoardName, ResultBoard) :-
-    Board = board(InitialBoardName, _, WorkTiles),
+    get_work_tiles(InitialBoardName, WorkTiles),
     atom_chars(Word0, Word),
     (   IsHorizontal
     ->  place_letters(true, X, Y, Word, WorkTiles, ResultBoard)

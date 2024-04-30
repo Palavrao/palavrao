@@ -3,37 +3,36 @@ report(1, ValidLetters, InvalidLetters, InvalidWords, Report) :- Report = [true,
 
 validation(MatchName, InputLine, Report) :-
     get_match_board_name(MatchName, BoardName),
-    write(1),
     
     (read_input(InputLine, Info) ->
-        write(2),
+        
         nth0(0, Info, X),
         nth0(1, Info, Y),
         nth0(2, Info, WordLetters),
         nth0(3, Info, IsHorizontal),
-        write(3),
+        
         % Lógica que verifica se o jogador tem as letras da palavra
-        write(4),
+        
         get_turn_player_name(MatchName, PlayerName),
         get_player_letters(MatchName, PlayerName, PlayerLetters),
         length(WordLetters, WordLength),
         (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_work_tiles(BoardName, WorkTiles),
         take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles),
         player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
-        write(5),
+        
         % Lógica de validação da palavra
-        write(6),
-        (write(7),(word_fits_in_space(X, Y, WordLetters, IsHorizontal)) ->
+        
+        ((word_fits_in_space(X, Y, WordLetters, IsHorizontal)) ->
 
-            (write(8),(word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) )->
+            ((word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) )->
 
-                (write(9),(center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters), write(10)) ->
-                    
+                (center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) ->
                    
                     atomic_list_concat(WordLetters, Word),
                     place_word(X, Y, IsHorizontal, Word, BoardName, NewBoard),
                     get_words(NewBoard, BoardWords),
                     get_word_list(PortugueseWords),
+                    
                     (all_words_exist(BoardWords, PortugueseWords, InvalidWords) ->
                         report(1, ValidLetters, InvalidLetters, InvalidWords, Report),
                         update_cur_tiles(InitialBoardName, NewBoard), !
@@ -114,7 +113,8 @@ letter_overlap_validation([_|T], [X|Y]) :-
     not(is_alpha(X)),
     letter_overlap_validation(T, Y), !.
 
-take_up_to(_, X, Y, N, _, []) :- (X =:= N), ! ; (Y =:= N), !.
+take_up_to(_, N, _, N, true, []) :- !.
+take_up_to(_, _, N, N, false, []) :- !.
 take_up_to(Matrix, X, Y, N, IsHorizontal, BoardTiles) :-
     nth0(Y, Matrix, List),
     nth0(X, List, Char),
