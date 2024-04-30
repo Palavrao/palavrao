@@ -121,7 +121,7 @@ place_word(X, Y, IsHorizontal, Word0, InitialBoardName, ResultBoard) :-
     ;   place_letters(false, X, Y, Word, WorkTiles, ResultBoard)
     ),
     NewBoard = board(InitialBoardName, ResultBoard, ResultBoard),
-    update_fact_file(BoardsPath, Board, NewBoard).
+    update_fact_file(BoardsPath, Board, NewBoard, board).
 
 place_letters(_, _, _, [], Board, Board).
 place_letters(true, X, Y, [H|T], Board, ResultBoard) :-
