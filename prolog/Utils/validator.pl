@@ -35,7 +35,8 @@ validation(MatchName, InputLine, Report) :-
                     get_words(NewBoard, BoardWords),
                     get_word_list(PortugueseWords),
                     (all_words_exist(BoardWords, PortugueseWords, InvalidWords) ->
-                        report(1, ValidLetters, InvalidLetters, InvalidWords, Report), !
+                        report(1, ValidLetters, InvalidLetters, InvalidWords, Report),
+                        update_cur_tiles(InitialBoardName, NewBoard), !
                     )
                 )
             )
