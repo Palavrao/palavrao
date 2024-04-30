@@ -15,21 +15,22 @@ validation(MatchName, InputLine, Report) :-
         get_turn_player_name(MatchName, PlayerName),
         get_player_letters(MatchName, PlayerName, PlayerLetters),
         length(WordLetters, WordLength),
-        (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_cur_tiles(BoardName, CurTiles),
-        take_up_to(CurTiles, X, Y, N, IsHorizontal, BoardTiles),
+        (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_work_tiles(BoardName, WorkTiles),
+        take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles),
         player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
 
         % Lógica de validação da palavra
 
         (word_fits_in_space(X, Y, WordLetters, IsHorizontal) ->
 
-            (word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal) ->
+            (word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) ->
 
-                (center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters) ->
+                (center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) ->
                     
+                    atomic_list_concat(WordLetters, Word),
+                    place_word(X, Y, IsHorizontal, Word, BoardName, NewBoard),
+                    get_words(NewBoard, BoardWords),
                     get_word_list(PortugueseWords),
-                    get_work_tiles(BoardName, WorkTiles),
-                    get_words(WorkTiles, BoardWords),
 
                     (all_words_exist(BoardWords, PortugueseWords, InvalidWords) ->
                         report(1, ValidLetters, InvalidLetters, InvalidWords, Report), !
@@ -91,8 +92,7 @@ word_fits_in_space(X, Y, WordLetters, IsHorizontal) :-
         (X =< 15 - WordLength)
     ; (Y =< 15 - WordLength)).
 
-word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal) :-
-    get_cur_tiles(BoardName, CurTiles), 
+word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) :-
     length(WordLetters, WordLength),
 
     (IsHorizontal -> 
@@ -100,7 +100,7 @@ word_tiles_validation(BoardName, WordLetters, X, Y, IsHorizontal) :-
     ;   
         N is Y + WordLength),
     
-    take_up_to(CurTiles, X, Y, N, IsHorizontal, SublistTiles),
+    take_up_to(WorkTiles, X, Y, N, IsHorizontal, SublistTiles),
     letter_overlap_validation(WordLetters, SublistTiles),
     not(maplist(is_alpha, SublistTiles)).
 
@@ -125,9 +125,8 @@ take_up_to(Matrix, X, Y, N, IsHorizontal, BoardTiles) :-
 
     append([Char], TempBoardTiles, BoardTiles).
 
-center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters) :-
-    get_cur_tiles(BoardName, CurTiles),
-    take_up_to(CurTiles, 7, 7, 8, IsHorizontal, [CenterTile]),
+center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) :-
+    take_up_to(WorkTiles, 7, 7, 8, IsHorizontal, [CenterTile]),
     length(WordLetters, WordLength),
 
     ((is_alpha(CenterTile), !) ; 
@@ -137,10 +136,6 @@ center_tile_validation(BoardName, X, Y, IsHorizontal, WordLetters) :-
         Y =:= 7, X =< 7, WordLastInd >= 7
     ; WordLastInd is Y + WordLength - 1,
         X =:= 7, Y =< 7, WordLastInd >= 7)).
-
-word_existence_validation(WordLetters, PortugueseWords) :-
-    atomic_list_concat(WordLetters, WordUpper), downcase_atom(WordUpper, Word),
-    member(Word, PortugueseWords).
 
 all_words_exist([], _, []).
 all_words_exist([BW|BWs], PortugueseWords, InvalidWords) :-
