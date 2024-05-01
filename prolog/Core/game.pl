@@ -3,6 +3,7 @@ game_loop(MatchName, LastMessage):-
     match_exists(MatchName),
     match(MatchName, _, _, _, _, MatchLetters, _, MatchTimer, MatchSkips),
     get_turn_player_name(MatchName, PlayerOnTurn),
+    update_player_letters(MatchName),
     ((MatchSkips == 4 ; length(MatchLetters, 0)) -> 
         (   
             ansi_format([bold, fg(green)], '>> 4 skips ou trocas! Encerrando o jogo...\n\n',[]),

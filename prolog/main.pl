@@ -20,8 +20,7 @@
 setup :- 
     create_acc(samuel),
     create_acc(gabriel),
-    create_match(samuel_x_gabriel, samuel, gabriel),
-    inc_player_score(samuel_x_gabriel, 10).
+    create_match(samuel_x_gabriel, samuel, gabriel).
 
 main :-
     game_loop(samuel_x_gabriel, '').

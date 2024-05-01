@@ -68,11 +68,13 @@ pop_random_elements(Elements, Quantity, [RemovedElement|RemovedElements], Update
 
 remove_elements([], _, []).
 remove_elements([H|T], ToRemove, Updated) :-
-    (member(H, ToRemove) -> 
-        remove_one_element(ToRemove, _, _, NewToRemove),
-        remove_elements(T, NewToRemove, Updated);
-    remove_elements(T, ToRemove, OtherElements),
-    Updated = [H|OtherElements]).
+    (   member(H, ToRemove) ->
+        remove_one_element(ToRemove, _, H, NewToRemove),
+        remove_elements(T, NewToRemove, Updated)
+    ;   Updated = [H|OtherElements],
+        remove_elements(T, ToRemove, OtherElements)
+    ).
+
 
 no_period_input(Input):- 
     read_line_to_codes(user_input, K),
