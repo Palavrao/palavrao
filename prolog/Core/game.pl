@@ -153,7 +153,8 @@ flux_handler(MatchName,StringInput, Msg):-
 
 flux_handler(MatchName,StringInput, Msg):-
     validation(MatchName, StringInput, [_, _, _, Invalidletters, _]),
-    reset_work_tiles(MatchName),
+    get_match_board_name(MatchName, BoardName),
+    reset_work_tiles(BoardName),
     ansi_format([bold, fg(red)], '\nVocê não tem as letras: ~w, tente novamente: \n', [InvalidLetters]),
     write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
@@ -161,7 +162,8 @@ flux_handler(MatchName,StringInput, Msg):-
 
 flux_handler(MatchName,StringInput, Msg):-
     validation(MatchName, StringInput,[ _, _, _, _, InvalidWords]),
-    reset_work_tiles(MatchName),
+    get_match_board_name(MatchName, BoardName),
+    reset_work_tiles(BoardName),
     ansi_format([bold, fg(red)], '\nPalavras inválidas: ~w, tente novamente: \n', [InvalidWords]),
     write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
