@@ -1,12 +1,8 @@
 
 game_loop(MatchName, LastMessage):-
-    writeln(1),
     match_exists(MatchName),
-    writeln(2),
     match(MatchName, _, _, _, _, MatchLetters, _, MatchTimer, MatchSkips),
-    writeln(3),
     get_turn_player_name(MatchName, PlayerOnTurn),
-    writeln(4),
     ((MatchSkips == 4 ; length(MatchLetters, 0)) -> 
         (   
             ansi_format([bold, fg(green)], '>> 4 skips ou trocas! Encerrando o jogo...\n\n',[]),
@@ -17,11 +13,9 @@ game_loop(MatchName, LastMessage):-
 
             % Mostra a tela de transição e aguarda continuação
             string_upper(PlayerOnTurn, PlayerOnTurnUpper),
-            clear_screen,
             ansi_format([bold, fg(blue)], '~w' , [LastMessage]),
             ansi_format([bold, fg(green)], '> Enter para ver o tabuleiro de ~w!\n\n\n', [PlayerOnTurnUpper]),
             no_period_input(I),
-            clear_screen,
             
             % Mostra a tela de jogo 
             print_board(MatchName),
@@ -49,10 +43,7 @@ game_loop(MatchName, LastMessage):-
                             toggle_player_turn(MatchName),
                             game_loop(MatchName, '\nTempo de rodada excedido!\n'),!
                         ) ; (
-                            writeln('going into handler'),
-                            writeln(UserPlayString),
                             flux_handler(MatchName, UserPlayString, Msg),
-                            writeln('flux handled'),
                             game_loop(MatchName, Msg),!
                         )
                     )
@@ -113,7 +104,6 @@ flux_handler(MatchName, ':!', Msg):-
 
 flux_handler(MatchName, ':?', Msg):-
     print_short_rules,
-    clear_screen,
     print_board(MatchName),
     writef('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
@@ -121,68 +111,62 @@ flux_handler(MatchName, ':?', Msg):-
 
 flux_handler(_, ':*', '').
 
-flux_handler(MatchName, S, Msg):- 
-    sub_string(S, 0, 2, _, ':*'), 
-    string_chars(S, SL), 
-    nth0(2, SL, L),
-    get_turn_player_name(MatchName, P) ,
-    get_player_letters(MatchName, P, PlayerLetters),
-    letter_score(L, Score),
+% flux_handler(MatchName, S, Msg):- 
+%     sub_string(S, 0, 2, _, ':*'), 
+%     string_chars(S, SL),
+%     nth0(2, SL, L),
+%     get_turn_player_name(MatchName, P),
+%     get_player_letters(MatchName, P, PlayerLetters),
+%     letter_score(L, Score),
 
-    ((
-        Score > -1, member(L, PlayerLetters),
-        format(atom(Msg), ' >> ~w trocou a letra ~w!\n\n', [P, L]),
-        switch_player_letter(MatchName, L),
-        skip_player_turn(MatchName)
-    );(
-        ansi_format([bold, fg(red)],' > Escolha uma letra válida \n', []),
-        write(':*'),
-        no_period_input(I),
-        format(atom(A), ':*~w', [I]),
-        flux_handler(MatchName, A, Msg))).
+%     ((
+%         Score > -1, member(L, PlayerLetters),
+%         format(atom(Msg), ' >> ~w trocou a letra ~w!\n\n', [P, L]),
+%         switch_player_letter(MatchName, L),
+%         skip_player_turn(MatchName)
+%     );(
+%         ansi_format([bold, fg(red)],' > Escolha uma letra válida \n', []),
+%         write(':*'),
+%         no_period_input(I),
+%         format(atom(A), ':*~w', [I]),
+%         flux_handler(MatchName, A, Msg))), !.
 
 
 
 flux_handler(MatchName,StringInput, Msg):-
-    writeln('testing first stop'),
-    validation(MatchName, StringInput, [false, _, _, _, _]).
-    write(1),
+    validation(MatchName, StringInput, [False|_]),
     reset_work_tiles(MatchName),
     ansi_format([bold, fg(red)], '\nCoordenada ou Formatação inválidas, tente novamente: \n', []),
     write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
-    flux_handler(MatchName, I, Msg),!.
+    flux_handler(MatchName, I, Msg), !.
 
 flux_handler(MatchName,StringInput, Msg):-
-    writeln('segundo stop'),
-    validation(MatchName, StringInput, [true, Points, UsedLetters, [], []]),
-    write(2),
-    remove_player_letters(MatchName, UsedLetters),
-    inc_player_score(MatchName, Points),
-    update_cur_tiles(MatchName),
-    format(atom(Msg), '\nPalavra válida! Pontos: ~d\n', [Points]),
-    toggle_player_turn(MatchName),!.
+    % [true, Points, UsedLetters, [], []]
+    validation(MatchName, StringInput, Test),
+    writeln(Test).
+    % remove_player_letters(MatchName, UsedLetters),
+    % inc_player_score(MatchName, Points),
+    % update_cur_tiles(MatchName),
+    % format(atom(Msg), '\nPalavra válida! Pontos: ~d\n', [Points]),
+    % toggle_player_turn(MatchName), !.
 
 flux_handler(MatchName,StringInput, Msg):-
-    writeln('terceiro stop'),
     validation(MatchName, StringInput, [_, _, _, Invalidletters, _]),
-    write(3),
     reset_work_tiles(MatchName),
-    ansi_format([bold, fg(red)], '\nVocê não tem as letras: ~w, tente novamente: \n', [InvalidLetters),
+    ansi_format([bold, fg(red)], '\nVocê não tem as letras: ~w, tente novamente: \n', [InvalidLetters]),
     write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
-    flux_handler(MatchName, I, Msg),!.
+    flux_handler(MatchName, I, Msg), !.
 
 flux_handler(MatchName,StringInput, Msg):-
-    writeln('quarto stop'),
     validation(MatchName, StringInput,[ _, _, _, _, InvalidWords]),
-    write(4),
     reset_work_tiles(MatchName),
     ansi_format([bold, fg(red)], '\nPalavras inválidas: ~w, tente novamente: \n', [InvalidWords]),
     write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
-    flux_handler(MatchName, I, Msg),!.
+    flux_handler(MatchName, I, Msg), !.
 
 
-flux_handler(_,_,'Pânico geral!'),!.
+flux_handler(_,_,'Pânico geral!').
 

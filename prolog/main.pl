@@ -16,21 +16,17 @@
 :- use_module(library(dialect/sicstus/system)).
 :- use_module(library(ansi_term)).
 
-main :-
-    write(1),
-    create_acc(gabriel),
+setup :- 
     create_acc(samuel),
-    write(2),
-    create_match(samuel_x_gabriel, samuel, gabriel),
-    write(3),
-    inc_player_score(samuel_x_gabriel, 10),
-    write(4).
+    create_acc(gabriel),
+    create_match(samuel_x_gabriel, samuel, gabriel).
+    inc_player_score(samuel_x_gabriel, 10).
+
+main :-
+    game_loop(samuel_x_gabriel, '').
     %finish_match(samuel_x_gabriel).
 
-    % create_acc(samuel),
-    % create_acc(gabriel),
-    % create_match(samuel_x_gabriel, samuel, gabriel),
-    % inc_player_score(samuel_x_gabriel, 10).
+    % 
     % finish_match(samuel_x_gabriel).
     /* assertz(current_screen(redimension_screen)),
     show_menu(redimension_screen),

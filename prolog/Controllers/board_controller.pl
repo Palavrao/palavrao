@@ -218,7 +218,6 @@ bingo(Tiles, Score) :-
 
 count_played_letters(Tiles, PlayedLetters) :-
     include(is_empty_tile, Tiles, PlayedTiles),
-    write(PlayedTiles),
     length(PlayedTiles, PlayedLetters).
 
 

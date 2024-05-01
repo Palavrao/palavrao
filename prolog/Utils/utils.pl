@@ -79,7 +79,7 @@ get_word_list(WordList) :-
     words_path(WP),
     read_file_to_string(WP, Base, []),
     atomic_list_concat(LineList, '\n', Base),
-    maplist(atom_string, WordList, LineList).
+    maplist(atom_string, WordList, LineList), !.
 
 
 no_period_input(Input):- 
@@ -91,5 +91,4 @@ no_period_input(Input):-
 
 too_long(Start,End) :-
     K is End - Start,
-    write(K),
     K > 300.
