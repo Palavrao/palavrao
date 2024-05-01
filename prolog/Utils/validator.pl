@@ -1,5 +1,5 @@
 report(0, Report) :- Report = [false, 0, [], [], []].
-report(1, Points, ValidLetters, InvalidLetters, InvalidWords, Report) :- Report = [true, Points, ValidLetters, InvalidLetters, InvalidWords], writeln(Report).
+report(1, Points, ValidLetters, InvalidLetters, InvalidWords, Report) :- Report = [true, Points, ValidLetters, InvalidLetters, InvalidWords], writeln(Report), !.
 
 validation(MatchName, InputLine, Report) :-
     get_match_board_name(MatchName, BoardName),

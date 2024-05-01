@@ -82,7 +82,7 @@ length_1(X) :-
 
 get_words(Matrix, Words):-
     replace_tokens_matrix(Matrix, Rep),
-    get_wordsHorizontal(Rep, W1), get_wordsVertical(Rep,W2), append(W1,W2,Words).
+    get_wordsHorizontal(Rep, W1), get_wordsVertical(Rep,W2), append(W1,W2,Words), !.
 
 get_wordsHorizontal([], []).
 get_wordsHorizontal([Row|Rest], NewList):- 
