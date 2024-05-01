@@ -131,9 +131,17 @@ place_letters(false, X, Y, [H|T], Board, ResultBoard) :-
     set_element(Board, X,Y, H, NewBoard),
     place_letters(false, X, Y1, T, NewBoard, ResultBoard).
 
-update_cur_tiles(InitialBoardName, WorkTiles):-
+update_work_tiles(InitialBoardName, NewWorkTiles):-
     boards_path(BoardsPath),
     get_board(InitialBoardName, B),
+    get_cur_tiles(InitialBoardName, CurTiles),
+    NewBoard = board(InitialBoardName, CurTiles, NewWorkTiles),
+    update_fact_file(BoardsPath, B, NewBoard, board).
+
+update_cur_tiles(InitialBoardName):-
+    boards_path(BoardsPath),
+    get_board(InitialBoardName, B),
+    get_work_tiles(InitialBoardName, WorkTiles),
     NewBoard = board(InitialBoardName, WorkTiles, WorkTiles),
     update_fact_file(BoardsPath, B, NewBoard, board).
 
