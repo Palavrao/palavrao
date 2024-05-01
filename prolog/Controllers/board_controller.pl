@@ -48,10 +48,7 @@ get_work_tiles(BoardName, WorkTiles):-
     board(BoardName, _, WorkTiles), !.
 
 get_board(BoardName, Board):-
-    writeln('4.2.1'),
-    writeln(BoardName),
     board(BoardName, CurTiles, WorkTiles),
-    writeln('4.2.2'),
     Board = board(BoardName, CurTiles, WorkTiles), !.
 
 transpose([], []).
