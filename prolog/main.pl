@@ -1,5 +1,6 @@
 :- include('Interfaces/boxes_menu.pl').
 :- include('Utils/utils.pl').
+:- include('Utils/validator.pl').
 :- include('Constants/paths.pl').
 :- include('Controllers/accs_controller.pl').
 :- include('Controllers/matches_controller.pl').
@@ -16,11 +17,15 @@
 :- use_module(library(ansi_term)).
 
 main :-
-    create_acc(samuel),
+    write(1),
     create_acc(gabriel),
+    create_acc(samuel),
+    write(2),
     create_match(samuel_x_gabriel, samuel, gabriel),
+    write(3),
     inc_player_score(samuel_x_gabriel, 10),
-    finish_match(samuel_x_gabriel).
+    write(4).
+    %finish_match(samuel_x_gabriel).
 
     % create_acc(samuel),
     % create_acc(gabriel),

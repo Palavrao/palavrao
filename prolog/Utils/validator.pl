@@ -1,10 +1,11 @@
-report(0, Report) :- Report = [false, [], [], []].
-report(1, ValidLetters, InvalidLetters, InvalidWords, Report) :- Report = [true, ValidLetters, InvalidLetters, InvalidWords].
+report(0, Report) :- Report = [false, 0, [], [], []].
+report(1, Points, ValidLetters, InvalidLetters, InvalidWords, Report) :- Report = [true, Points, ValidLetters, InvalidLetters, InvalidWords], writeln(Report).
 
 validation(MatchName, InputLine, Report) :-
     get_match_board_name(MatchName, BoardName),
     
     (read_input(InputLine, Info) ->
+        writeln('reading input'),
         
         nth0(0, Info, X),
         nth0(1, Info, Y),
@@ -12,30 +13,42 @@ validation(MatchName, InputLine, Report) :-
         nth0(3, Info, IsHorizontal),
         
         % Lógica que verifica se o jogador tem as letras da palavra
-        
+        writeln('getting player letters'),
         get_turn_player_name(MatchName, PlayerName),
         get_player_letters(MatchName, PlayerName, PlayerLetters),
         length(WordLetters, WordLength),
+        
+        writeln('getting board tiles'),
         (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_work_tiles(BoardName, WorkTiles),
         take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles),
+        writeln('playerHasletters?'),
         player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
+        writeln('getting the points'),
+        get_points_word(BoardTiles, WordLetters, Points),
+        writeln('got the points'),
         
         % Lógica de validação da palavra
         
-        ((word_fits_in_space(X, Y, WordLetters, IsHorizontal)) ->
+        (writeln('word fits?'),(word_fits_in_space(X, Y, WordLetters, IsHorizontal)) ->
 
-            ((word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) )->
+            (writeln('word tile validation?'),(word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) )->
 
-                (center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) ->
+                (writeln('center tile validation?'),center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) ->
                    
+                   writeln('placing word and getting word list'),
                     atomic_list_concat(WordLetters, Word),
                     place_word(X, Y, IsHorizontal, Word, BoardName, NewBoard),
                     get_words(NewBoard, BoardWords),
+                    writeln('getting portuguese words'),
                     get_word_list(PortugueseWords),
                     
+                    writeln('all words exist?'),
                     (all_words_exist(BoardWords, PortugueseWords, InvalidWords) ->
-                        report(1, ValidLetters, InvalidLetters, InvalidWords, Report),
-                        update_cur_tiles(InitialBoardName, NewBoard), !
+                        writeln('report'),
+                        print_list([Points, ValidLetters, InvalidLetters, InvalidWords]),
+                        report(1, Points, ValidLetters, InvalidLetters, InvalidWords, Report),
+                        writeln('updating work tiles'),
+                        update_work_tiles(BoardName, NewBoard),!
                     )
                 )
             )
