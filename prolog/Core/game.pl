@@ -143,8 +143,9 @@ flux_handler(MatchName,StringInput, Msg):-
 
 
 flux_handler(MatchName,StringInput, Msg):-
-    validation(MatchName, StringInput, [False|_]),
-    reset_work_tiles(MatchName),
+    validation(MatchName, StringInput, [false|_]),
+    get_match_board_name(MatchName, BoardName),
+    reset_work_tiles(BoardName),
     ansi_format([bold, fg(red)], '\nCoordenada ou Formatação inválidas, tente novamente: \n', []),
     write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
