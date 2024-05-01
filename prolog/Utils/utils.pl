@@ -81,6 +81,20 @@ no_period_input(Input):-
     string_upper(StringInput, UpperInput),
     string_to_atom(UpperInput, Input).
 
+
 too_long(Start,End) :-
     K is End - Start,
     K > 300.
+
+
+compare_second(>, [_,X], [_,Y]) :- X @> Y.
+compare_second(>, [A,X], [B,X]) :- A @> B.
+compare_second(<, [_,X], [_,Y]) :- X @< Y.
+compare_second(=, [A,X], [A,X]).
+
+sort_by_second(Pairs, Sorted) :- 
+    predsort(compare_second, Pairs, Sorted), !.
+
+
+get_last_elements(Elements, Qtd, LastElements) :- length(Elements, Len), Len =:= Qtd, LastElements = Elements.
+get_last_elements([H|T], Qtd, LastElements) :- get_last_elements(T, Qtd, LastElements), !.

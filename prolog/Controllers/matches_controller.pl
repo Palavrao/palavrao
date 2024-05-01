@@ -121,6 +121,18 @@ get_matches(Matches) :-
             Matches).
 
 
+get_match_names(MatchesNames) :-
+    get_matches(Matches),
+    get_match_names(Matches, MatchesNames).
+
+
+get_match_names([], []).
+get_match_names([H|T], MatchesNames) :-
+    get_match_names(T, AnotherMatchesNames),
+    H =.. [_|[MatchName |_]],
+    MatchesNames = [MatchName|AnotherMatchesNames].
+
+
 inc_player_score(MatchName, PlayerScore) :- 
     get_turn_player_name(MatchName, PlayerName),
 
