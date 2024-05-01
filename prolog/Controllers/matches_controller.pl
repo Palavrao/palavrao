@@ -124,7 +124,7 @@ get_matches(Matches) :-
 inc_player_score(MatchName, PlayerScore) :- 
     get_turn_player_name(MatchName, PlayerName),
 
-    inc_score(MatchName, PlayerName, PlayerScore).
+    inc_score(MatchName, PlayerName, PlayerScore), !.
 
 
 update_player_letters(MatchName) :- 

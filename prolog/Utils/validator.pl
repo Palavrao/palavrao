@@ -5,6 +5,7 @@ validation(MatchName, InputLine, Report) :-
     get_match_board_name(MatchName, BoardName),
     
     (read_input(InputLine, Info) ->
+    
         nth0(0, Info, X),
         nth0(1, Info, Y),
         nth0(2, Info, WordLetters),
@@ -23,7 +24,6 @@ validation(MatchName, InputLine, Report) :-
         % Lógica de validação da palavra
         
         ((word_fits_in_space(X, Y, WordLetters, IsHorizontal)) ->
-
             ((word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) )->
 
                 (center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) ->
@@ -31,10 +31,8 @@ validation(MatchName, InputLine, Report) :-
                     atomic_list_concat(WordLetters, Word),
                     place_word(X, Y, IsHorizontal, Word, BoardName, NewBoard),
                     get_words(NewBoard, BoardWords),
-                    get_word_list(PortugueseWords),
 
-
-                    (all_words_exist(BoardWords, PortugueseWords, InvalidWords) ->
+                    (all_words_exist(BoardWords, InvalidWords) ->
                         report(1, Points, ValidLetters, InvalidLetters, InvalidWords, Report),
                         update_work_tiles(BoardName, NewBoard),!
                     )
@@ -141,13 +139,10 @@ center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) :-
     ; WordLastInd is Y + WordLength - 1,
         X =:= 7, Y =< 7, WordLastInd >= 7)).
 
-all_words_exist([], _, []).
-all_words_exist([BW|BWs], PortugueseWords, InvalidWords) :-
-    atom_string(AtomBW, BW),
-    downcase_atom(AtomBW, Word),
-
-    (member(Word, PortugueseWords) ->
-        all_words_exist(BWs, PortugueseWords, InvalidWords)
+all_words_exist([], []).
+all_words_exist([H|T], InvalidWords) :-
+    (word(H) ->
+        all_words_exist(T, InvalidWords), !
     ;
-        all_words_exist(BWs, PortugueseWords, TempInvalidWords),
-        InvalidWords = [AtomBW|TempInvalidWords]), !.
+        all_words_exist(T, TempInvalidWords),
+        InvalidWords = [H|TempInvalidWords]), !.

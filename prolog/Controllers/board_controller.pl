@@ -45,11 +45,14 @@ get_cur_tiles(BoardName, CurTiles):-
     board(BoardName, CurTiles, _).
 
 get_work_tiles(BoardName, WorkTiles):-
-    board(BoardName, _, WorkTiles).
+    board(BoardName, _, WorkTiles), !.
 
 get_board(BoardName, Board):-
+    writeln('4.2.1'),
+    writeln(BoardName),
     board(BoardName, CurTiles, WorkTiles),
-    Board = board(BoardName, CurTiles, WorkTiles).
+    writeln('4.2.2'),
+    Board = board(BoardName, CurTiles, WorkTiles), !.
 
 transpose([], []).
 transpose([F|Fs], Ts) :-
@@ -136,14 +139,14 @@ update_cur_tiles(InitialBoardName):-
     get_board(InitialBoardName, B),
     get_work_tiles(InitialBoardName, WorkTiles),
     NewBoard = board(InitialBoardName, WorkTiles, WorkTiles),
-    update_fact_file(BoardsPath, B, NewBoard, board).
+    update_fact_file(BoardsPath, B, NewBoard, board), !.
 
 update_work_tiles(InitialBoardName, NewWorkTiles):-
     boards_path(BoardsPath),
     get_board(InitialBoardName, B),
     get_cur_tiles(InitialBoardName, CurTiles),
     NewBoard = board(InitialBoardName, CurTiles, NewWorkTiles),
-    update_fact_file(BoardsPath, B, NewBoard, board).
+    update_fact_file(BoardsPath, B, NewBoard, board), !.
 
 reset_work_tiles(InitialBoardName):-
     boards_path(BoardsPath),

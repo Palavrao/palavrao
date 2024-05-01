@@ -132,6 +132,15 @@ flux_handler(_, ':*', '').
 %         flux_handler(MatchName, A, Msg))), !.
 
 
+flux_handler(MatchName,StringInput, Msg):-
+    validation(MatchName, StringInput, [true, Points, UsedLetters, [], []]),
+    remove_player_letters(MatchName, UsedLetters),
+    inc_player_score(MatchName, Points),
+    get_match_board_name(MatchName, BoardName),
+    update_cur_tiles(BoardName),
+    format(atom(Msg), '\nPalavra válida! Pontos: ~d\n', [Points]),
+    toggle_player_turn(MatchName), !.
+
 
 flux_handler(MatchName,StringInput, Msg):-
     validation(MatchName, StringInput, [False|_]),
@@ -140,16 +149,6 @@ flux_handler(MatchName,StringInput, Msg):-
     write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
     flux_handler(MatchName, I, Msg), !.
-
-flux_handler(MatchName,StringInput, Msg):-
-    % [true, Points, UsedLetters, [], []]
-    validation(MatchName, StringInput, Test),
-    writeln(Test).
-    % remove_player_letters(MatchName, UsedLetters),
-    % inc_player_score(MatchName, Points),
-    % update_cur_tiles(MatchName),
-    % format(atom(Msg), '\nPalavra válida! Pontos: ~d\n', [Points]),
-    % toggle_player_turn(MatchName), !.
 
 flux_handler(MatchName,StringInput, Msg):-
     validation(MatchName, StringInput, [_, _, _, Invalidletters, _]),

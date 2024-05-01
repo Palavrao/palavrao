@@ -74,14 +74,6 @@ remove_elements([H|T], ToRemove, Updated) :-
     remove_elements(T, ToRemove, OtherElements),
     Updated = [H|OtherElements]).
 
-
-get_word_list(WordList) :-
-    words_path(WP),
-    read_file_to_string(WP, Base, []),
-    atomic_list_concat(LineList, '\n', Base),
-    maplist(atom_string, WordList, LineList), !.
-
-
 no_period_input(Input):- 
     read_line_to_codes(user_input, K),
     string_to_atom(K, AtomInput),

@@ -11,15 +11,16 @@
 :- include('data/matches.pl').
 :- include('data/boards.pl').
 :- include('data/players.pl').
-:-include('Core/game.pl').
+:- include('Core/game.pl').
 :- include('Interfaces/draw_board.pl').
+:- include('Words/words.pl').
 :- use_module(library(dialect/sicstus/system)).
 :- use_module(library(ansi_term)).
 
 setup :- 
     create_acc(samuel),
     create_acc(gabriel),
-    create_match(samuel_x_gabriel, samuel, gabriel).
+    create_match(samuel_x_gabriel, samuel, gabriel),
     inc_player_score(samuel_x_gabriel, 10).
 
 main :-
