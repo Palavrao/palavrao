@@ -30,3 +30,4 @@ letter_score('J', 5).
 letter_score('Q', 6).
 letter_score('X', 7).
 letter_score('Z', 7).
+letter_score(_, -1).

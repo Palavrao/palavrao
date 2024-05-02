@@ -4,6 +4,7 @@ player_exists(MatchName, PlayerName) :-
 
 
 create_player(MatchName , PlayerName) :- 
+    \+ player_exists(MatchName, PlayerName),
     players_path(PlayersPath),
     inc_fact_file(PlayersPath, player(MatchName, PlayerName, [], 0), player), !.
 

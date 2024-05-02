@@ -1,11 +1,15 @@
 
-
-print_matrix([]).
-print_matrix([Row|Rest]) :-
-    write('     '),
+print_matrix(_, []).
+print_matrix(MatchName, [Row|Rest]) :-
+    write('  '),
     print_list(Row),
+    length(Rest, L),
+    I is 14 - L,
+    format('~|~`0t~d~2+', [I]),
+    suffix(MatchName, I, S),
+    write(S),
     nl,
-    print_matrix(Rest).
+    print_matrix(MatchName, Rest).
 
 print_list([]).
 print_list([X|Xs]) :-
@@ -14,36 +18,44 @@ print_list([X|Xs]) :-
     print_list(Xs).
 
 
+suffix(MatchName, 1, ''):-
+    match(MatchName, _, _, P1Name, P2Name, _, _, _, _),
+    sub_string(P1Name, 0, 5, _, P1Name5),
+    sub_string(P2Name, 0, 5, _, P2Name5),
+    format('    ~w.     ~w.', [P1Name5, P2Name5]).
 
-letterScoreArray(Letters, Scores):-maplist(letter_score, Letters, Scores).
-
-print_board(MatchName):-
-    Match = match(MatchName, BoardName, MatchTurn, P1Name, P2Name, RemainingLetters, _, _, _),
-    getCurTiles(BoardName, CurTiles),
-    get_turn_player_name(MatchName, TurnPlayerName),
-    player(MatchName, TurnPlayerName, TurnPlayerLetters, _),
+suffix(MatchName, 2, ''):-
+    match(MatchName, _, _, P1Name, P2Name, _, _, _, _),
     get_player_score(MatchName, P1Name, ScoreP1),
     get_player_score(MatchName, P2Name, ScoreP2),
+    format('    ~|~`0t~d~3+ pt     ~|~`0t~d~3+ pt    ', [ScoreP1, ScoreP2]).
+
+suffix(_, 11, '   :C   sair            ').
+suffix(_, 12, '   :?   manual          ').
+suffix(_, 13, '   :!   pular vez       ').
+suffix(_, 14, '   :*X  trocar letra x  ').
+suffix(_, _, '').
+
+
+letter_score_array(Letters, Scores):- maplist(letter_score, Letters, Scores).
+
+print_board(MatchName):-
+    match(MatchName, BoardName, _, _, _, RemainingLetters, _, _, _),
+    get_cur_tiles(BoardName, CurTiles),
+    get_turn_player_name(MatchName, TurnPlayerName),
+    player(MatchName, TurnPlayerName, TurnPlayerLetters, _),
     length(RemainingLetters, RL),
-    writef('Letras Restantes: %w\n',[RL]),
-    writef('%w - %w pts            %w - %w pts\n\n', [P1Name, ScoreP1, P2Name, ScoreP2]),
-    writef('     A B C D E F G H I J K L M N O\n'),
-    print_matrix(CurTiles),
+    ansi_format([bold, fg(yellow)], '  PARTIDA: ~w\n\n',[MatchName]),
+    %writef('%w - %w pts            %w - %w pts\n\n', [P1Name, ScoreP1, P2Name, ScoreP2]),
+    ansi_format([bold], '  A B C D E F G H I J K L M N O\n',[]),
+    print_matrix(MatchName, CurTiles),
     writef('\n\n'),
     print_list(TurnPlayerLetters),
-    letterScoreArray = letterScoreArray(TurnPlayerLetters, LetterScores),
-    print_list(LetterScores).
-
-dummyPrint(_):-
-    create_board(dummy),
-    getCurTiles(dummy, CurTiles),
-
-    writef('Letras Restantes: %w\n',[0]),
-    writef('%w - %w pts            %w - %w pts\n\n', [player1, 000, player2, 111]),
-    writef('     A B C D E F G H I J K L M N O\n\n'),
-    print_matrix(CurTiles),
-    writef('\n\n'),
-    print_list([a,b,c,d,e,f,g]),
+    ansi_format([], '       Letras Restantes: ~w',[RL]),
     nl,
-    letterScoreArray = letterScoreArray(['a',b,c,d,e,f,g], LetterScores),
-    print_list(LetterScores).
+    letter_score_array(TurnPlayerLetters, LetterScores),
+    print_list(LetterScores),
+    nl,
+    nl,
+    ansi_format([bold, fg(blue)],'Turno de: ~w\n',[TurnPlayerName]),!.
+

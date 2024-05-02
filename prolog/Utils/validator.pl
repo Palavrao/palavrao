@@ -1,22 +1,49 @@
-validator(MatchName, InputLine) :-
-    read_input(InputLine, Info),
-    nth0(0, Info, X),
-    nth0(1, Info, Y),
-    nth0(2, Info, WordLetters),
-    nth0(3, Info, IsHorizontal),
+report(0, Report) :- Report = [false, 0, [], [], []].
+report(1, Points, ValidLetters, InvalidLetters, InvalidWords, Report) :- Report = [true, Points, ValidLetters, InvalidLetters, InvalidWords], !.
 
-    % Lógica que verifica se o jogador tem as letras da palavra
+validation(MatchName, InputLine, Report) :-
+    get_match_board_name(MatchName, BoardName),
 
-    get_turn_player(MatchName, PlayerName),
-    get_player_letters(MatchName, PlayerName, PlayerLetters),
-    msort(PlayerLetters, LetrasPlayer),
-    msort(WordLetters, LetrasWord),
-    player_has_letters(LetrasPlayer, LetrasWord),
+    (read_input(InputLine, Info) ->
 
-    % Lógica de validação da palavra
+        nth0(0, Info, X),
+        nth0(1, Info, Y),
+        nth0(2, Info, WordLetters),
+        nth0(3, Info, IsHorizontal),
 
-    word_fits_in_space(X, Y, WordLetters, IsHorizontal),
-    word_tiles_validator(BoardName, WordLetters, X, Y, IsHorizontal).
+        % Lógica que verifica se o jogador tem as letras da palavra
+        get_turn_player_name(MatchName, PlayerName),
+        get_player_letters(MatchName, PlayerName, PlayerLetters),
+        length(WordLetters, WordLength),
+
+        (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_work_tiles(BoardName, WorkTiles),
+        take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles),
+        player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
+        get_points_word(BoardTiles, WordLetters, Points),
+
+        % Lógica de validação da palavra
+
+        ((word_fits_in_space(X, Y, WordLetters, IsHorizontal)) ->
+            ((word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) )->
+
+                (center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) ->
+
+                    atomic_list_concat(WordLetters, Word),
+                    place_word(X, Y, IsHorizontal, Word, BoardName, NewBoard),
+                    get_words(NewBoard, BoardWords),
+
+                    (all_words_exist(BoardWords, InvalidWords) ->
+                        report(1, Points, ValidLetters, InvalidLetters, InvalidWords, Report),
+                        update_work_tiles(BoardName, NewBoard),!
+                    )
+                )
+            )
+        )
+    )
+
+    ;
+
+    report(0, Report).
 
 read_input(InputLine, Info) :-
     string_upper(InputLine, InputLineUpper),
@@ -35,6 +62,7 @@ read_input(InputLine, Info) :-
     
     X is CharCode - 65, (X >= 0, X =< 14),
     number_codes(Y, NewCoord), (Y >= 0, Y =< 14),
+
     (Direction = "H" ->
         IsHorizontal = true
     ; IsHorizontal = false),
@@ -44,46 +72,80 @@ read_input(InputLine, Info) :-
 is_alpha(Char) :-
     char_type(Char, alpha).
 
-player_has_letters(_, []) :- !.
-player_has_letters([], _) :- false, !.
-player_has_letters([H|T], [H|Ts]) :-
-    player_has_letters(T, Ts), !.
-player_has_letters([_|T], WordLetters) :-
-    player_has_letters(T, WordLetters).
+player_has_letters([], _, _, [], []).
+player_has_letters([WL|WLs], PlayerLetters, [WL|BTs], ValidLetters, InvalidLetters) :-
+    player_has_letters(WLs, PlayerLetters, BTs, ValidLetters, InvalidLetters), !.
+player_has_letters([WL|WLs], PlayerLetters, [_|BTs], ValidLetters, InvalidLetters) :-
+    (member(WL, PlayerLetters) ->
+        select(WL, PlayerLetters, NewPlayerLetters), !
+    ; member('<', PlayerLetters) ->
+        select('<', PlayerLetters, NewPlayerLetters)),
+    player_has_letters(WLs, NewPlayerLetters, BTs, TempValidLetters, InvalidLetters),
+    ValidLetters = [WL|TempValidLetters], !.
+player_has_letters([WL|WLs], _, [_|BTs], ValidLetters, InvalidLetters) :-
+    player_has_letters(WLs, _, BTs, ValidLetters, TempInvalidLetters),
+    InvalidLetters = [WL|TempInvalidLetters].
 
-word_fits_in_space(X, _, WordLetters, true) :-
-    length(WordLetters, Len), (X =< 15 - Len), !.
-word_fits_in_space(_, Y, WordLetters, false) :-
-    length(WordLetters, Len), (Y =< 15 - Len).
+word_fits_in_space(X, Y, WordLetters, IsHorizontal) :-
+    length(WordLetters, WordLength),
 
-word_tiles_validator(BoardName, WordLetters, X, Y, true) :-
-    length(WordLetters, WordLen),
-    getCurTiles(BoardName, CurTiles), 
-    To is X + WordLen,
-    get_sublist_row(CurTiles, X, To, Y, SublistTiles),
-    letter_overlap_validator(WordLetters, SublistTiles), not(maplist(is_alpha, SublistTiles)), !.
-word_tiles_validator(BoardName, WordLetters, X, Y, false) :-
-    length(WordLetters, WordLen),
-    getCurTiles(BoardName, CurTiles), 
-    To is Y + WordLen,
-    take_sublist_col(CurTiles, Y, To, X, SublistTiles),
-    letter_overlap_validator(WordLetters, SublistTiles), not(maplist(is_alpha, SublistTiles)).
+    (IsHorizontal ->
+        (X =< 15 - WordLength)
+    ; (Y =< 15 - WordLength)).
 
-letter_overlap_validator([], []) :- !.
-letter_overlap_validator([H|T], [H|Y]) :-
-    letter_overlap_validator(T, Y), !.
-letter_overlap_validator([_|T], [X|Y]) :-
+word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) :-
+    length(WordLetters, WordLength),
+
+    (IsHorizontal ->
+        N is X + WordLength
+    ;
+        N is Y + WordLength),
+
+    take_up_to(WorkTiles, X, Y, N, IsHorizontal, SublistTiles),
+    letter_overlap_validation(WordLetters, SublistTiles),
+    not(maplist(is_alpha, SublistTiles)).
+
+letter_overlap_validation([], []) :- !.
+letter_overlap_validation([H|T], [H|Y]) :-
+    letter_overlap_validation(T, Y), !.
+letter_overlap_validation([_|T], [X|Y]) :-
     not(is_alpha(X)),
-    letter_overlap_validator(T, Y), !.
+    letter_overlap_validation(T, Y), !.
 
-get_sublist_row(_, To, To, _, []) :- !.
-get_sublist_row(Matrix, From, To, Y, Sublist) :-
-    nth0(Y, Matrix, Row),
-    nth0(From, Row, Char),
-    NewFrom is From + 1,
-    get_sublist_row(Matrix, NewFrom, To, Y, TempSublist),
-    append([Char], TempSublist, Sublist).
+take_up_to(_, N, _, N, true, []) :- !.
+take_up_to(_, _, N, N, false, []) :- !.
+take_up_to(Matrix, X, Y, N, IsHorizontal, BoardTiles) :-
+    nth0(Y, Matrix, List),
+    nth0(X, List, Char),
 
+    (IsHorizontal ->
+        NewX is X + 1,
+        take_up_to(Matrix, NewX, Y, N, IsHorizontal, TempBoardTiles)
+    ;
+        NewY is Y + 1,
+        take_up_to(Matrix, X, NewY, N, IsHorizontal, TempBoardTiles)),
+
+    append([Char], TempBoardTiles, BoardTiles).
+
+center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) :-
+    take_up_to(WorkTiles, 7, 7, 8, IsHorizontal, [CenterTile]),
+    length(WordLetters, WordLength),
+
+    ((is_alpha(CenterTile), !) ;
+
+    (IsHorizontal ->
+        WordLastInd is X + WordLength - 1,
+        Y =:= 7, X =< 7, WordLastInd >= 7
+    ; WordLastInd is Y + WordLength - 1,
+        X =:= 7, Y =< 7, WordLastInd >= 7)).
+
+all_words_exist([], []).
+all_words_exist([H|T], InvalidWords) :-
+    (word(H) ->
+        all_words_exist(T, InvalidWords), !
+    ;
+        all_words_exist(T, TempInvalidWords),
+        InvalidWords = [H|TempInvalidWords]), !.
 get_sublist_col(_, To, To, _, []) :- !.
 get_sublist_col(Matrix, From, To, X, Sublist) :-
     nth0(From, Matrix, Col),

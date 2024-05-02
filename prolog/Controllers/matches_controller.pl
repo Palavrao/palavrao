@@ -49,6 +49,10 @@ get_turn_player_name(MatchName, PlayerName) :-
 
 
 create_match(MatchName, P1Name, P2Name) :- 
+    \+ match_exists(MatchName),
+    acc_exists(P1Name),
+    acc_exists(P2Name),
+    
     matches_path(MatchesPath),
 
     create_player(MatchName, P1Name),
@@ -67,8 +71,11 @@ create_match(MatchName, P1Name, P2Name) :-
 del_match(MatchName) :-
     matches_path(MatchesPath),
     players_path(PlayersPath),
+    boards_path(BoardsPath),
 
     get_match(MatchName, Match),
+    get_match_board_name(MatchName, BoardName),
+    get_board(BoardName, Board),
     get_match_p1_name(MatchName, P1Name),
     get_match_p2_name(MatchName, P2Name),
     get_player(MatchName, P1Name, P1),
@@ -76,16 +83,18 @@ del_match(MatchName) :-
 
     del_fact_file(PlayersPath, P1, player),
     del_fact_file(PlayersPath, P2, player),
-    del_fact_file(MatchesPath, Match, match).
+    del_fact_file(MatchesPath, Match, match),
+    del_fact_file(BoardsPath, Board, board).
 
 
 finish_match(MatchName) :- 
+    match(MatchName, _, _, P1Name, P2Name, _, _, _, _),
     get_player_score(MatchName, P1Name, P1Score),
     get_player_score(MatchName, P2Name, P2Score),
     inc_acc_score(P1Name, P1Score),
-    inc_acc_score(P2Name, P2Score),
 
-    del_match(MatchName).
+    inc_acc_score(P2Name, P2Score),
+    del_match(MatchName),!.
 
 
 update_match_timer(MatchName, NewTimer) :- 
@@ -112,10 +121,22 @@ get_matches(Matches) :-
             Matches).
 
 
+get_match_names(MatchesNames) :-
+    get_matches(Matches),
+    get_match_names(Matches, MatchesNames).
+
+
+get_match_names([], []).
+get_match_names([H|T], MatchesNames) :-
+    get_match_names(T, AnotherMatchesNames),
+    H =.. [_|[MatchName |_]],
+    MatchesNames = [MatchName|AnotherMatchesNames].
+
+
 inc_player_score(MatchName, PlayerScore) :- 
     get_turn_player_name(MatchName, PlayerName),
 
-    inc_score(MatchName, PlayerName, PlayerScore).
+    inc_score(MatchName, PlayerName, PlayerScore), !.
 
 
 update_player_letters(MatchName) :- 
@@ -178,15 +199,13 @@ inc_match_used_words(MatchName, UsedWords) :-
 
 
 switch_player_letter(MatchName, Letter) :- 
-    matches_path(MatchesPath),
-
     get_match_letters(MatchName, MatchLetters),
     pop_random_elements(MatchLetters, 1, NewLetter, UpdatedLetters),
 
     get_turn_player_name(MatchName, PlayerName),
 
     get_player_letters(MatchName, PlayerName, PlayerLetters),
-    remove_one_element(PlayerLetters, _, Letter, UpdatedPlayerLetters),
+    selectchk(Letter, PlayerLetters, UpdatedPlayerLetters),
 
     append(UpdatedPlayerLetters, NewLetter, FinalPlayerLetters),
     append(UpdatedLetters, [Letter], FinalMatchLetters),

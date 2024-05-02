@@ -1,4 +1,3 @@
-:-include('../Constants/paths.pl').
 
 clear_screen :- (current_prolog_flag(windows, true) -> shell('cls'); shell('clear')).
 
@@ -69,26 +68,39 @@ pop_random_elements(Elements, Quantity, [RemovedElement|RemovedElements], Update
 
 remove_elements([], _, []).
 remove_elements([H|T], ToRemove, Updated) :-
-    (member(H, ToRemove) -> 
-        remove_one_element(ToRemove, _, _, NewToRemove),
-        remove_elements(T, NewToRemove, Updated);
-    remove_elements(T, ToRemove, OtherElements),
-    Updated = [H|OtherElements]).
-
-
-getWordList(WordList) :-
-    words_path(WP),
-    read_file_to_string(WP, Base, []),
-    atomic_list_concat(LineList, '\n', Base),
-    maplist(atom_string, WordList, LineList).
+    (   member(H, ToRemove) ->
+        remove_one_element(ToRemove, _, H, NewToRemove),
+        remove_elements(T, NewToRemove, Updated)
+    ;   Updated = [H|OtherElements],
+        remove_elements(T, ToRemove, OtherElements)
+    ).
 
 
 no_period_input(Input):- 
     read_line_to_codes(user_input, K),
-    string_to_atom(K, Input).
+    string_to_atom(K, AtomInput),
+    atom_string(AtomInput, StringInput),
+    string_upper(StringInput, UpperInput),
+    string_to_atom(UpperInput, Input).
+
 
 too_long(Start,End) :-
     K is End - Start,
+    K > 300.
+
+
+compare_second(>, [_,X], [_,Y]) :- X @> Y.
+compare_second(>, [A,X], [B,X]) :- A @> B.
+compare_second(<, [_,X], [_,Y]) :- X @< Y.
+compare_second(=, [A,X], [A,X]).
+
+sort_by_second(Pairs, Sorted) :-
+    predsort(compare_second, Pairs, Sorted), !.
+
+
+get_last_elements(Elements, Qtd, LastElements) :- length(Elements, Len), Len =:= Qtd, LastElements = Elements.
+get_last_elements([H|T], Qtd, LastElements) :- get_last_elements(T, Qtd, LastElements), !.
+
     K // 300 == 0.
 
 % Regras do jogo

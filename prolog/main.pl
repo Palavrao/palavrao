@@ -1,6 +1,6 @@
 :- include('Interfaces/boxes_menu.pl').
-:- use_module(library(dialect/sicstus/system)).
 :- include('Utils/utils.pl').
+:- include('Utils/validator.pl').
 :- include('Constants/paths.pl').
 :- include('Controllers/accs_controller.pl').
 :- include('Controllers/matches_controller.pl').
@@ -11,24 +11,26 @@
 :- include('data/matches.pl').
 :- include('data/boards.pl').
 :- include('data/players.pl').
-:-include('Core/game.pl').
+:- include('Core/game.pl').
 :- include('Interfaces/draw_board.pl').
+:- include('Words/words.pl').
+:- use_module(library(dialect/sicstus/system)).
+:- use_module(library(ansi_term)).
+
+setup :-
+    create_acc(samuel),
+    create_acc(gabriel),
+    create_match(samuel_x_gabriel, samuel, gabriel).
 
 main :-
-    % create_acc(samuel),
-    % create_acc(gabriel),
-    % create_match(samuel_x_gabriel, samuel, gabriel),
-    % inc_player_score(samuel_x_gabriel, 10),
-    % finish_match(samuel_x_gabriel).
+    game_loop(samuel_x_gabriel, '').
+    %finish_match(samuel_x_gabriel).
 
-    % create_acc(samuel),
-    % create_acc(gabriel),
-    % create_match(samuel_x_gabriel, samuel, gabriel),
-    % inc_player_score(samuel_x_gabriel, 10).
+    %
     % finish_match(samuel_x_gabriel).
-    assertz(current_screen(redimension_screen)),
+    /* assertz(current_screen(redimension_screen)),
     show_menu(redimension_screen),
-    main_loop.  
+    main_loop */
 
 main_loop :-
     get_input(Input),
