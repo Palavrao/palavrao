@@ -3,31 +3,31 @@ report(1, Points, ValidLetters, InvalidLetters, InvalidWords, Report) :- Report 
 
 validation(MatchName, InputLine, Report) :-
     get_match_board_name(MatchName, BoardName),
-    
+
     (read_input(InputLine, Info) ->
-    
+
         nth0(0, Info, X),
         nth0(1, Info, Y),
         nth0(2, Info, WordLetters),
         nth0(3, Info, IsHorizontal),
-        
+
         % Lógica que verifica se o jogador tem as letras da palavra
         get_turn_player_name(MatchName, PlayerName),
         get_player_letters(MatchName, PlayerName, PlayerLetters),
         length(WordLetters, WordLength),
-        
+
         (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_work_tiles(BoardName, WorkTiles),
         take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles),
         player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
         get_points_word(BoardTiles, WordLetters, Points),
-        
+
         % Lógica de validação da palavra
-        
+
         ((word_fits_in_space(X, Y, WordLetters, IsHorizontal)) ->
             ((word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) )->
 
                 (center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) ->
-                   
+
                     atomic_list_concat(WordLetters, Word),
                     place_word(X, Y, IsHorizontal, Word, BoardName, NewBoard),
                     get_words(NewBoard, BoardWords),
@@ -40,10 +40,10 @@ validation(MatchName, InputLine, Report) :-
             )
         )
     )
-    
-    ; 
 
-    report(0, Report).    
+    ;
+
+    report(0, Report).
 
 read_input(InputLine, Info) :-
     string_upper(InputLine, InputLineUpper),
@@ -80,27 +80,27 @@ player_has_letters([WL|WLs], PlayerLetters, [_|BTs], ValidLetters, InvalidLetter
         select(WL, PlayerLetters, NewPlayerLetters), !
     ; member('<', PlayerLetters) ->
         select('<', PlayerLetters, NewPlayerLetters)),
-    player_has_letters(WLs, NewPlayerLetters, BTs, TempValidLetters, InvalidLetters), 
+    player_has_letters(WLs, NewPlayerLetters, BTs, TempValidLetters, InvalidLetters),
     ValidLetters = [WL|TempValidLetters], !.
 player_has_letters([WL|WLs], _, [_|BTs], ValidLetters, InvalidLetters) :-
     player_has_letters(WLs, _, BTs, ValidLetters, TempInvalidLetters),
     InvalidLetters = [WL|TempInvalidLetters].
 
 word_fits_in_space(X, Y, WordLetters, IsHorizontal) :-
-    length(WordLetters, WordLength), 
-    
-    (IsHorizontal -> 
+    length(WordLetters, WordLength),
+
+    (IsHorizontal ->
         (X =< 15 - WordLength)
     ; (Y =< 15 - WordLength)).
 
 word_tiles_validation(WorkTiles, WordLetters, X, Y, IsHorizontal) :-
     length(WordLetters, WordLength),
 
-    (IsHorizontal -> 
+    (IsHorizontal ->
         N is X + WordLength
-    ;   
+    ;
         N is Y + WordLength),
-    
+
     take_up_to(WorkTiles, X, Y, N, IsHorizontal, SublistTiles),
     letter_overlap_validation(WordLetters, SublistTiles),
     not(maplist(is_alpha, SublistTiles)).
@@ -121,7 +121,7 @@ take_up_to(Matrix, X, Y, N, IsHorizontal, BoardTiles) :-
     (IsHorizontal ->
         NewX is X + 1,
         take_up_to(Matrix, NewX, Y, N, IsHorizontal, TempBoardTiles)
-    ; 
+    ;
         NewY is Y + 1,
         take_up_to(Matrix, X, NewY, N, IsHorizontal, TempBoardTiles)),
 
@@ -131,9 +131,9 @@ center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) :-
     take_up_to(WorkTiles, 7, 7, 8, IsHorizontal, [CenterTile]),
     length(WordLetters, WordLength),
 
-    ((is_alpha(CenterTile), !) ; 
-    
-    (IsHorizontal -> 
+    ((is_alpha(CenterTile), !) ;
+
+    (IsHorizontal ->
         WordLastInd is X + WordLength - 1,
         Y =:= 7, X =< 7, WordLastInd >= 7
     ; WordLastInd is Y + WordLength - 1,
@@ -146,3 +146,34 @@ all_words_exist([H|T], InvalidWords) :-
     ;
         all_words_exist(T, TempInvalidWords),
         InvalidWords = [H|TempInvalidWords]), !.
+get_sublist_col(_, To, To, _, []) :- !.
+get_sublist_col(Matrix, From, To, X, Sublist) :-
+    nth0(From, Matrix, Col),
+    nth0(X, Col, Char),
+    NewFrom is From + 1,
+    get_sublist_col(Matrix, NewFrom, To, X, TempSublist),
+    append([Char], TempSublist, Sublist).
+
+valid_name(Name) :-
+    \+ Name = "",
+    \+ contains_space(Name),
+    \+ contains_special_chars_helper(Name).
+
+contains_space(Name) :-
+    sub_string(Name, _, _, _, ' ').
+
+contains_special_chars(Name) :-
+    writeln("Checking for special characters"),
+    atom_chars(Name, Chars),
+    contains_special_chars_helper(Chars).
+
+contains_special_chars_helper([]).
+contains_special_chars_helper([Char|Rest]) :-
+    special_char(Char),
+    !.
+contains_special_chars_helper([_|Rest]) :-
+    contains_special_chars_helper(Rest).
+
+special_char(Char) :-
+    member(Char, ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', ';', ':', "'", '"', '<', '>', ',', '.', '/', '?', '\\', '|',
+                  'á', 'à', 'ã', 'â', 'é', 'è', 'ẽ', 'ê', 'í', 'ì', 'ĩ', 'î', 'ó', 'ò', 'õ', 'ô', 'ú', 'ù', 'ũ', 'û', 'ç']).

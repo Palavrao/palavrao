@@ -7,6 +7,7 @@
 :- include('Controllers/board_controller.pl').
 :- include('Controllers/letters_controller.pl').
 :- include('Controllers/players_controller.pl').
+:- include('Core/menu.pl').
 :- include('data/accounts.pl').
 :- include('data/matches.pl').
 :- include('data/boards.pl').
@@ -17,7 +18,7 @@
 :- use_module(library(dialect/sicstus/system)).
 :- use_module(library(ansi_term)).
 
-setup :- 
+setup :-
     create_acc(samuel),
     create_acc(gabriel),
     create_match(samuel_x_gabriel, samuel, gabriel).
@@ -26,7 +27,7 @@ main :-
     game_loop(samuel_x_gabriel, '').
     %finish_match(samuel_x_gabriel).
 
-    % 
+    %
     % finish_match(samuel_x_gabriel).
     /* assertz(current_screen(redimension_screen)),
     show_menu(redimension_screen),
