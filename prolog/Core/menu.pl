@@ -52,6 +52,14 @@ process_input('3') :-
 
 process_input('4') :-
     current_screen(start_menu),
+    clear_screen,
+    rank,
+    read_line_to_codes(user_input, Codes),
+    string_codes(Out, Codes),
+    back_to_start_menu.
+
+process_input('5') :-
+    current_screen(start_menu),
     writeln('saindo...'), halt.
 
 % fluxo de novo jogo
@@ -81,6 +89,16 @@ process_input('1') :-
         back_to_start_menu).
 
 process_input('2') :-
+    current_screen(continue_game),
+    clear_screen,
+    list_matches,
+    read_line_to_codes(user_input, Codes),
+    string_codes(Out, Codes),
+    retract(current_screen(_)),
+    assertz(current_screen(continue_game)),
+    show_menu(continue_game).
+
+process_input('3') :-
     current_screen(continue_game),
     back_to_start_menu.
 
@@ -144,6 +162,39 @@ write_player(PlayerNumber, PlayerName) :-
                  writeln("conta criada com sucesso.")));
             writeln("nome inválido, insira um nome válido."),
             write_player(PlayerNumber, PlayerName))).
+
+rank :-
+    writeln('\n------- rank -------'),
+    get_accs_rank(AccRank),
+    print_accounts(AccRank),
+    writeln('--------------------'),
+    writeln('digite qualquer numero para voltar>').
+
+list_matches :-
+    writeln('\n----- partidas criadas -----'),
+    get_match_names(MatchesNames),
+    print_matches(MatchesNames),
+    writeln('----------------------------'),
+    writeln('digite qualquer numero para voltar>').
+
+print_matches(List) :-
+    print_matches(List, 1).
+
+print_matches([], _).
+print_matches([Head|Rest], Order) :-
+    format('~w - ~w~n', [Order, Head]),
+    NextOrder is Order + 1,
+    print_matches(Rest, NextOrder).
+
+print_accounts([]).
+print_accounts(Accounts) :-
+    print_accounts(Accounts, 1).
+
+print_accounts([], _).
+print_accounts([[AccName, AccScore]|Rest], Order) :-
+    format('~w - ~w: ~w~n', [Order, AccName, AccScore]),
+    NextOrder is Order + 1,
+    print_accounts(Rest, NextOrder).
 
 back_to_start_menu :-
     retract(current_screen(_)),
