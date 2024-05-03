@@ -44,7 +44,7 @@ game_loop(MatchName, LastMessage):-
                             toggle_player_turn(MatchName),
                             game_loop(MatchName, '\nTempo de rodada excedido!\n'),!
                         ) ; (
-                            flux_handler(MatchName, UserPlayString, Msg),
+                            flux_handler(MatchName, UserPlayString, Msg, StartTime),
                             game_loop(MatchName, Msg),!
                         )
                     )
@@ -54,21 +54,21 @@ game_loop(MatchName, LastMessage):-
     ).
 
 
-flux_handler(MatchName, ':!', Msg):-
+flux_handler(MatchName, ':!', Msg,_):-
     get_turn_player_name(MatchName, PlayerOnTurn),
     skip_player_turn(MatchName),
     format(atom(Msg), '>> ~w pulou o turno!\n', [PlayerOnTurn]).
 
-flux_handler(MatchName, ':?', Msg):-
+flux_handler(MatchName, ':?', Msg,_):-
     print_short_rules,
     print_board(MatchName),
     writef('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
     flux_handler(MatchName, I, Msg).
 
-flux_handler(_, ':*', '').
+flux_handler(_, ':*', '',_).
 
-flux_handler(MatchName, S, Msg):- 
+flux_handler(MatchName, S, Msg,_):- 
     sub_string(S, 0, 2, _, ':*'), 
     string_chars(S, SL),
     nth0(2, SL, L),
@@ -89,25 +89,33 @@ flux_handler(MatchName, S, Msg):-
         flux_handler(MatchName, A, Msg))), !.
 
 
-flux_handler(MatchName,StringInput, Msg):-
+flux_handler(MatchName,StringInput, Msg, StartTime):-
     validation(MatchName, StringInput, [true, Points, UsedLetters, [], []]),
-    remove_player_letters(MatchName, UsedLetters),
+    now(CurTime),
+    ((too_long(StartTime,CurTime),
+    Msg = '\nTempo de rodada excedido!\n'),!;
+    (remove_player_letters(MatchName, UsedLetters),
     inc_player_score(MatchName, Points),
     get_match_board_name(MatchName, BoardName),
     update_cur_tiles(BoardName),
     reset_match_skips(MatchName),
-    format(atom(Msg), '\nPalavra válida! Pontos: ~d\n', [Points]),
+    format(atom(Msg), '\nPalavra válida! Pontos: ~d\n', [Points]))),
     toggle_player_turn(MatchName), !.
 
 
-flux_handler(MatchName,StringInput, Msg):-
+flux_handler(MatchName,StringInput, Msg, StartTime):-
     validation(MatchName, StringInput, [false|_]),
-    get_match_board_name(MatchName, BoardName),
+    now(CurTime),
+    ((too_long(StartTime,CurTime),
+        Msg = '\nTempo de rodada excedido!\n',
+        toggle_player_turn(MatchName), !),!
+        ;
+    (get_match_board_name(MatchName, BoardName),
     reset_work_tiles(BoardName),
     ansi_format([bold, fg(red)], '\nJogada inválida, tente novamente: \n', []),
     write('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
-    flux_handler(MatchName, I, Msg), !.
+    flux_handler(MatchName, I, Msg, StartTime))),!.
 
 flux_handler(MatchName,StringInput, Msg):-
     validation(MatchName, StringInput, [_, _, _, Invalidletters, _]),

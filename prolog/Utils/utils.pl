@@ -86,7 +86,7 @@ no_period_input(Input):-
 
 too_long(Start,End) :-
     K is End - Start,
-    K > 300.
+    K > 60.
 
 
 compare_second(>, [_,X], [_,Y]) :- X @> Y.
