@@ -141,11 +141,14 @@ center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) :-
 
 all_words_exist([], []).
 all_words_exist([H|T], InvalidWords) :-
-    (word(H) ->
+    all_words(AW),
+    downcase_atom(H, Lowercase),
+    (memberchk(Lowercase,AW) ->
         all_words_exist(T, InvalidWords), !
     ;
         all_words_exist(T, TempInvalidWords),
         InvalidWords = [H|TempInvalidWords]), !.
+
 get_sublist_col(_, To, To, _, []) :- !.
 get_sublist_col(Matrix, From, To, X, Sublist) :-
     nth0(From, Matrix, Col),
@@ -168,7 +171,7 @@ contains_special_chars(Name) :-
     contains_special_chars_helper(Chars).
 
 contains_special_chars_helper([]).
-contains_special_chars_helper([Char|Rest]) :-
+contains_special_chars_helper([Char|_]) :-
     special_char(Char),
     !.
 contains_special_chars_helper([_|Rest]) :-
