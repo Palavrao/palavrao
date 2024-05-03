@@ -122216,7 +122216,7 @@ etruria
 etrusco
 etruscos
 eu
-eUa
+eua
 eucalipto
 eucaliptos
 eucaristia
@@ -141114,7 +141114,7 @@ historiografos
 historiou
 histriao
 hitler
-hiV
+hiv
 hodierna
 hodiernas
 hodierno
@@ -164744,7 +164744,7 @@ mercenaria
 mercenarias
 mercenario
 mercenarios
-mercosUl
+mercosul
 mercurio
 mercurio
 merda
@@ -237846,7 +237846,7 @@ tutor
 tutores
 tutoriais
 tutorial
-tV
+tv
 uai
 ucrania
 ucraniana
@@ -237909,7 +237909,7 @@ ufanosas
 ufanoso
 ufanosos
 ufanou
-Ufrj
+ufrj
 uh
 ui
 uisque
@@ -237972,7 +237972,7 @@ ulcera
 ulceracao
 ulceracoes
 ulceras
-Ulisses
+ulisses
 ulterior
 ulteriores
 ulteriormente
@@ -238190,7 +238190,7 @@ ululemos
 ulules
 ululo
 ululou
-Ulysses
+ulysses
 um
 uma
 umas
@@ -238330,7 +238330,7 @@ unia
 uniam
 uniamos
 uniao
-Uniao
+uniao
 unias
 unica
 unicamente
@@ -238349,12 +238349,12 @@ unida
 unidade
 unidades
 unidas
-Unidas
+unidas
 unidimensionais
 unidimensional
 unido
 unidos
-Unidos
+unidos
 unieis
 unifica
 unificacao
@@ -238598,7 +238598,7 @@ univesitario
 univesitarios
 univoco
 univocos
-Unix
+unix
 uno
 uns
 unta
@@ -238950,7 +238950,7 @@ ursinho
 ursinhos
 urso
 ursos
-Urss
+urss
 urticante
 urticantes
 urticaria
@@ -238962,7 +238962,7 @@ urubu
 urubus
 urucubaca
 urucubacas
-Uruguai
+uruguai
 uruguaia
 uruguaias
 uruguaio
@@ -239148,7 +239148,7 @@ usurpemos
 usurpes
 usurpo
 usurpou
-Utah
+utah
 uteis
 utensilio
 utensilios
@@ -239245,7 +239245,7 @@ vacancia
 vacancias
 vacante
 vacantes
-Vacaria
+vacaria
 vacas
 vacila
 vacilacao
@@ -239744,7 +239744,7 @@ valadas
 valado
 valados
 valas
-Valdemar
+valdemar
 vale
 valei
 valeiro
@@ -240277,7 +240277,7 @@ variem
 variemo
 variemos
 varies
-Varig
+varig
 varinha
 varinhas
 vario
@@ -240350,7 +240350,7 @@ varridos
 varrieis
 varro
 varsovia
-Varsovia
+varsovia
 varzea
 varzeas
 vas
@@ -240489,7 +240489,7 @@ vatapas
 vaticana
 vaticanas
 vaticano
-Vaticano
+vaticano
 vaticanos
 vaticina
 vaticinado
@@ -240667,7 +240667,7 @@ veem
 veemencia
 veemente
 veementes
-Vegas
+vegas
 vegeta
 vegetacao
 vegetacoes
@@ -241165,13 +241165,13 @@ veneres
 venero
 venerou
 veneza
-Veneza
+veneza
 veneziana
 venezianas
 veneziano
 venezianos
 venezuela
-Venezuela
+venezuela
 venezuelana
 venezuelanas
 venezuelano
@@ -241318,7 +241318,7 @@ venturosa
 venturosas
 venturoso
 venturosos
-Venus
+venus
 ver
 vera
 veracidade
@@ -241447,7 +241447,7 @@ verbatim
 verbete
 verbetes
 verbo
-Verbo
+verbo
 verborreia
 verbos
 verdade
@@ -241642,7 +241642,7 @@ vermelhissimas
 vermelhissimo
 vermelhissimos
 vermelho
-Vermelho
+vermelho
 vermelhos
 vermes
 vermicida
@@ -242377,7 +242377,7 @@ vicosa
 vicosas
 vicoso
 vicosos
-Victor
+victor
 vida
 vidas
 vide
@@ -242458,7 +242458,7 @@ viela
 vielas
 viemos
 viena
-Viena
+viena
 vier
 viera
 vieram
@@ -242478,7 +242478,7 @@ viessemos
 viesses
 vieste
 viestes
-Vietna
+vietna
 vietnamita
 vietnamitas
 vieza
@@ -243076,13 +243076,13 @@ vires
 virgem
 virgens
 virgilia
-Virgilia
+virgilia
 virgilio
-Virgilio
+virgilio
 virginais
 virginal
 virginalmente
-Virginia
+virginia
 virgula
 virgulas
 viria
@@ -243350,7 +243350,7 @@ vissem
 vissemos
 visses
 vista
-Vista
+vista
 vistais
 vistam
 vistamo
@@ -243589,7 +243589,7 @@ vitimismos
 vitimo
 vitimou
 vitoria
-Vitoria
+vitoria
 vitoriana
 vitorianas
 vitoriano

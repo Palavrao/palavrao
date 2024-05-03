@@ -99,19 +99,19 @@ sort_by_second(Pairs, Sorted) :-
 
 
 get_last_elements(Elements, Qtd, LastElements) :- length(Elements, Len), Len =:= Qtd, LastElements = Elements.
-get_last_elements([H|T], Qtd, LastElements) :- get_last_elements(T, Qtd, LastElements), !.
+get_last_elements([_|T], Qtd, LastElements) :- get_last_elements(T, Qtd, LastElements), !.
 
-    K // 300 == 0.
 
 % Regras do jogo
 regras :-
-    writeln('\nPalavrão!
-    é um jogo estratégico double player de formação de palavras em um tabuleiro matricial, baseado no popular "Scrabble".\n'),
+    ansi_format([bold, fg(yellow)],'\nPalavrão! ',[]),
+    writeln('é um jogo estratégico double player de formação de palavras em um tabuleiro matricial, baseado no popular "Scrabble".\n'),
 
-    writeln('Objetivo do jogo:
-    O objetivo do jogo é acumular a maior quantidade de pontos possível a partir da formação de novas palavras horizontal ou verticalmente, e adjacentes às palavras já dispostas no tabuleiro.\n'),
+    ansi_format([bold, fg(blue)],'Objetivo do jogo:\n',[]),
+    writeln('O objetivo do jogo é acumular a maior quantidade de pontos possível a partir da formação de novas palavras horizontal ou verticalmente, e adjacentes às palavras já dispostas no tabuleiro.\n'),
 
-    writeln('Funcionamento do jogo:
+    ansi_format([bold, fg(blue)], 'Funcionamento do jogo:',[]),
+    writeln('
     - Cada jogador recebe 7 letras, que podem ser trocadas por letras aleatórias do saco de letras, fazendo-o perder a vez.
     - O primeiro jogador coloca ao menos duas letras no tabuleiro formando a primeira palavra.
     - Em seguida os jogadores tomam turnos adicionando letras adjacentes às letras dispostas no tabuleiro para formar novas palavras.
@@ -123,7 +123,8 @@ regras :-
     - O jogador pode pular a sua vez.
     '),
 
-    writeln('Pontuação das letras:
+    ansi_format([bold, fg(blue)], 'Pontuação das letras:\n',[]),
+    writeln('
     0   |   < (Curinga)
     1   |   A, E, I, O, S, U, M, R, T
     2   |   D, L, C, P
@@ -134,16 +135,24 @@ regras :-
     7   |   X, Z
     '),
 
-    writeln('Pontuações especiais:
-    ■ -> Dobra a pontuação da letra sobre a célula.
-    ■ -> Triplica a pontuação da letra sobre a célula.
-    ■ -> Dobra a pontuação de toda a palavra cuja letra está sobre a célula.
-    ■ -> Triplica a pontuação de toda a palavra cuja letra está sobre a célula.\n'),
+    print_short_rules.
 
-    writeln('Bingo!
-    Se um jogador usar 7 letras para formar uma nova palavra, a pontuação dela é incrementada em 20 pontos.\n'),
 
-    writeln('Fim de jogo:
-    O jogo termina quando não há mais peças no saco ou ambos os jogadores realizam 4 trocas de peças seguidas. Em caso de empate, o jogador com a menor soma na pontuação das letras em sua mão vence.\n'),
+print_short_rules:- 
+    ansi_format([bold, fg(green)],' \nPontuações especiais:\n\n', []),
 
-    writeln('Digite qualquer coisa para voltar').
+    ansi_format([bold, fg(blue)], '    * ', []),
+    write('-> Dobra a pontuação da letra sobre a célula.\n'),
+    ansi_format([bold, fg(green)], '    ! ', []),
+    write('-> Triplica a pontuação da letra sobre a célula.\n'),
+    ansi_format([bold, fg(magenta)], '    - ', []),
+    write('-> Dobra a pontuação de toda a palavra cuja letra está sobre a célula.\n'),
+    ansi_format([bold, fg(red)],'    # ',[]),
+    write('-> Triplica a pontuação de toda a palavra cuja letra está sobre a célula.\n\n'),
+    
+    ansi_format([bold, fg(magenta)], 'Bingo! ', []),
+    write('Se um jogador usar 7 letras para formar uma nova palavra, a pontuação dela é incrementada em 20 pontos.\n\n'),
+    ansi_format([bold, fg(green)],'Fim de jogo:\n\n',[]),
+    write('  O jogo termina quando não há mais peças no saco ou os jogadores realizam, em conjunto, 4 trocas de peças ou saltos de vez seguidos. Em caso de empate, o jogador com a menor soma na pontuação das letras em sua mão vence.\n\n'),
+    ansi_format([bold, fg(blue)],'Enter para voltar\n\n',[]),
+    no_period_input(_).
