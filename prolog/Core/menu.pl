@@ -66,13 +66,7 @@ process_input('5') :-
 process_input('1') :-
     current_screen(new_game),
     clear_screen,
-    write_match(NewMatchName),
-    (NewMatchName \= "0" ->
-        writeln("valeu"),
-        retract(current_screen(_)),
-        assertz(current_screen(login)),
-        show_menu(login);
-        back_to_start_menu).
+    write_match(NewMatchName).
 
 process_input('2') :-
     current_screen(new_game),
@@ -82,11 +76,7 @@ process_input('2') :-
 process_input('1') :-
     current_screen(continue_game),
     clear_screen,
-    write_existing_match(MatchName),
-    (MatchName \= "0" ->
-        % ir pro jogo
-        writeln("valeu");
-        back_to_start_menu).
+    write_existing_match(MatchName).
 
 process_input('2') :-
     current_screen(continue_game),
@@ -128,12 +118,11 @@ write_existing_match(MatchName) :-
     string_codes(MatchName, Codes),
 
     (MatchName = "0" ->
-        writeln('saindo...'), fail;
+        back_to_start_menu, fail;
         (valid_name(MatchName), match_exists(MatchName) ->
             %ir pra partida
             writeln("partida existe.");
-            writeln("partida não existe, tente novamente, ou digite 0 para voltar"),
-            write_existing_match(MatchName))).
+            writeln("partida não existe, tente novamente."), write_existing_match(MatcheName))).
 
 write_match(NewMatchName) :-
     writeln('digite o nome da nova partida (ou digite 0 para voltar)>'),
@@ -141,7 +130,7 @@ write_match(NewMatchName) :-
     string_codes(NewMatchName, Codes),
 
     (NewMatchName = "0" ->
-        writeln('saindo...'), fail;
+        back_to_start_menu, fail;
         (valid_name(NewMatchName), match_exists(NewMatchName) ->
             %ir pra partida
             writeln("partida com esse nome já existe, tente novamente, ou digite 0 para voltar."),
