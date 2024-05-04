@@ -78,8 +78,7 @@ process_input('3') :-
     current_screen(continue_game),
     back_to_start_menu.
 
-process_input(_) :-
-    writeln('opção inválida!').
+process_input(_).
 
 write_existing_match(MatchName) :-
     writeln('digite o nome da partida (ou digite 0 para voltar)>'),
