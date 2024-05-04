@@ -92,7 +92,7 @@ pop_random_elements(Elements, Quantity, [RemovedElement|RemovedElements], Update
 remove_elements([], _, []).
 remove_elements([H|T], ToRemove, Updated) :-
     (   member(H, ToRemove) ->
-        remove_one_element(ToRemove, _, H, NewToRemove),
+        selectchk(H, ToRemove, NewToRemove),
         remove_elements(T, NewToRemove, Updated)
     ;   Updated = [H|OtherElements],
         remove_elements(T, ToRemove, OtherElements)
