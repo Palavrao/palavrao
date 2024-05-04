@@ -162,10 +162,12 @@ update_match_letters(MatchName, NewLetters) :-
 
 % Retorna todas as partidas registradas na persistência em formato de átomos
 % Retorna: Todas as partidas registradas em formato de átomos
-get_matches(Matches) :- 
-    findall(match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
-            match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
-            Matches).
+get_matches(Matches) :-
+    (current_predicate(match/9) ->
+        findall(match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
+                match(MatchName, BoardName, MatchTurn, P1Name, P2Name, MatchLetters, MatchWords, MatchTimer, MatchSkips),
+                Matches);
+        Matches = []).
 
 
 % Retorna os nomes de todas as partidas registradas na persistência

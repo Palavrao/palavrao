@@ -45,7 +45,9 @@ inc_acc_score(AccName, IncScore) :-
 % Retorna todas as contas da persistência
 % Retorna: Todas as contas registradas
 get_accs(Accs) :-
-    findall(account(AccName, AccScore), account(AccName, AccScore), Accs).
+    (current_predicate(account/2) ->
+            findall(account(AccName, AccScore), account(AccName, AccScore), Accs);
+            Accs = []).
 
 
 % Retorna os pares das contas no modelo "[NomeDaConta, ScoreDaConta]"

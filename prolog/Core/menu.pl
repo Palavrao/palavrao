@@ -145,7 +145,9 @@ list_matches :-
 
 print_matches :-
     get_match_names(MatchesNames),
-    format_matches(MatchesNames, 1).
+    (length(MatchesNames, 0) ->
+        writeln('nao ha partidas criadas');
+        format_matches(MatchesNames, 1)).
 
 format_matches([], _).
 format_matches([Head|Rest], Order) :-
@@ -161,7 +163,9 @@ rank :-
 
 print_accounts :-
     get_accs_rank(AccRank),
-    format_accounts(AccRank, 1).
+    (length(AccRank, 0) ->
+        writeln('nao ha contas criadas');
+        format_accounts(AccRank, 1)).
 
 format_accounts([], _).
 format_accounts([[AccName, AccScore]|Rest], Order) :-
