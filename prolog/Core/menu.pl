@@ -102,6 +102,7 @@ write_new_match(NewMatchName, Player1, Player2) :-
     write_match(NewMatchName),
     write_player(1, Player1),
     write_player(2, Player2),
+    writeln("partida cadastrada"),
     setup_game(NewMatchName, Player1, Player2).
 
 write_match(NewMatchName) :-
@@ -116,7 +117,7 @@ write_match(NewMatchName) :-
             (match_exists(LowerNewMatchName) ->
                 (writeln("partida com esse nome já existe, tente novamente, ou digite 0 para voltar."),
                  write_match(NewMatchName));
-                writeln("partida cadastrada"));
+                writeln("partida ok, agora digite os jogadores"));
             (writeln("partida com nome invalido, insira um nome válido."),
             write_match(NewMatchName)))).
 
