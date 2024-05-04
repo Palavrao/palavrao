@@ -47,8 +47,6 @@ process_input('3') :-
     current_screen(start_menu),
     clear_screen,
     regras,
-    read_line_to_codes(user_input, Codes),
-    string_codes(_, Codes),
     back_to_start_menu.
 
 process_input('4') :-
