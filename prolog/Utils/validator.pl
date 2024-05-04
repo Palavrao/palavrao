@@ -38,7 +38,6 @@ validation(MatchName, InputLine, Report) :-
 
         ((word_fits_in_space(X, Y, WordLetters, IsHorizontal)) ->
             (center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) ->
-                not(maplist(special_char, BoardTiles)),
                 atomic_list_concat(WordLetters, Word),
                 place_word(X, Y, IsHorizontal, Word, BoardName, NewBoard),
                 get_words(NewBoard, BoardWords),
