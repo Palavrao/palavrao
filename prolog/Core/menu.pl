@@ -136,38 +136,37 @@ write_player(PlayerNumber, PlayerName) :-
             writeln("nome inválido, insira um nome válido."),
             write_player(PlayerNumber, PlayerName))).
 
-rank :-
-    writeln('\n------- rank -------'),
-    get_accs_rank(AccRank),
-    print_accounts(AccRank),
-    writeln('--------------------'),
-    writeln('digite qualquer numero para voltar>').
-
 list_matches :-
     writeln('\n----- partidas criadas -----'),
-    get_match_names(MatchesNames),
-    print_matches(MatchesNames),
+    print_matches,
     writeln('----------------------------'),
     writeln('digite qualquer numero para voltar>').
 
-print_matches(List) :-
-    print_matches(List, 1).
+print_matches :-
+    get_match_names(MatchesNames),
+    format_matches(MatchesNames, 1).
 
-print_matches([], _).
-print_matches([Head|Rest], Order) :-
+format_matches([], _).
+format_matches([Head|Rest], Order) :-
     format('~w - ~w~n', [Order, Head]),
     NextOrder is Order + 1,
-    print_matches(Rest, NextOrder).
+    format_matches(Rest, NextOrder).
 
-print_accounts([]).
-print_accounts(Accounts) :-
-    print_accounts(Accounts, 1).
+rank :-
+    writeln('\n------- rank -------'),
+    print_accounts,
+    writeln('--------------------'),
+    writeln('digite qualquer numero para voltar>').
 
-print_accounts([], _).
-print_accounts([[AccName, AccScore]|Rest], Order) :-
+print_accounts :-
+    get_accs_rank(AccRank),
+    format_accounts(AccRank, 1).
+
+format_accounts([], _).
+format_accounts([[AccName, AccScore]|Rest], Order) :-
     format('~w - ~w: ~w~n', [Order, AccName, AccScore]),
     NextOrder is Order + 1,
-    print_accounts(Rest, NextOrder).
+    format_accounts(Rest, NextOrder).
 
 setup_game(NewMatchName, Player1, Player2) :-
     create_match(NewMatchName, Player1, Player2),
