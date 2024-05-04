@@ -1,3 +1,6 @@
+
+% Retorna as letras iniciais de uma partida em formato de array
+% Retorna: Letras iniciais de uma partida
 start_letters(['<','<','<','A','A','A','A','A','A','A','A','A','A','A','A',
     'A','A','E','E','E','E','E','E','E','E','E','E','E','I','I','I','I','I',
     'I','I','I','I','I','O','O','O','O','O','O','O','O','O','O','S','S','S',
@@ -6,6 +9,10 @@ start_letters(['<','<','<','A','A','A','A','A','A','A','A','A','A','A','A',
     'L','L','L','C','C','C','C','C','C','P','P','P','P','N','N','N','N','B',
     'B','B','F','F','G','G','H','H','V','V','J','J','Q','X','Z']).
 
+
+% Mapeia cada letra a sua pontuação
+% Recebe: Letra 
+% Retorna: Pontuação da letra passada
 letter_score('<', 0).
 letter_score('A', 1).
 letter_score('E', 1).
