@@ -18,20 +18,11 @@
 :- use_module(library(dialect/sicstus/system)).
 :- use_module(library(ansi_term)).
 
-setup :-
-    create_acc(samuel),
-    create_acc(gabriel),
-    create_match(samuel_x_gabriel, samuel, gabriel).
 
 main :-
-    game_loop(samuel_x_gabriel, '').
-    %finish_match(samuel_x_gabriel).
-
-    %
-    % finish_match(samuel_x_gabriel).
-    /* assertz(current_screen(redimension_screen)),
+    assertz(current_screen(redimension_screen)),
     show_menu(redimension_screen),
-    main_loop */
+    main_loop.
 
 main_loop :-
     get_input(Input),
