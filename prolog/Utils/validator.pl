@@ -24,9 +24,12 @@ validation(MatchName, InputLine, Report) :-
         get_turn_player_name(MatchName, PlayerName),
         get_player_letters(MatchName, PlayerName, PlayerLetters),
         length(WordLetters, WordLength),
-
+        
         (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_work_tiles(BoardName, WorkTiles),
-        take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles), not(maplist(special_char, BoardTiles)),
+
+        take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles), 
+        get_element(WorkTiles, 7, 7, MiddleElement),
+        (not(maplist(special_char, BoardTiles)) ; special_char(MiddleElement)),
         player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
         not(maplist(is_alpha, BoardTiles)), letter_overlap_validation(WordLetters, BoardTiles), 
         get_points_word(BoardTiles, WordLetters, Points),
