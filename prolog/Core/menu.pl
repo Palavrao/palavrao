@@ -97,14 +97,15 @@ write_existing_match(MatchName) :-
     writeln('digite o nome da partida (ou digite 0 para voltar)>'),
     read_line_to_codes(user_input, Codes),
     string_codes(MatchName, Codes),
+    check_lowercase(MatchName, LowerMatchName),
 
-    (MatchName = "0" ->
+    (LowerMatchName = "0" ->
         retract(current_screen(_)),
         assertz(current_screen(continue_game)),
         show_menu(continue_game), fail;
-        (match_exists(MatchName) ->
-            %ir pra partida
-            writeln("partida existe.");
+        (match_exists(LowerMatchName) ->
+            (clear_screen,
+            game_loop(LowerMatchName, ''));
             writeln("partida não existe, tente novamente."), write_existing_match(MatchesNames))).
 
 write_new_match(NewMatchName, Player1, Player2) :-
