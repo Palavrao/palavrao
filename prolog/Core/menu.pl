@@ -119,26 +119,28 @@ write_match(NewMatchName) :-
     writeln('digite o nome da nova partida (ou digite 0 para voltar)>'),
     read_line_to_codes(user_input, Codes),
     string_codes(NewMatchName, Codes),
+    check_lowercase(NewMatchName, LowerNewMatchName),
 
-    (NewMatchName = "0" ->
+    (LowerNewMatchName = "0" ->
         back_to_start_menu, fail;
-        (valid_name(NewMatchName), match_exists(NewMatchName) ->
+        (valid_name(LowerNewMatchName), match_exists(LowerNewMatchName) ->
             writeln("partida com esse nome já existe, tente novamente, ou digite 0 para voltar."),
-            write_existing_match(NewMatchName);
+            write_existing_match(LowerNewMatchName);
             %ir pra partida
             writeln("partida cadastrada"))).
 
 write_player(PlayerNumber, PlayerName) :-
-    format("digite o nome do player ~w (ou digite 0 para voltar)>", [PlayerNumber]),
+    format("digite o nome do player ~w (ou digite 0 para voltar)>\n", [PlayerNumber]),
     read_line_to_codes(user_input, Codes),
     string_codes(PlayerInput, Codes),
+    check_lowercase(PlayerInput, LowerPlayerInput),
 
-    (PlayerInput = "0" ->
+    (LowerPlayerInput = "0" ->
         writeln('saindo...'), fail;
-        (valid_name(PlayerInput) ->
-            (acc_exists(PlayerInput) ->
+        (valid_name(LowerPlayerInput) ->
+            (acc_exists(LowerPlayerInput) ->
                 writeln("jogador logado com sucesso.");
-                (create_acc(PlayerInput),
+                (create_acc(LowerPlayerInput),
                  writeln("conta criada com sucesso.")));
             writeln("nome inválido, insira um nome válido."),
             write_player(PlayerNumber, PlayerName))).

@@ -190,6 +190,11 @@ get_sublist_col(Matrix, From, To, X, Sublist) :-
     get_sublist_col(Matrix, NewFrom, To, X, TempSublist),
     append([Char], TempSublist, Sublist).
 
+check_lowercase(Word, LowercaseWord) :-
+    string_upper(Word, Word),
+    string_lower(Word, LowercaseWord), !.
+check_lowercase(Word, Word).
+
 valid_name(Name) :-
     \+ Name = "",
     \+ contains_space(Name),
