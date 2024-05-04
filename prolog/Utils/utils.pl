@@ -190,3 +190,10 @@ print_short_rules:-
     write('  O jogo termina quando não há mais peças no saco ou os jogadores realizam, em conjunto, 4 trocas de peças ou saltos de vez seguidos. Em caso de empate, o jogador com a menor soma na pontuação das letras em sua mão vence.\n\n'),
     ansi_format([bold, fg(blue)],'Enter para voltar\n\n',[]),
     no_period_input(_).
+
+
+% recebe uma lista e retorna ela revertida
+reverse_list([], []).
+reverse_list([Head|Tail], Reversed) :-
+    reverse_list(Tail, ReversedTail),
+    append(ReversedTail, [Head], Reversed).
