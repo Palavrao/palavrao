@@ -26,7 +26,7 @@ validation(MatchName, InputLine, Report) :-
         length(WordLetters, WordLength),
 
         (IsHorizontal -> N is X + WordLength ; N is Y + WordLength), get_work_tiles(BoardName, WorkTiles),
-        take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles), not(maplist(special_char, BoardTiles)),
+        take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles),
         player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
         not(maplist(is_alpha, BoardTiles)), letter_overlap_validation(WordLetters, BoardTiles), 
         get_points_word(BoardTiles, WordLetters, Points),
@@ -35,7 +35,7 @@ validation(MatchName, InputLine, Report) :-
 
         ((word_fits_in_space(X, Y, WordLetters, IsHorizontal)) ->
             (center_tile_validation(WorkTiles, X, Y, IsHorizontal, WordLetters) ->
-
+                not(maplist(special_char, BoardTiles)),
                 atomic_list_concat(WordLetters, Word),
                 place_word(X, Y, IsHorizontal, Word, BoardName, NewBoard),
                 get_words(NewBoard, BoardWords),
