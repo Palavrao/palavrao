@@ -62,16 +62,6 @@ process_input('5') :-
     current_screen(start_menu),
     writeln('saindo...'), halt.
 
-% fluxo de novo jogo
-process_input('1') :-
-    current_screen(new_game),
-    clear_screen,
-    write_match(NewMatchName).
-
-process_input('2') :-
-    current_screen(new_game),
-    back_to_start_menu.
-
 % fluxo de continuar jogo
 process_input('1') :-
     current_screen(continue_game),
@@ -111,7 +101,8 @@ write_existing_match(MatchName) :-
 write_new_match(NewMatchName, Player1, Player2) :-
     write_match(NewMatchName),
     write_player(1, Player1),
-    write_player(2, Player2).
+    write_player(2, Player2),
+    setup_game(NewMatchName, Player1, Player2).
 
 write_match(NewMatchName) :-
     writeln('digite o nome da nova partida (ou digite 0 para voltar)>'),
@@ -179,9 +170,9 @@ print_accounts([[AccName, AccScore]|Rest], Order) :-
     print_accounts(Rest, NextOrder).
 
 setup_game(NewMatchName, Player1, Player2) :-
-    create_acc(samuel),
-    create_acc(gabriel),
-    create_match(samuel_x_gabriel, samuel, gabriel).
+    create_match(NewMatchName, Player1, Player2),
+    clear_screen,
+    game_loop(NewMatchName, '').
 
 back_to_start_menu :-
     retract(current_screen(_)),
