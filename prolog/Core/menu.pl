@@ -93,7 +93,9 @@ write_existing_match(MatchName) :-
         show_menu(continue_game), fail;
         (match_exists(LowerMatchName) ->
             (clear_screen,
-            game_loop(LowerMatchName, ''));
+            game_loop(LowerMatchName, ''),
+            clear_screen,
+            back_to_start_menu);
             writeln("partida não existe, tente novamente."), write_existing_match(MatchesNames))).
 
 write_new_match(NewMatchName, Player1, Player2) :-
@@ -174,7 +176,9 @@ format_accounts([[AccName, AccScore]|Rest], Order) :-
 setup_game(NewMatchName, Player1, Player2) :-
     create_match(NewMatchName, Player1, Player2),
     clear_screen,
-    game_loop(NewMatchName, '').
+    game_loop(NewMatchName, ''),
+    clear_screen,
+    back_to_start_menu.
 
 back_to_start_menu :-
     retract(current_screen(_)),
