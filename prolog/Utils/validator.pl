@@ -66,7 +66,7 @@ read_input(InputLine, Info) :-
     nth0(0, Input, InputCoord),
     nth0(1, Input, Direction), (Direction = "H", ! ; Direction = "V"),
     nth0(2, Input, InputWord), string_chars(InputWord, WordLetters), 
-    length(WordLetters, Len), (Len >= 2, Len =< 7), maplist(is_alpha, WordLetters),
+    length(WordLetters, Len), Len >= 2, maplist(is_alpha, WordLetters),
 
     string_chars(InputCoord, [H|T]), length([H|T], 3),
     char_code(H, CharCode), 
