@@ -139,7 +139,7 @@ list_matches :-
     writeln('\n----- partidas criadas -----'),
     print_matches,
     writeln('----------------------------'),
-    writeln('digite qualquer numero para voltar>').
+    writeln('Enter para voltar>').
 
 print_matches :-
     get_match_names(MatchesNames),
@@ -157,7 +157,7 @@ rank :-
     writeln('\n------- rank -------'),
     print_accounts,
     writeln('--------------------'),
-    writeln('digite qualquer numero para voltar>').
+    writeln('Enter para voltar>').
 
 print_accounts :-
     get_accs_rank(AccRank),
