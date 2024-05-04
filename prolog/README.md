@@ -3,26 +3,15 @@
 * Instalar o Prolog na sua máquina. Para mais informações de instalação acessar o seguinte link: <https://www.swi-prolog.org/download/stable>
 * Fazer a clonagem deste respositório
 * Entrar na pasta "prolog"
-* Rodar o arquivo de boot do jogo com o comando
+  
+* Rodar o comando (apenas na primeira vez):
 
 ``` bash
-swipl -s boot.pl
+chmod +x run_project.sh
 ```
 
-* Inicializar a persistência do jogo com o comando
-
-``` prolog
-boot.
-```
-
-* Por fim, rodar o projeto utilizando o comando
+* Depois, rodar o comando:
 
 ``` bash
-swipl -s main.pl
-```
-
-* E rodar o jogo utilizando o comando
-
-``` prolog
-main.
+./run_project.sh
 ```
