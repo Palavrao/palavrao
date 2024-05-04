@@ -1,3 +1,5 @@
+
+% Retorna um array contendo todas as palavras válidas no jogo
 all_words([a,
 aarao,
 aba,
