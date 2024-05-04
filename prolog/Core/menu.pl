@@ -165,7 +165,7 @@ print_accounts :-
     get_accs_rank(AccRank),
     (length(AccRank, 0) ->
         writeln('nao ha contas criadas');
-        format_accounts(AccRank, 1)).
+        (reverse_list(AccRank, Reversed), format_accounts(Reversed, 1))).
 
 format_accounts([], _).
 format_accounts([[AccName, AccScore]|Rest], Order) :-
