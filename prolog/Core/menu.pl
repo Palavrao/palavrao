@@ -113,11 +113,11 @@ write_match(NewMatchName) :-
         back_to_start_menu, fail;
         (valid_name(LowerNewMatchName) ->
             (match_exists(LowerNewMatchName) ->
-                (writeln("partida com esse nome já existe."),
+                (writeln("partida com esse nome já existe, insira um nome válido (ou digite 0 para voltar)>"),
                   read_retry_input(RetryString),
                   check_and_retry(RetryString, NewMatchName));
                 writeln("partida ok, agora digite os jogadores"));
-            (writeln("partida com nome invalido, insira um nome válido. (ou digite 0 para voltar)"),
+            (writeln("partida com nome invalido, insira um nome válido (ou digite 0 para voltar)"),
              read_retry_input(RetryString),
              check_and_retry(RetryString, NewMatchName)))).
 
