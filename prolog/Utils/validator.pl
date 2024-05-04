@@ -198,23 +198,15 @@ check_lowercase(Word, Word).
 valid_name(Name) :-
     \+ Name = "",
     \+ contains_space(Name),
-    \+ contains_special_chars_helper(Name).
+    atom_chars(Name, Chars),
+    valid_chars(Chars).
+
+valid_chars([]).
+valid_chars([Char|Rest]) :-
+    member(Char, ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+                  'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+                  '0','1','2','3','4','5','6','7','8','9']),
+    valid_chars(Rest).
 
 contains_space(Name) :-
     sub_string(Name, _, _, _, ' ').
-
-contains_special_chars(Name) :-
-    writeln("Checking for special characters"),
-    atom_chars(Name, Chars),
-    contains_special_chars_helper(Chars).
-
-contains_special_chars_helper([]).
-contains_special_chars_helper([Char|_]) :-
-    special_char(Char),
-    !.
-contains_special_chars_helper([_|Rest]) :-
-    contains_special_chars_helper(Rest).
-
-special_char(Char) :-
-    member(Char, ['!', '@', '#', '~', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', ';', ':', "'", '"', '<', '>', ',', '.', '/', '?', '\\', '|',
-                  'á', 'à', 'ã', 'â', 'é', 'è', 'ẽ', 'ê', 'í', 'ì', 'ĩ', 'î', 'ó', 'ò', 'õ', 'ô', 'ú', 'ù', 'ũ', 'û', 'ç']).
