@@ -114,10 +114,21 @@ write_match(NewMatchName) :-
         (valid_name(LowerNewMatchName) ->
             (match_exists(LowerNewMatchName) ->
                 (writeln("partida com esse nome já existe."),
-                 write_match(NewMatchName));
+                  read_retry_input(RetryString),
+                  check_and_retry(RetryString, NewMatchName));
                 writeln("partida ok, agora digite os jogadores"));
-            (writeln("partida com nome invalido, insira um nome válido."),
-            write_match(NewMatchName)))).
+            (writeln("partida com nome invalido, insira um nome válido. (ou digite 0 para voltar)"),
+             read_retry_input(RetryString),
+             check_and_retry(RetryString, NewMatchName)))).
+
+read_retry_input(Input) :-
+    read_line_to_codes(user_input, Codes),
+    string_codes(Input, Codes).
+
+check_and_retry(Input, NewMatchName) :-
+    (Input = "0" ->
+        back_to_start_menu, fail;
+        write_match(NewMatchName)).
 
 write_player(PlayerNumber, Player) :-
     format("digite o nome do player ~w (ou digite 0 para voltar)>\n", [PlayerNumber]),
