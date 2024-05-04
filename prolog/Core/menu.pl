@@ -35,15 +35,7 @@ process_input('1') :-
     retract(current_screen(_)),
     assertz(current_screen(new_game)),
     show_menu(new_game),
-    write_match(NewMatchName),
-    write_player(1, Player1),
-    (Player1 \= "0" ->
-        write_player(2, Player2),
-        (Player2 \= "0" ->
-            % ir pro jogo
-            writeln("Os nomes foram registrados com sucesso.");
-            back_to_start_menu);
-            back_to_start_menu).
+    write_new_match(NewMatchName, Player1, Player2).
 
 process_input('2') :-
     current_screen(start_menu),
@@ -115,6 +107,11 @@ write_existing_match(MatchName) :-
             writeln("partida existe.");
             writeln("partida não existe, tente novamente."), write_existing_match(MatchesNames))).
 
+write_new_match(NewMatchName, Player1, Player2) :-
+    write_match(NewMatchName),
+    write_player(1, Player1),
+    write_player(2, Player2).
+
 write_match(NewMatchName) :-
     writeln('digite o nome da nova partida (ou digite 0 para voltar)>'),
     read_line_to_codes(user_input, Codes),
@@ -123,11 +120,13 @@ write_match(NewMatchName) :-
 
     (LowerNewMatchName = "0" ->
         back_to_start_menu, fail;
-        (valid_name(LowerNewMatchName), match_exists(LowerNewMatchName) ->
-            writeln("partida com esse nome já existe, tente novamente, ou digite 0 para voltar."),
-            write_existing_match(LowerNewMatchName);
-            %ir pra partida
-            writeln("partida cadastrada"))).
+        (valid_name(LowerNewMatchName) ->
+            (match_exists(LowerNewMatchName) ->
+                (writeln("partida com esse nome já existe, tente novamente, ou digite 0 para voltar."),
+                 write_match(NewMatchName));
+                writeln("partida cadastrada"));
+            (writeln("partida com nome invalido, insira um nome válido."),
+            write_match(NewMatchName)))).
 
 write_player(PlayerNumber, PlayerName) :-
     format("digite o nome do player ~w (ou digite 0 para voltar)>\n", [PlayerNumber]),
@@ -136,7 +135,7 @@ write_player(PlayerNumber, PlayerName) :-
     check_lowercase(PlayerInput, LowerPlayerInput),
 
     (LowerPlayerInput = "0" ->
-        writeln('saindo...'), fail;
+        back_to_start_menu, fail;
         (valid_name(LowerPlayerInput) ->
             (acc_exists(LowerPlayerInput) ->
                 writeln("jogador logado com sucesso.");
@@ -177,6 +176,11 @@ print_accounts([[AccName, AccScore]|Rest], Order) :-
     format('~w - ~w: ~w~n', [Order, AccName, AccScore]),
     NextOrder is Order + 1,
     print_accounts(Rest, NextOrder).
+
+setup_game(NewMatchName, Player1, Player2) :-
+    create_acc(samuel),
+    create_acc(gabriel),
+    create_match(samuel_x_gabriel, samuel, gabriel).
 
 back_to_start_menu :-
     retract(current_screen(_)),
