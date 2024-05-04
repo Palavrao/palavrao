@@ -6,7 +6,10 @@ game_loop(MatchName, LastMessage):-
     update_player_letters(MatchName),
     ((MatchSkips == 4 ; length(MatchLetters, 0)) -> 
         (   
-            ansi_format([bold, fg(green)], '>> 4 skips ou trocas! Encerrando o jogo...\n\n',[]),
+            (length(MatchLetters, 0) -> 
+                ansi_format([bold, fg(green)], '>> Letras da partida acabaram! Encerrando o jogo...\n\n',[]) ;
+                ansi_format([bold, fg(green)], '>> 4 skips ou trocas! Encerrando o jogo...\n\n',[])
+            ),
             ansi_format([bold, fg(blue)], 'Aperte Enter para ver o placar...\n\n',[]),
             no_period_input(_),
             finish_match(MatchName)
