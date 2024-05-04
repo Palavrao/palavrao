@@ -102,7 +102,6 @@ write_new_match(NewMatchName, Player1, Player2) :-
     write_match(NewMatchName),
     write_player(1, Player1),
     write_player(2, Player2),
-    writeln("partida cadastrada"),
     setup_game(NewMatchName, Player1, Player2).
 
 write_match(NewMatchName) :-
@@ -115,13 +114,13 @@ write_match(NewMatchName) :-
         back_to_start_menu, fail;
         (valid_name(LowerNewMatchName) ->
             (match_exists(LowerNewMatchName) ->
-                (writeln("partida com esse nome já existe, tente novamente, ou digite 0 para voltar."),
+                (writeln("partida com esse nome já existe."),
                  write_match(NewMatchName));
                 writeln("partida ok, agora digite os jogadores"));
             (writeln("partida com nome invalido, insira um nome válido."),
             write_match(NewMatchName)))).
 
-write_player(PlayerNumber, PlayerName) :-
+write_player(PlayerNumber, Player) :-
     format("digite o nome do player ~w (ou digite 0 para voltar)>\n", [PlayerNumber]),
     read_line_to_codes(user_input, Codes),
     string_codes(PlayerInput, Codes),
@@ -131,11 +130,13 @@ write_player(PlayerNumber, PlayerName) :-
         back_to_start_menu, fail;
         (valid_name(LowerPlayerInput) ->
             (acc_exists(LowerPlayerInput) ->
-                writeln("jogador logado com sucesso.");
+                (get_acc(LowerPlayerInput, Player),
+                 writeln("jogador logado com sucesso."));
                 (create_acc(LowerPlayerInput),
-                 writeln("conta criada com sucesso.")));
+                 writeln("conta criada com sucesso."),
+                 get_acc(LowerPlayerInput, Player)));
             writeln("nome inválido, insira um nome válido."),
-            write_player(PlayerNumber, PlayerName))).
+            write_player(PlayerNumber, Player))).
 
 list_matches :-
     writeln('\n----- partidas criadas -----'),
@@ -174,11 +175,15 @@ format_accounts([[AccName, AccScore]|Rest], Order) :-
     format_accounts(Rest, NextOrder).
 
 setup_game(NewMatchName, Player1, Player2) :-
-    create_match(NewMatchName, Player1, Player2),
+    get_account_name(Player1, Player1Name),
+    get_account_name(Player2, Player2Name),
+    create_match(NewMatchName, Player1Name, Player2Name),
     clear_screen,
+    writeln("partida cadastrada, vamos jogar!"),
     game_loop(NewMatchName, ''),
     clear_screen,
     back_to_start_menu.
+
 
 back_to_start_menu :-
     retract(current_screen(_)),

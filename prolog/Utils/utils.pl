@@ -197,3 +197,6 @@ reverse_list([], []).
 reverse_list([Head|Tail], Reversed) :-
     reverse_list(Tail, ReversedTail),
     append(ReversedTail, [Head], Reversed).
+
+% recebe uma conta e retorna o nome do usuario
+get_account_name(account(Name, _), Name).
