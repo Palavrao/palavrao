@@ -8,28 +8,36 @@
 :- dynamic(screen/2).
 screen(redimension_screen, []).
 
+% recebe a acao feita, o menu atual exibido e o proximo, e atualiza o menu mostrado
 update_menu(Action, CurrentMenu, UpdatedMenu) :-
     (menu(Action, NovoMenu) -> UpdatedMenu = NovoMenu ; UpdatedMenu = CurrentMenu).
 
+% recebe o menu (uma lista de strings) e imprime ele na tela
 writeln_menu([]).
 writeln_menu([Line|Rest]) :-
     writeln(Line),
     writeln_menu(Rest).
 
+% recebe uma acao e atualiza o menu mostrado pro usuario no terminal
 show_menu(Action) :-
     clear_screen,
     update_menu(Action, [], UpdatedMenu),
     writeln_menu(UpdatedMenu).
 
+% processa a entrada recebida pelo usuario para transicao de telas
 get_input(Key) :-
     get_single_char(Code),
     char_code(Key, Code).
 
-% fluxo de menu inicial
+% fluxo de entrada no jogo
+% ao receber 0 como entrada, entra no menu inicial do jogo
 process_input('0') :-
     current_screen(redimension_screen),
     back_to_start_menu.
 
+% fluxo de menu inicial
+% ao receber 1 como entrada, transiciona para a tela de criacao de novo jogo, onde
+% faz interacao com o usuario para receber nome de partida e de jogadores, iniciando um jogo
 process_input('1') :-
     current_screen(start_menu),
     retract(current_screen(_)),
@@ -37,18 +45,21 @@ process_input('1') :-
     show_menu(new_game),
     write_new_match(NewMatchName, Player1, Player2).
 
+% ao receber 2 como entrada, transiciona para a tela de continuacao de jogo
 process_input('2') :-
     current_screen(start_menu),
     retract(current_screen(_)),
     assertz(current_screen(continue_game)),
     show_menu(continue_game).
 
+% ao receber 3 como entrada, imprime no terminal as regras do jogo
 process_input('3') :-
     current_screen(start_menu),
     clear_screen,
     regras,
     back_to_start_menu.
 
+% ao receber 4 como entrada, imprime o ranking dos 5 jogadores com as maiores pontuacoes
 process_input('4') :-
     current_screen(start_menu),
     rank,
@@ -56,15 +67,19 @@ process_input('4') :-
     string_codes(_, Codes),
     back_to_start_menu.
 
+% ao receber 5 como entrada, finaliza a execucao do programa
 process_input('5') :-
     current_screen(start_menu),
     writeln('saindo...'), halt.
 
 % fluxo de continuar jogo
+% ao receber 1 como entrada, faz interacao com o usuario para
+% receber nome da partida existente, continuando o jogo
 process_input('1') :-
     current_screen(continue_game),
     write_existing_match(MatchName).
 
+% ao receber 2 como entrada, imprime o nome das partidas criadas ate o momento no jogo
 process_input('2') :-
     current_screen(continue_game),
     list_matches,
@@ -74,10 +89,12 @@ process_input('2') :-
     assertz(current_screen(continue_game)),
     show_menu(continue_game).
 
+% ao receber 3 como entrada, retorna ao menu inicial
 process_input('3') :-
     current_screen(continue_game),
     back_to_start_menu.
 
+% ao receber alguma outra entrada nao definida, nao executa acao alguma
 process_input(_).
 
 write_existing_match(MatchName) :-
