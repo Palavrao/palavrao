@@ -1,4 +1,6 @@
 
+:- consult('Utils/utils.pl').
+
 game_loop(MatchName, LastMessage):-
     match_exists(MatchName),
     match(MatchName, _, _, _, _, MatchLetters, _, MatchTimer, MatchSkips),
@@ -10,7 +12,9 @@ game_loop(MatchName, LastMessage):-
                 ansi_format([bold, fg(green)], '>> Letras da partida acabaram! Encerrando o jogo...\n\n',[]) ;
                 ansi_format([bold, fg(green)], '>> 4 skips ou trocas! Encerrando o jogo...\n\n',[])
             ),
-            ansi_format([bold, fg(blue)], 'Aperte Enter para ver o placar...\n\n',[]),
+            get_winner(WinnerName, WinnerScore),
+            print_winner(WinnerName, WinnerScore),
+            ansi_format([bold, fg(blue)], 'Aperte Enter para sair...\n\n',[]),
             no_period_input(_),
             finish_match(MatchName)
         );(
@@ -22,6 +26,7 @@ game_loop(MatchName, LastMessage):-
             no_period_input(I),
             
             % Mostra a tela de jogo 
+            clear_screen,
             print_board(MatchName),
             now(StartTime),
             writef('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
@@ -141,3 +146,22 @@ flux_handler(MatchName,StringInput, Msg):-
 
 flux_handler(_,_,'Pânico geral!').
 
+get_winner(WinnerName, WinnerScore) :-
+    get_match_p1_name(MatchName, Player1Name),
+    get_match_p2_name(MatchName, Player2Name),
+    get_player_score(MatchName, Player1Name, Player1Score),
+    get_player_score(MatchName, Player2Name, Player2Score),
+    (   Player1Score > Player2Score ->
+        WinnerName = Player1Name,
+        WinnerScore = Player1Score
+    ;   Player2Score > Player1Score ->
+        WinnerName = Player2Name,
+        WinnerScore = Player2Score
+    ;   % Em caso de empate
+        atomic_list_concat([Player1Name, ' e ', Player2Name], WinnerName),
+        WinnerScore = Player1Score
+    ).
+
+
+print_winner(Player, Points) :-
+    format(" ~w é/são o(s) vencedor(es) com ~d pontos.~n", [Player, Points]).
