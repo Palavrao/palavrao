@@ -17,6 +17,18 @@
 :- include('Words/words.pl').
 :- use_module(library(dialect/sicstus/system)).
 :- use_module(library(ansi_term)).
+:- style_check(-singleton).
+:- style_check(-discontiguous).
+
+
+%    Jogo de palavras baseado em Scrabble, com sistema de contas e partidas
+
+%    Produzido por: 
+%    - Samuel Lucas (https://github.com/SamuelLucasVM)
+%    - Helena Sátyro (https://github.com/helenasatyro)
+%    - Eliane Tamara (https://github.com/elianetamara)
+%    - Rayanne Macedo (https://github.com/raiaiaia)
+%    - Paulo Ricardo (https://github.com/paulorpn)
 
 
 main :-
