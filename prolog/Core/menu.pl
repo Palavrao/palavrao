@@ -43,7 +43,7 @@ process_input('1') :-
     retract(current_screen(_)),
     assertz(current_screen(new_game)),
     show_menu(new_game),
-    write_new_match(NewMatchName, Player1, Player2).
+    write_new_match.
 
 % ao receber 2 como entrada, transiciona para a tela de continuacao de jogo
 process_input('2') :-
@@ -118,26 +118,29 @@ write_existing_match(MatchName) :-
             back_to_start_menu);
             writeln("partida não existe, tente novamente."), write_existing_match(MatchesNames))).
 
-% pega retorno com nome de partida e com os jogadores
-% e passa pro setup do jogo
-write_new_match(NewMatchName, Player1, Player2) :-
-    write_match(NewMatchName),
+% pega retorno com nome de jogadores e de partida
+% e passa pro criacao do jogo
+write_new_match :-
     write_player(1, Player1),
     write_player(2, Player2),
-    setup_game(NewMatchName, Player1, Player2).
+    get_account_name(Player1, Player1Name),
+    get_account_name(Player2, Player2Name),
+    write_match(NewMatchName, Player1Name, Player2Name).
 
 % recebe entrada, valida caracteres,
 % verifica se a partida nao existe ainda para poder ser criada,
-write_match(NewMatchName) :-
+% se nao existir cria a partida e inicia ela
+write_match(NewMatchName, Player1Name, Player2Name) :-
     read_match_input(LowerNewMatchName),
 
 	(valid_name(LowerNewMatchName) ->
 		(match_exists(LowerNewMatchName) ->
 			(writeln("partida com esse nome já existe."),
-                  write_match(LowerMatchName));
-                writeln("partida ok, agora digite os jogadores"));
+                  write_match(NewMatchName, Player1Name, Player2Name));
+                (create_match(LowerNewMatchName, Player1Name, Player2Name),
+                 setup_game(LowerNewMatchName)));
             (writeln("partida com nome invalido."),
-             write_match(LowerMatchName))).
+             write_match(NewMatchName, Player1Name, Player2Name))).
 
 % lida com entrada do usuario para novo jogo:
 % recebe entrada, valida letras minusculas,
@@ -217,15 +220,10 @@ format_accounts([[AccName, AccScore]|Rest], Order) :-
     NextOrder is Order + 1,
     format_accounts(Rest, NextOrder).
 
-% recebe o nome da nova partida e os dois jogadores dela
-% pega o nome dos usuarios, cria nova partida e entra no loop dela
+% recebe o nome da nova partida e entra no loop dela
 % ao finalizar, volta ao menu inicial
-setup_game(NewMatchName, Player1, Player2) :-
-    get_account_name(Player1, Player1Name),
-    get_account_name(Player2, Player2Name),
-    create_match(NewMatchName, Player1Name, Player2Name),
+setup_game(NewMatchName) :-
     clear_screen,
-    writeln("partida cadastrada, vamos jogar!"),
     game_loop(NewMatchName, ''),
     clear_screen,
     back_to_start_menu.
