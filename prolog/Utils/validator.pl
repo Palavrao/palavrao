@@ -29,7 +29,7 @@ validation(MatchName, InputLine, Report) :-
 
         take_up_to(WorkTiles, X, Y, N, IsHorizontal, BoardTiles), 
         get_element(WorkTiles, 7, 7, MiddleElement),
-        (not(maplist(special_char, BoardTiles)) ; special_char(MiddleElement)),
+        (not(maplist(is_token, BoardTiles)) ; is_token(MiddleElement)),
         player_has_letters(WordLetters, PlayerLetters, BoardTiles, ValidLetters, InvalidLetters),
         not(maplist(is_alpha, BoardTiles)), letter_overlap_validation(WordLetters, BoardTiles), 
         get_points_word(BoardTiles, WordLetters, Points),
@@ -86,6 +86,9 @@ read_input(InputLine, Info) :-
 
 is_alpha(Char) :-
     char_type(Char, alpha).
+
+is_token(Char) :-
+    member(Char, [!,-,~,*,-,#]).
 
 % Verifica se o jogador tem as letras da palavra jogada
 % Recebe: A lista com os caracteres da palavra
