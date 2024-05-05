@@ -158,36 +158,43 @@ write_player(PlayerNumber, Player) :-
             writeln("nome inválido, insira um nome válido."),
             write_player(PlayerNumber, Player))).
 
+% listagem de partidas para o usuario
 list_matches :-
     writeln('\n----- partidas criadas -----'),
     print_matches,
     writeln('----------------------------'),
     writeln('Enter para voltar>').
 
+% pega as partidas criadas, verifica se ha partidas, e retorna a listagem
 print_matches :-
     get_match_names(MatchesNames),
     (length(MatchesNames, 0) ->
         writeln('nao ha partidas criadas');
         format_matches(MatchesNames, 1)).
 
+% auxiliar para a listagem de partidas, formata saida para mostrar ordem e nome
 format_matches([], _).
 format_matches([Head|Rest], Order) :-
     format('~w - ~w~n', [Order, Head]),
     NextOrder is Order + 1,
     format_matches(Rest, NextOrder).
 
+% listagem de rank para o usuario
 rank :-
     writeln('\n------- rank -------'),
     print_accounts,
     writeln('--------------------'),
     writeln('Enter para voltar>').
 
+% pega o rank das contas, verifica se ha contas criadas, e retorna a listagem
 print_accounts :-
     get_accs_rank(AccRank),
     (length(AccRank, 0) ->
         writeln('nao ha contas criadas');
         (reverse_list(AccRank, Reversed), format_accounts(Reversed, 1))).
 
+% auxiliar para a listagem do rank, formata saida para mostrar posicao,
+% nome de usuario e pontuacao obtida
 format_accounts([], _).
 format_accounts([[AccName, AccScore]|Rest], Order) :-
     format('~w - ~w: ~w~n', [Order, AccName, AccScore]),
@@ -204,7 +211,7 @@ setup_game(NewMatchName, Player1, Player2) :-
     clear_screen,
     back_to_start_menu.
 
-
+% limpa conteudo da tela e mostra o menu inicial do jogo
 back_to_start_menu :-
     retract(current_screen(_)),
     assertz(current_screen(start_menu)),
