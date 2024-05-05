@@ -6,6 +6,8 @@ game_action(start_menu).
 game_action(redimension_screen).
 game_action(finish_match).
 
+
+% Tela inicial do jogo, que mostra ao usuário os limites do terminal que devem ser seguidos
 menu(redimension_screen,
      ["                 ┌─────────────────────────────┐                ",
       "                 │                             │                ",
@@ -17,6 +19,7 @@ menu(redimension_screen,
       "                 │                             │                ",
       "                 └─────────────────────────────┘                "]).
 
+% Tela de menu inicial
 menu(start_menu,
     ["    ┌───────────────────────────────┐   ",
      "    │                               │   ",
@@ -35,6 +38,7 @@ menu(start_menu,
      "    │                               │   ",
      "    └───────────────────────────────┘   "]).
 
+% Tela de iniciação de novo jogo
 menu(new_game,
     ["    ┌───────────────────────────────┐   ",
      "    │                               │   " ,
@@ -53,6 +57,7 @@ menu(new_game,
      "    │      iniciando novo jogo      │   ",
      "    └───────────────────────────────┘   "]).
 
+% Tela de iniciação de continuar jogo
 menu(continue_game,
     ["    ┌───────────────────────────────┐   ",
      "    │                               │   " ,
@@ -71,6 +76,7 @@ menu(continue_game,
      "    │        continuar jogo         │   ",
      "    └───────────────────────────────┘   "]).
 
+% Tela de iniciação de login de conta
 menu(login,
     ["    ┌───────────────────────────────┐   ",
      "    │                               │   " ,
