@@ -182,25 +182,21 @@ all_words_exist([H|T], InvalidWords) :-
         all_words_exist(T, TempInvalidWords),
         InvalidWords = [H|TempInvalidWords]), !.
 
-get_sublist_col(_, To, To, _, []) :- !.
-get_sublist_col(Matrix, From, To, X, Sublist) :-
-    nth0(From, Matrix, Col),
-    nth0(X, Col, Char),
-    NewFrom is From + 1,
-    get_sublist_col(Matrix, NewFrom, To, X, TempSublist),
-    append([Char], TempSublist, Sublist).
-
+% recebe uma string, verifica se ha algum caractere em maiusculo nela,
+% e caso tenha, transforma em minusculo e retorna a string modificada
 check_lowercase(Word, LowercaseWord) :-
     string_upper(Word, Word),
     string_lower(Word, LowercaseWord), !.
 check_lowercase(Word, Word).
 
+% valida entrada de usuario para que nao seja vazia, e que nao tenha caracteres especiais
 valid_name(Name) :-
     \+ Name = "",
     \+ contains_space(Name),
     atom_chars(Name, Chars),
     valid_chars(Chars).
 
+% auxiliar para verificacao de entrada, ve se os caracteres da string nao sao alfanumericos
 valid_chars([]).
 valid_chars([Char|Rest]) :-
     member(Char, ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
@@ -208,5 +204,6 @@ valid_chars([Char|Rest]) :-
                   '0','1','2','3','4','5','6','7','8','9']),
     valid_chars(Rest).
 
+% auxiliar para verificacao de entrada, procura por espacos em branco na string
 contains_space(Name) :-
     sub_string(Name, _, _, _, ' ').
