@@ -12,8 +12,8 @@ game_loop(MatchName, LastMessage):-
                 ansi_format([bold, fg(green)], '>> Letras da partida acabaram! Encerrando o jogo...\n\n',[]) ;
                 ansi_format([bold, fg(green)], '>> 4 skips ou trocas! Encerrando o jogo...\n\n',[])
             ),
-            get_winner(WinnerName, WinnerScore),
-            print_winner(WinnerName, WinnerScore),
+            %get_winner(WinnerName, WinnerScore),
+            print_winner,
             ansi_format([bold, fg(blue)], 'Aperte Enter para sair...\n\n',[]),
             no_period_input(_),
             finish_match(MatchName)
@@ -146,22 +146,15 @@ flux_handler(MatchName,StringInput, Msg):-
 
 flux_handler(_,_,'Pânico geral!').
 
-get_winner(WinnerName, WinnerScore) :-
+print_winner :-
     get_match_p1_name(MatchName, Player1Name),
     get_match_p2_name(MatchName, Player2Name),
     get_player_score(MatchName, Player1Name, Player1Score),
     get_player_score(MatchName, Player2Name, Player2Score),
     (   Player1Score > Player2Score ->
-        WinnerName = Player1Name,
-        WinnerScore = Player1Score
+        format(" ~w é o(a) vencedor(a) com ~d pontos.~n", [Player1Name, Player1Score])
     ;   Player2Score > Player1Score ->
-        WinnerName = Player2Name,
-        WinnerScore = Player2Score
+        format(" ~w é o(a) vencedor(a) com ~d pontos.~n", [Player2Name, Player2Score])
     ;   % Em caso de empate
-        atomic_list_concat([Player1Name, ' e ', Player2Name], WinnerName),
-        WinnerScore = Player1Score
+        format("~w e ~w são os vencedores com ~d pontos.~n", [Player1Name, Player2Name, Player1Score])
     ).
-
-
-print_winner(Player, Points) :-
-    format(" ~w é/são o(s) vencedor(es) com ~d pontos.~n", [Player, Points]).
