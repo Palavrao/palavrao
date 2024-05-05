@@ -208,9 +208,12 @@ rank :-
 % pega o rank das contas, verifica se ha contas criadas, e retorna a listagem
 print_accounts :-
     get_accs_rank(AccRank),
-    (length(AccRank, 0) ->
-        writeln('nao ha contas criadas');
-        (reverse_list(AccRank, Reversed), format_accounts(Reversed, 1))).
+    (is_longer_than_5(AccRank) ->
+        format_accounts(AccRank, 1),
+        writeln('todas as contas estão com score zerado');
+        (length(AccRank, 0) ->
+            writeln('nao ha contas criadas');
+            (reverse_list(AccRank, Reversed), format_accounts(Reversed, 1)))).
 
 % auxiliar para a listagem do rank, formata saida para mostrar posicao,
 % nome de usuario e pontuacao obtida

@@ -1,3 +1,4 @@
+:- consult('Utils/utils.pl').
 
 % Verifica se a conta existe 
 % Recebe: Nome da conta
@@ -64,12 +65,13 @@ get_accs_pairs([H|T], AccsPairs) :-
 
 
 % Retorna os pares representando as contas dos top 5 melhores jogadores
-% Retorna: As 5 contas com melhores pontuações registradas, sendo representadas por pares
+% Retorna: As 5 contas com melhores pontuações registradas, sendo representadas por pares,
+% e caso os usuarios tenham suas pontuações zeradas, retorna todos os usuarios
 get_accs_rank(AccRank) :-
     get_accs_pairs(Accs),
-    sort_by_second(Accs, SortedAccs),
-
-    length(SortedAccs, Len),
-    AccsQtd is min(5, Len),
-
-    get_last_elements(SortedAccs, AccsQtd, AccRank).
+    (all_scores_zero(Accs) ->
+        AccRank = Accs;
+        (sort_by_second(Accs, SortedAccs),
+        length(SortedAccs, Len),
+        AccsQtd is min(5, Len),
+        get_last_elements(SortedAccs, AccsQtd, AccRank))).

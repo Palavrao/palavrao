@@ -200,3 +200,14 @@ reverse_list([Head|Tail], Reversed) :-
 
 % recebe uma conta e retorna o nome do usuario
 get_account_name(account(Name, _), Name).
+
+% verifica se o tamanho de uma lista é maior que 5
+is_longer_than_5(List) :-
+    length(List, Len),
+    Len > 5.
+
+% verifica se todos os usuários têm pontuação igual a zero
+all_scores_zero([]).
+all_scores_zero([[_, Score] | Tail]) :-
+    Score =:= 0,
+    all_scores_zero(Tail).
