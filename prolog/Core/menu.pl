@@ -97,6 +97,10 @@ process_input('3') :-
 % ao receber alguma outra entrada nao definida, nao executa acao alguma
 process_input(_).
 
+% lida com entrada do usuario para continuacao de jogo:
+% recebe entrada, faz validacao de letras minusculas e caracteres,
+% verifica se a partida existe para entrar no loop,
+% e caso o usuario digite 0, ele volta pro menu de continuacao
 write_existing_match(MatchName) :-
     writeln('digite o nome da partida (ou digite 0 para voltar)>'),
     read_line_to_codes(user_input, Codes),
@@ -114,12 +118,16 @@ write_existing_match(MatchName) :-
             back_to_start_menu);
             writeln("partida não existe, tente novamente."), write_existing_match(MatchesNames))).
 
+% pega retorno com nome de partida e com os jogadores
+% e passa pro setup do jogo
 write_new_match(NewMatchName, Player1, Player2) :-
     write_match(NewMatchName),
     write_player(1, Player1),
     write_player(2, Player2),
     setup_game(NewMatchName, Player1, Player2).
 
+% recebe entrada, valida caracteres,
+% verifica se a partida nao existe ainda para poder ser criada,
 write_match(NewMatchName) :-
     read_match_input(LowerNewMatchName),
 
@@ -131,6 +139,9 @@ write_match(NewMatchName) :-
             (writeln("partida com nome invalido."),
              write_match(LowerMatchName))).
 
+% lida com entrada do usuario para novo jogo:
+% recebe entrada, valida letras minusculas,
+% e caso o usuario digite 0, ele volta pro menu de continuacao
 read_match_input(LowerNewMatchName) :-
     writeln('digite o nome da nova partida (ou digite 0 para voltar)>'),
     read_line_to_codes(user_input, Codes),
@@ -140,6 +151,11 @@ read_match_input(LowerNewMatchName) :-
         back_to_start_menu, fail;
         true).
 
+% lida com entrada do usuario para login/criacao de jogador:
+% recebe entrada, faz validacao de letras minusculas e caracteres,
+% se a conta com o nome dado existe o usuario é logado,
+% caso nao exista uma nova conta é criada,
+% e caso o usuario digite 0, ele volta pro menu de continuacao
 write_player(PlayerNumber, Player) :-
     format("digite o nome do player ~w (ou digite 0 para voltar)>\n", [PlayerNumber]),
     read_line_to_codes(user_input, Codes),
@@ -201,6 +217,9 @@ format_accounts([[AccName, AccScore]|Rest], Order) :-
     NextOrder is Order + 1,
     format_accounts(Rest, NextOrder).
 
+% recebe o nome da nova partida e os dois jogadores dela
+% pega o nome dos usuarios, cria nova partida e entra no loop dela
+% ao finalizar, volta ao menu inicial
 setup_game(NewMatchName, Player1, Player2) :-
     get_account_name(Player1, Player1Name),
     get_account_name(Player2, Player2Name),
