@@ -67,12 +67,12 @@ flux_handler(MatchName, ':!', Msg,_):-
     skip_player_turn(MatchName),
     format(atom(Msg), '>> ~w pulou o turno!\n', [PlayerOnTurn]).
 
-flux_handler(MatchName, ':?', Msg,_):-
+flux_handler(MatchName, ':?', Msg, StartTime):-
     print_short_rules,
     print_board(MatchName),
     writef('Digite sua palavra no formato X00 V/H PALAVRA:\n > '),
     no_period_input(I),
-    flux_handler(MatchName, I, Msg).
+    flux_handler(MatchName, I, Msg, StartTime).
 
 flux_handler(_, ':*', '',_).
 
